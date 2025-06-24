@@ -7,70 +7,13 @@
   <title>Sri Kamala Hospital</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="favicon.ico" />
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-  />
-  <style>
-    /* Slider styles */
-    .slider {
-      width: 600px;
-      height: 350px;
-      overflow: hidden;
-      position: relative;
-      margin: 20px auto;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .slides {
-      display: flex;
-      transition: transform 0.5s ease-in-out;
-      height: 100%;
-    }
-
-    .slides img {
-      width: 600px;
-      height: 350px;
-      object-fit: cover;
-      user-select: none;
-      pointer-events: none;
-    }
-
-    /* Arrows */
-    .arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background-color: rgba(0, 0, 0, 0.4);
-      color: white;
-      border: none;
-      font-size: 2.5rem;
-      padding: 0 12px;
-      cursor: pointer;
-      border-radius: 50%;
-      z-index: 10;
-      user-select: none;
-    }
-
-    .arrow.left {
-      left: 10px;
-    }
-
-    .arrow.right {
-      right: 10px;
-    }
-  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 
 <body>
+  <!-- Header -->
   <header>
-    <img
-       src="ChatGPT Image Apr 19, 2025, 01_22_02 AM.png"
-      height="60"
-      width="60"
-      alt="Hospital Logo"
-    />
+    <img src="ChatGPT Image Apr 19, 2025, 01_22_02 AM.png" height="60" width="60" alt="Hospital Logo" />
     <h1>Sri Kamala Hospital</h1>
     <nav>
       <a href="index.html">Home</a>
@@ -80,26 +23,7 @@
     </nav>
   </header>
 
-  <div class="slider">
-    <div class="slides" id="slides">
-      <img
-        src="WhatsApp Image 2025-06-06 at 10.57.35 PM (1).jpeg"
-        alt="Banner 1"
-      />
-      <img
-        src="WhatsApp Image 2025-06-06 at 10.57.35 PM (2).jpeg"
-        alt="Banner 2"
-      />
-      <img
-        src="WhatsApp Image 2025-06-06 at 10.57.35 PM (3).jpeg"
-        alt="Banner 3"
-      />
-      <img src="WhatsApp Image 2025-06-06 at 10.57.35 PM.jpeg" alt="Banner 4" />
-    </div>
-    <button class="arrow left" id="prev">&#10094;</button>
-    <button class="arrow right" id="next">&#10095;</button>
-  </div>
-
+  <!-- Features -->
   <section class="features">
     <div class="feature-box">
       <i class="fas fa-user-md"></i>
@@ -118,6 +42,7 @@
     </div>
   </section>
 
+  <!-- OP Booking -->
   <section class="op-booking animated-booking">
     <div class="icon-wrap">
       <i class="fas fa-calendar-check animated-icon"></i>
@@ -126,36 +51,27 @@
     <p>మీ కన్సల్టేషన్‌ను ఆన్‌లైన్‌లో బుక్ చేసుకొని సమయాన్ని సేవ్ చేసుకోండి.</p>
   </section>
 
-  <!-- Book Appointment Button -->
+  <!-- Book OP Button -->
   <div class="book-btn-container">
     <center>
       <a href="appoinment.html" class="op-btn" style="text-decoration:none;">Book OP</a>
     </center>
   </div>
 
-  <!-- Diagnosis and Medical Shop Section -->
+  <!-- Facilities -->
   <section class="facility-section">
     <h2 class="section-title">Facilities</h2>
     <div class="facility-wrapper">
-      <!-- Diagnosis Card -->
       <div class="facility-card diagnosis-card">
         <i class="fas fa-vials icon-top"></i>
         <h3>Diagnosis</h3>
-        <p>Advanced diagnostic lab tests</p>
-        <br />
+        <p>Advanced diagnostic lab tests</p><br />
         <a href="diagnosis.html" class="main-btn" style="text-decoration:none;">Explore Diagnosis</a>
       </div>
-
-      <!-- Medical Shop Card -->
       <div class="facility-card medical-shop-card">
-        <i
-          class="fas fa-pills"
-          style="font-size: 45px; color: #008080; margin-bottom: 20px;"
-        ></i>
-
+        <i class="fas fa-pills" style="font-size: 45px; color: #008080; margin-bottom: 20px;"></i>
         <h3>Medical Shop</h3>
-        <p>24x7 pharmacy available for all medicines</p>
-        <br />
+        <p>24x7 pharmacy available for all medicines</p><br />
         <a href="medical-shop.html" class="main-btn" style="text-decoration:none;">Explore Medical</a>
       </div>
     </div>
@@ -192,8 +108,6 @@
     </div>
   </section>
 
-  <br /><br />
-
   <!-- Newsletter -->
   <section class="newsletter">
     <h3>Subscribe to our Newsletter</h3>
@@ -203,6 +117,7 @@
     </form>
   </section>
 
+  <!-- Footer with Chatbot and Location -->
   <footer>
     <div id="chatbot">
       <div class="chat-header">💬 Need Help? Chat with us!</div>
@@ -215,83 +130,24 @@
 
     <button id="chat-toggle" onclick="toggleChat()">💬</button>
 
-    <script>
-      let chatVisible = false;
-
-      function toggleChat() {
-        chatVisible = !chatVisible;
-        document.getElementById("chatbot").style.display = chatVisible ? "flex" : "none";
-        if (chatVisible) {
-          setTimeout(() => botReply("Hi! How can I help you today? 👋"), 500);
-        }
-      }
-
-      function sendMessage() {
-        const input = document.getElementById("chat-input");
-        const msg = input.value.trim();
-        if (!msg) return;
-        addMessage("You", msg);
-        input.value = "";
-        setTimeout(() => botReply(getBotResponse(msg)), 800);
-      }
-
-      function addMessage(sender, message) {
-        const chat = document.getElementById("chat-body");
-        const bubble = document.createElement("div");
-        bubble.className = "chat-msg";
-        bubble.innerHTML = `<strong>${sender}:</strong> ${message}`;
-        chat.appendChild(bubble);
-        chat.scrollTop = chat.scrollHeight;
-      }
-
-      function botReply(message) {
-        addMessage("Bot", message);
-      }
-
-      function getBotResponse(input) {
-        const msg = input.toLowerCase();
-        if (msg.includes("bookop") || msg.includes("appointment")) {
-          return 'You can book an appointment <a href="appoinment.html" target="_blank">here</a>.';
-        }
-        if (msg.includes("time") || msg.includes("timing")) {
-          return "We are open from <strong>8AM to 8PM</strong>, all 7 days.";
-        }
-        if (msg.includes("doctor")) {
-          return 'You can view our doctors <a href="doctors.html" target="_blank">here</a>.';
-        }
-        if (msg.includes("location") || msg.includes("where")) {
-          return "We are located at <strong>123 Health Road, YourCity</strong>.";
-        }
-        if (msg.includes("blood test")) {
-          return 'You can book blood tests <a href="bloodtestbook.html" target="_blank">here</a>.';
-        }
-        if (msg.includes("emergency")) {
-          return "Please call our emergency line: <strong>+91-XXXXXXXXXX</strong>";
-        }
-        if (msg.includes("contact")) {
-          return 'You can contact us via the form <a href="contact.html" target="_blank">here</a>.';
-        }
-
-        return "Sorry, I didn’t understand that. Can you rephrase?";
-      }
-    </script>
-
     <div class="location-info">
-      <h4>Our Location</h4>
-      <br />
+      <h4>Our Location</h4><br />
+      <p>
+  <strong>Our Location:</strong><br />
+  M.G Road Opp. Tirumala Grand Resturant, Suryapet<br /><br />
+  <a
+    href="https://www.google.com/maps/dir/17.4913176,78.4005111/SRI+KAMALA+HOSPITAL,+Manasa+Nagar,+Suryapet,+Telangana+508213/@17.3720714,77.666669,8z/data=!3m1!4b1!4m9!4m8!1m1!4e1!1m5!1m1!1s0x3a34dba63f29a213:0x2dfe41301d2da441!2m2!1d79.6225782!2d17.147934?entry=ttu"
+    target="_blank"
+    style="display: inline-block; background: #00796b; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;"
+  >
+   📍 Get Directions 
+  </a>
+</p>
 
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3811.05353128582!2d79.6382875!3d17.831235799999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a34f21f5f0f93d1%3A0x1a2b3c4d5e6f7h8i!2sM.G+Road+Opp.+Tirumala+Grand+Resturant%2C+Suryapet!5e0!3m2!1sen!2sin!4v1678888888888"
-        width="300"
-        height="200"
-        style="border: 0"
-        allowfullscreen=""
-        loading="lazy"
-      ></iframe>
-      <p>M.G Road Opp. Tirumala Grand Resturant, Suryapet</p>
     </div>
   </footer>
 
+  <!-- Bottom Footer -->
   <div>
     <center>
       <p>&copy; 2025 Sri Kamala Hospital. All rights reserved.</p>
@@ -306,26 +162,64 @@
     <a href="contact.html">Contact Us</a>
   </footer>
 
+  <!-- Chatbot Script -->
   <script>
-    const slides = document.getElementById("slides");
-    const totalSlides = slides.children.length;
-    let currentIndex = 0;
-    const slideWidth = 600; // match slider width
+    let chatVisible = false;
+    function toggleChat() {
+      chatVisible = !chatVisible;
+      document.getElementById("chatbot").style.display = chatVisible ? "flex" : "none";
+      if (chatVisible) {
+        setTimeout(() => botReply("Hi! How can I help you today? 👋"), 500);
+      }
+    }
 
-    document.getElementById("next").addEventListener("click", () => {
-      currentIndex = (currentIndex + 1) % totalSlides;
-      updateSlider();
-    });
+    function sendMessage() {
+      const input = document.getElementById("chat-input");
+      const msg = input.value.trim();
+      if (!msg) return;
+      addMessage("You", msg);
+      input.value = "";
+      setTimeout(() => botReply(getBotResponse(msg)), 800);
+    }
 
-    document.getElementById("prev").addEventListener("click", () => {
-      currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-      updateSlider();
-    });
+    function addMessage(sender, message) {
+      const chat = document.getElementById("chat-body");
+      const bubble = document.createElement("div");
+      bubble.className = "chat-msg";
+      bubble.innerHTML = `<strong>${sender}:</strong> ${message}`;
+      chat.appendChild(bubble);
+      chat.scrollTop = chat.scrollHeight;
+    }
 
-    function updateSlider() {
-      slides.style.transform = `translateX(${-currentIndex * slideWidth}px)`;
+    function botReply(message) {
+      addMessage("Bot", message);
+    }
+
+    function getBotResponse(input) {
+      const msg = input.toLowerCase();
+      if (msg.includes("bookop") || msg.includes("appointment")) {
+        return 'You can book an appointment <a href="appoinment.html" target="_blank">here</a>.';
+      }
+      if (msg.includes("time") || msg.includes("timing")) {
+        return "We are open from <strong>8AM to 8PM</strong>, all 7 days.";
+      }
+      if (msg.includes("doctor")) {
+        return 'You can view our doctors <a href="doctors.html" target="_blank">here</a>.';
+      }
+      if (msg.includes("location") || msg.includes("where")) {
+        return "We are located at <strong>123 Health Road, YourCity</strong>.";
+      }
+      if (msg.includes("blood test")) {
+        return 'You can book blood tests <a href="bloodtestbook.html" target="_blank">here</a>.';
+      }
+      if (msg.includes("emergency")) {
+        return "Please call our emergency line: <strong>+91-XXXXXXXXXX</strong>";
+      }
+      if (msg.includes("contact")) {
+        return 'You can contact us via the form <a href="contact.html" target="_blank">here</a>.';
+      }
+      return "Sorry, I didn’t understand that. Can you rephrase?";
     }
   </script>
 </body>
-
 </html>
