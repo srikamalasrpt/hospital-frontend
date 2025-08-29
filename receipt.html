@@ -13,14 +13,6 @@
       padding: 40px;
       margin: 0;
     }
-    .container {
-  max-width: 500px;
-  margin: 60px auto;
-  padding: 30px;
-}
-input, select, .book-btn {
-  width: 100%;
-}
 
     .receipt-box {
       max-width: 700px;
@@ -28,11 +20,12 @@ input, select, .book-btn {
       border: 1px solid #ccc;
       padding: 40px;
       border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
       background-color: #fefefe;
     }
 
-    h1, h2 {
+    h1,
+    h2 {
       text-align: center;
       color: #00a6b8;
       margin-bottom: 10px;
@@ -97,28 +90,18 @@ input, select, .book-btn {
     .print-btn:active {
       animation: clickBounce 0.3s ease;
     }
-    .modal {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.button-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-}
-img{
-  display: block;
-  margin: 0 auto;
-}
+
+    img {
+      display: block;
+      margin: 0 auto;
+    }
+
     @keyframes fadeIn {
       from {
         opacity: 0;
         transform: translateY(15px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -129,9 +112,11 @@ img{
       0% {
         box-shadow: 0 0 0 0 rgba(0, 80, 184, 0.7);
       }
+
       70% {
         box-shadow: 0 0 0 10px rgba(0, 80, 184, 0);
       }
+
       100% {
         box-shadow: 0 0 0 0 rgba(0, 80, 184, 0);
       }
@@ -141,9 +126,11 @@ img{
       0% {
         transform: scale(0.95);
       }
+
       50% {
         transform: scale(1.05);
       }
+
       100% {
         transform: scale(1);
       }
@@ -151,7 +138,7 @@ img{
 
     @media print {
       .print-btn {
-        display:none;
+        display: none;
       }
 
       body {
@@ -167,16 +154,16 @@ img{
     }
   </style>
 </head>
+
 <body>
   <div class="receipt-box">
-    <img src="ChatGPT Image Apr 19, 2025, 01_22_02 AM.png" width="90" height="80">
+    <img src="ChatGPT Image Apr 19, 2025, 01_22_02 AM.png" width="90" height="80" alt="Hospital Logo">
     <h1>Sri Kamala Hospital</h1>
     <div class="hospital-info">
-      Opp. Tirumala Grand resturant, Suryapet - 508213<br>
+      Opp. Tirumala Grand Restaurant, Suryapet - 508213<br>
       Phone: 9948076665 | Email: srikamalahospitalsrpt@gmail.com
     </div>
     <h2>Appointment Receipt</h2>
-    <br><br><br>
     <table class="receipt-details">
       <tr>
         <td class="label">Token Number:</td>
@@ -207,7 +194,6 @@ img{
         <td id="paymentId"></td>
       </tr>
     </table>
-    
 
     <div class="note">
       * Please bring this receipt or a screenshot on the appointment day.
@@ -219,22 +205,20 @@ img{
 document.addEventListener('DOMContentLoaded', async () => {
   const urlParams = new URLSearchParams(window.location.search);
   const paymentId = urlParams.get('payment_id');
-  const phone = urlParams.get('phone') || localStorage.getItem("patientPhone");
+  const token = urlParams.get('token'); // fetch by token
 
-  if (!phone) {
-    alert("❌ Missing patient phone number. Cannot fetch appointment.");
+  if (!token) {
+    alert("❌ Missing token. Cannot fetch appointment.");
     return;
   }
 
   const noteDiv = document.querySelector('.note');
-  if(paymentId && paymentId.startsWith('PENDING-')){
-    noteDiv.textContent = '💡 Payment Pending. Please pay at the hospital on your appointment day.';
-  } else {
-    noteDiv.textContent = '* Please bring this receipt or a screenshot on the appointment day.';
-  }
+  noteDiv.textContent = (paymentId && paymentId.startsWith('PENDING-'))
+    ? '💡 Payment Pending. Please pay at the hospital on your appointment day.'
+    : '* Please bring this receipt or a screenshot on the appointment day.';
 
   try {
-    const res = await fetch(`https://hospital-backend-78ur.onrender.com/get-latest-appointment?phone=${phone}`);
+    const res = await fetch(`https://hospital-backend-78ur.onrender.com/get-appointment?token=${token}`);
     if (!res.ok) throw new Error("Network response was not ok");
     const data = await res.json();
 
@@ -246,20 +230,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('date').textContent = data.appointmentDate || 'N/A';
     document.getElementById('paymentId').textContent = paymentId || 'N/A';
 
-    if(data.time){
-      let timeRow = document.createElement('tr');
-      timeRow.innerHTML = `<td class="label">Time:</td><td>${data.time}</td>`;
-      document.querySelector('.receipt-details').appendChild(timeRow);
-    }
-
   } catch (err) {
     console.error('❌ Error loading receipt:', err);
     alert("❌ Failed to load appointment details. Please try again.");
   }
 });
-
 </script>
-
 
 </body>
 </html>
