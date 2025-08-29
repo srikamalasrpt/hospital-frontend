@@ -423,6 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Form submit
 document.getElementById('appointmentForm').addEventListener('submit', function(e){
     e.preventDefault();
+
     const fullName = document.getElementById('fullName').value;
     const phone = document.getElementById('phone').value;
     const age = document.getElementById('age').value;
@@ -436,20 +437,32 @@ document.getElementById('appointmentForm').addEventListener('submit', function(e
         return;
     }
 
+    // Store phone in localStorage for receipt page
+    localStorage.setItem('patientPhone', phone);
+
+    // Show payment modal
     document.getElementById('paymentModal').style.display = 'block';
 });
 
+// Pay at Hospital
 document.getElementById('payHospital').addEventListener('click', function(){
-    alert('Sorry this option is not available right now. Please call 9948076665 to book your appointment.\nఈ ఆప్షన్ ఇప్పటివరకు అందుబాటులో లేదు. దయచేసి 9948076665 కి కాల్ చేసి మీ అపాయింట్మెంట్ బుక్ చేయండి.');
+    // Generate a placeholder pending payment ID
+    const pendingPaymentId = 'PENDING-' + Date.now();
+    window.location.href = `receipt.html?payment_id=${pendingPaymentId}`;
 });
 
+// Pay Online (Cashfree)
 document.getElementById('payOnline').addEventListener('click', function(){
-    window.location.href = '"https://payments.cashfree.com/forms/op-booking" ; 
+    // Example: redirect to Cashfree with return URL to receipt
+    const cashfreeLink = "https://payments.cashfree.com/forms/op-booking?redirect_url=https://srikamalahospital.store/receipt.html";
+    window.location.href = cashfreeLink;
 });
 
+// Close modal
 document.getElementById('closeModal').addEventListener('click', function(){
     document.getElementById('paymentModal').style.display = 'none';
 });
+
 </script>
 </body>
 </html>
