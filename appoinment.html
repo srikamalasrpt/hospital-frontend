@@ -1,53 +1,455 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Redirecting to Appointment Page</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      background: linear-gradient(to right, #00b894, #0078d7);
-      color: white;
-      font-family: 'Segoe UI', sans-serif;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sri Kamala Hospital - Appointment Booking</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+    --primary: #1a76d2;
+    --secondary: #34a853;
+    --accent: #f37e21;
+    --text: #333333;
+    --light-bg: #f5f7fa;
+    --shadow: 0 8px 20px rgba(0,0,0,0.1);
+    --transition: all 0.3s ease;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+}
 
-    .spinner {
-      border: 6px solid rgba(255, 255, 255, 0.2);
-      border-top: 6px solid white;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      animation: spin 1s linear infinite;
-      margin-bottom: 20px;
-    }
+/* Navbar */
+.navbar {
+    width: 100%;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    box-shadow: var(--shadow);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    animation: slideDown 0.8s ease forwards;
+}
+@keyframes slideDown {
+    0% { transform: translateY(-50px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+.navbar .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+.navbar ul li a {
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 600;
+    transition: 0.3s;
+}
+.navbar ul li a:hover {
+    color: var(--accent);
+    transform: scale(1.1);
+}
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+/* Container */
+.container {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    max-width: 700px;
+    width: 100%;
+    padding: 40px;
+    margin: 120px auto 40px auto; /* leave space for navbar */
+    animation: fadeInUp 1s ease forwards;
+}
+@keyframes fadeInUp {
+    0% { opacity:0; transform: translateY(40px); }
+    100% { opacity:1; transform: translateY(0); }
+}
+header { text-align:center; margin-bottom:30px; }
+header h1 { font-size:2rem; color: var(--primary); margin-bottom:10px; animation: fadeInDown 1s ease forwards; }
+@keyframes fadeInDown {
+    0% { opacity:0; transform: translateY(-20px); }
+    100% { opacity:1; transform: translateY(0); }
+}
+.card { padding: 20px; }
+.form-title {
+    text-align: center;
+    font-size: 1.8rem;
+    color: var(--primary);
+    margin-bottom: 25px;
+    position: relative;
+}
+.form-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 2px;
+}
+.form-group { margin-bottom: 20px; position: relative; }
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--primary);
+    transition: var(--transition);
+}
+.form-control {
+    width: 100%;
+    padding: 14px 20px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: var(--transition);
+    outline: none;
+    background: #f8f9fa;
+}
+.form-control:focus {
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px rgba(243,126,33,0.3);
+    background: #fff;
+}
+.row { display: flex; flex-wrap: wrap; gap: 20px; }
+.col { flex: 1; min-width: 250px; }
+.btn {
+    display: inline-block;
+    background: var(--primary);
+    color: #fff;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+.btn::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: var(--accent);
+    transition: var(--transition);
+    z-index: 0;
+}
+.btn:hover::before { width: 100%; }
+.btn span { position: relative; z-index: 1; }
+.btn:hover { transform: translateY(-2px); }
+.text-center { text-align: center; }
 
-    h2 {
-      font-size: 1.5rem;
-      margin-top: 0;
-    }
-  </style>
+/* Modal */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0; top: 0;
+    width: 100%; height: 100%; 
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6); 
+}
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto; 
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    animation: fadeInScale 0.5s ease forwards;
+}
+@keyframes fadeInScale {
+    0% { opacity:0; transform: scale(0.7); }
+    100% { opacity:1; transform: scale(1); }
+}
+.modal h3 { margin-bottom: 25px; }
+.modal .modal-btn {
+    margin: 10px 0;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    transition: 0.3s;
+}
+.modal-btn:hover { opacity: 0.9; }
+.pay-hospital { background: var(--secondary); color: #fff; }
+.pay-online { background: var(--accent); color: #fff; }
+
+@media (max-width:768px) {
+    .row { flex-direction: column; }
+    .navbar { flex-direction: column; gap: 10px; padding: 15px; }
+}
+</style>
 </head>
 <body>
 
-  <div class="spinner"></div>
-  <h2>Please wait... Redirecting to appointment page</h2>
+<!-- Navbar -->
+<div class="navbar">
+    <div class="logo">Sri Kamala Hospital</div>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="bloodtestbook.html">Blood Test(రక్త పరీక్ష)</a></li>
+        <li><a href="doctors.html">Doctors</a></li>
+    </ul>
+</div>
 
-  <script>
+<div class="container">
+    <header>
+      <img src="ChatGPT Image Apr 19, 2025, 01_22_02 AM.png" style="width: 100px;">
+        <h1>Sri Kamala Hospital</h1>
+    </header>
+    <div class="card">
+        <h2 class="form-title">Book Your Appointment</h2>
+        <br>
+        <form id="appointmentForm">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="fullName">Full Name-పూర్తి పేరు</label>
+                        <input type="text" id="fullName" class="form-control" placeholder="Full name-(మీ పూర్తి పేరు)" required>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="phone">Phone Number-ఫోన్ నంబర్</label>
+                        <input type="tel" id="phone" class="form-control" placeholder="Phone number-(ఫోన్ నంబర్)" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="age">Age-వయస్సు</label>
+                        <input type="number" id="age" class="form-control" placeholder="Enter your age-(మీ వయస్సు)" required min="1" max="120">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="gender">Gender-లింగం</label>
+                        <select id="gender" class="form-control" required>
+                            <option value="">Gender-లింగం</option>
+                            <option value="male">Male(పురుషుడు)</option>
+                            <option value="female">Female(మహిళ)</option>
+                            <option value="other">Other(ఇతర)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="role">Role-వైద్య రోల్</label>
+                        <select id="role" class="form-control" required>
+                            <option value="">Role -రోల్ ఎంచుకోండి</option>
+                            <option value="general">General Physician(జనరల్ ఫిజీషియన్)</option>
+                            <option value="cardio">Cardiologist(కార్డియాలజిస్ట్)</option>
+                            <option value="ortho">Orthopedist(ఆర్థోపెడిస్ట్)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="date">Appointment Date-తేదీ</label>
+                        <input type="date" id="date" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="time">Preferred Time-కోరుకున్న సమయం</label>
+                        <select id="time" class="form-control" required>
+                            <option value="">Select Time Slot-టైమ్ స్లాట్ ఎంచుకోండి</option>
+                            <option value="09:00 AM">09:00 AM</option>
+                            <option value="10:00 AM">10:00 AM</option>
+                            <option value="11:00 AM">11:00 AM</option>
+                            <option value="12:00 PM">12:00 PM</option>
+                            <option value="02:00 PM">02:00 PM</option>
+                            <option value="03:00 PM">03:00 PM</option>
+                            <option value="04:00 PM">04:00 PM</option>
+                            <option value="05:00 PM">05:00 PM</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="reason">Reason for Visit-ఎందుకు వస్తున్నారు</label>
+                <textarea id="reason" class="form-control" rows="3" placeholder="Briefly describe(మీ లక్షణాలు/కారణం వివరించండి)"></textarea>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn"><span><i class="fas fa-calendar-check"></i>Book Appointment(బుక్ చేయండి)</span></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- 3D Animated Payment Popup -->
+<div class="modal" id="paymentModal">
+    <div class="modal-content-3d" id="modal3d">
+        <div class="modal-front">
+            <h3>Payment Method (చెల్లింపు పద్ధతిని)</h3>
+            <button class="modal-btn pay-hospital" id="payHospital">Pay at Hospital-హాస్పిటల్ లో చెల్లించండి</button>
+            <button class="modal-btn pay-online" id="payOnline">PhonePe / GPay</button>
+            <button class="modal-btn" id="closeModal">Cancel(రద్దు చేయండి)</button>
+        </div>
+        <div class="modal-back">
+            <h3 id="backMessage">Message here</h3>
+            <button class="modal-btn" id="backClose">Close(రద్దు చేయండి)</button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* 3D Modal Styles */
+.modal-content-3d {
+    perspective: 1000px;
+    width: 90%;
+    max-width: 400px;
+    margin: 15% auto;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.8s ease;
+}
+.modal-front, .modal-back {
+    position: absolute;
+    width: 100%;
+    backface-visibility: hidden;
+    background: #fff;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+.modal-back {
+    transform: rotateY(180deg);
+}
+.modal-content-3d.show-back {
+    transform: rotateY(180deg);
+}
+.modal .modal-btn {
+    margin: 10px 0;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    transition: 0.3s;
+}
+.pay-hospital { background: var(--secondary); color: #fff; }
+.pay-online { background: var(--accent); color: #fff; }
+</style>
+
+<script>
+document.getElementById('appointmentForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    document.getElementById('paymentModal').style.display = 'block';
+});
+
+// 3D popup logic
+const modal3d = document.getElementById('modal3d');
+const backMessage = document.getElementById('backMessage');
+
+document.getElementById('payHospital').addEventListener('click', function(){
+    backMessage.textContent = "Sorry this option is not available right now.\nPlease call 9948076665 to book your appointment.\n \n ఈ ఆప్షన్ అందుబాటులో లేదు. దయచేసి 9948076665 కి కాల్ చేయండి.";
+    modal3d.classList.add('show-back');
+});
+
+document.getElementById('payOnline').addEventListener('click', function(){
+    backMessage.textContent = "Redirecting to Cashfree Gateway...";
+    modal3d.classList.add('show-back');
     setTimeout(() => {
-      window.location.href = "comingsoon.html";
-    }, 3000); // 3 seconds delay
-  </script>
+        // Example Cashfree link with redirect URL (replace with your Cashfree payment link)
+        const cashfreeLink = "https://payments.cashfree.com/forms/op-booking?redirect_url=https://srikamalahospital.store/receipt.html";
+        window.location.href = cashfreeLink;
+    }, 1000);
+});
 
+document.getElementById('backClose').addEventListener('click', function(){
+    modal3d.classList.remove('show-back');
+    document.getElementById('paymentModal').style.display = 'none';
+});
+
+document.getElementById('closeModal').addEventListener('click', function(){
+    document.getElementById('paymentModal').style.display = 'none';
+    modal3d.classList.remove('show-back');
+});
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    let mm = today.getMonth() + 1;
+    let dd = today.getDate();
+    if(dd<10) dd='0'+dd;
+    if(mm<10) mm='0'+mm;
+    document.getElementById('date').setAttribute('min', `${yyyy}-${mm}-${dd}`);
+});
+
+// Form submit
+document.getElementById('appointmentForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const fullName = document.getElementById('fullName').value;
+    const phone = document.getElementById('phone').value;
+    const age = document.getElementById('age').value;
+    const gender = document.getElementById('gender').value;
+    const role = document.getElementById('role').value;
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('time').value;
+
+    if(!fullName || !phone || !age || !gender || !role || !date || !time){
+        alert('Please fill all required fields(అన్ని వివరాలు సరైనదిగా నింపండి.)');
+        return;
+    }
+
+    document.getElementById('paymentModal').style.display = 'block';
+});
+
+document.getElementById('payHospital').addEventListener('click', function(){
+    alert('Sorry this option is not available right now. Please call 9948076665 to book your appointment.\nఈ ఆప్షన్ ఇప్పటివరకు అందుబాటులో లేదు. దయచేసి 9948076665 కి కాల్ చేసి మీ అపాయింట్మెంట్ బుక్ చేయండి.');
+});
+
+document.getElementById('payOnline').addEventListener('click', function(){
+    window.location.href = '"https://payments.cashfree.com/forms/op-booking" ; 
+});
+
+document.getElementById('closeModal').addEventListener('click', function(){
+    document.getElementById('paymentModal').style.display = 'none';
+});
+</script>
 </body>
 </html>
