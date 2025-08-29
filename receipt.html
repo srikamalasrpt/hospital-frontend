@@ -217,37 +217,27 @@ img{
 
   <script>
 document.addEventListener('DOMContentLoaded', async () => {
-  // Get stored phone from localStorage
-  const phone = localStorage.getItem("patientPhone");
+  const urlParams = new URLSearchParams(window.location.search);
+  const paymentId = urlParams.get('payment_id');
+  const phone = urlParams.get('phone') || localStorage.getItem("patientPhone");
 
-  // Get payment ID from URL
-  const paymentId = new URLSearchParams(window.location.search).get('payment_id');
+  if (!phone) {
+    alert("❌ Missing patient phone number. Cannot fetch appointment.");
+    return;
+  }
 
-  // Select the note div
   const noteDiv = document.querySelector('.note');
-
-  // Handle pending payments
   if(paymentId && paymentId.startsWith('PENDING-')){
     noteDiv.textContent = '💡 Payment Pending. Please pay at the hospital on your appointment day.';
   } else {
     noteDiv.textContent = '* Please bring this receipt or a screenshot on the appointment day.';
   }
 
-  // Check if phone exists
-  if (!phone) {
-    alert("❌ Missing patient phone number. Cannot fetch appointment.");
-    return;
-  }
-
   try {
-    // Fetch latest appointment details
     const res = await fetch(`https://hospital-backend-78ur.onrender.com/get-latest-appointment?phone=${phone}`);
-    
     if (!res.ok) throw new Error("Network response was not ok");
-    
     const data = await res.json();
 
-    // Populate receipt fields
     document.getElementById('token').textContent = data.token || 'N/A';
     document.getElementById('name').textContent = data.name || 'N/A';
     document.getElementById('age').textContent = data.age || 'N/A';
@@ -256,7 +246,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('date').textContent = data.appointmentDate || 'N/A';
     document.getElementById('paymentId').textContent = paymentId || 'N/A';
 
-    // Optional: show time if stored in backend
     if(data.time){
       let timeRow = document.createElement('tr');
       timeRow.innerHTML = `<td class="label">Time:</td><td>${data.time}</td>`;
@@ -268,6 +257,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     alert("❌ Failed to load appointment details. Please try again.");
   }
 });
+
 </script>
 
 
