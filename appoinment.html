@@ -400,8 +400,35 @@ document.getElementById('closeModal').addEventListener('click', function(){
 
 
 <script>
+// Token generation and management
+let appointmentCounter = localStorage.getItem('appointmentCounter') || 0;
+
+// Function to generate a unique token in KAMALA-OP(001) format
+function generateToken() {
+    appointmentCounter = parseInt(appointmentCounter) + 1;
+    localStorage.setItem('appointmentCounter', appointmentCounter);
+    
+    // Format the number with leading zeros
+    const formattedNumber = appointmentCounter.toString().padStart(3, '0');
+    return `KAMALA-OP(${formattedNumber})`;
+}
+
+// Function to reset counter at the start of each day
+function checkAndResetCounter() {
+    const today = new Date().toDateString();
+    const lastReset = localStorage.getItem('lastResetDate');
+    
+    if (lastReset !== today) {
+        localStorage.setItem('appointmentCounter', 0);
+        localStorage.setItem('lastResetDate', today);
+        appointmentCounter = 0;
+    }
+}
+
 // ✅ Set min date
 document.addEventListener('DOMContentLoaded', function() {
+    checkAndResetCounter();
+    
     const today = new Date();
     const yyyy = today.getFullYear();
     let mm = today.getMonth() + 1;
@@ -438,6 +465,8 @@ document.getElementById('appointmentForm').addEventListener('submit', async func
 
 // Pay at Hospital
 document.getElementById('payHospital').addEventListener('click', async function(){
+    const token = generateToken();
+    
     // ✅ Save appointment in backend with "Not Paid"
     const formData = {
         name: document.getElementById('fullName').value,
@@ -446,17 +475,22 @@ document.getElementById('payHospital').addEventListener('click', async function(
         gender: document.getElementById('gender').value,
         department: document.getElementById('role').value,
         appointmentDate: document.getElementById('date').value + " " + document.getElementById('time').value,
-        reason: document.getElementById('reason').value
+        reason: document.getElementById('reason').value,
+        token: token,
+        paymentStatus: "Not Paid"
     };
 
     try {
+        // Store data in localStorage for receipt page
+        localStorage.setItem('appointmentData', JSON.stringify(formData));
+        
         await fetch("https://hospital-backend-78ur.onrender.com/save-appointment-offline", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData)
         });
 
-        window.location.href = `receipt.html?payment_status=NotPaid`;
+        window.location.href = `receipt.html?token=${encodeURIComponent(token)}&status=NotPaid`;
     } catch (err) {
         alert("Error saving offline appointment");
     }
@@ -464,6 +498,8 @@ document.getElementById('payHospital').addEventListener('click', async function(
 
 // Pay Online (Cashfree)
 document.getElementById('payOnline').addEventListener('click', async function(){
+    const token = generateToken();
+    
     const formData = {
         name: document.getElementById('fullName').value,
         phone: document.getElementById('phone').value,
@@ -471,28 +507,32 @@ document.getElementById('payOnline').addEventListener('click', async function(){
         gender: document.getElementById('gender').value,
         department: document.getElementById('role').value,
         appointmentDate: document.getElementById('date').value + " " + document.getElementById('time').value,
-        reason: document.getElementById('reason').value
+        reason: document.getElementById('reason').value,
+        token: token,
+        paymentStatus: "Pending"
     };
 
     try {
-  const res = await fetch("https://hospital-backend-78ur.onrender.com/generate-payment-link", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData)
-  });
+        // Store data in localStorage as backup
+        localStorage.setItem('appointmentData', JSON.stringify(formData));
+        
+        const res = await fetch("https://hospital-backend-78ur.onrender.com/generate-payment-link", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({...formData, redirect_url: `https://srikamalahospital.store/receipt.html?token=${encodeURIComponent(token)}&status=Paid`})
+        });
 
-  const data = await res.json();
+        const data = await res.json();
 
-  if (data.success && data.payment_link) {
-    window.location.href = data.payment_link; // redirect to Cashfree checkout
-  } else {
-    alert("Failed to start payment. Please try again.");
-  }
-} catch (err) {
-  console.error(err);
-  alert("Error starting payment.");
-}
-
+        if (data.link_url) {
+            window.location.href = data.link_url; // ✅ Redirect to Cashfree
+        } else {
+            alert("Failed to start payment. Please try again.");
+        }
+    } catch (err) {
+        console.error("Payment error:", err);
+        alert("Error generating payment link");
+    }
 });
 
 // Close modal
@@ -503,6 +543,3 @@ document.getElementById('closeModal').addEventListener('click', function(){
 
 </body>
 </html>
-
-
-
