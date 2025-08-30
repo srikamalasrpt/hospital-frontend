@@ -235,6 +235,9 @@
 <div class="status">
   Status: <span id="paymentStatus"></span>
 </div>
+<div class="status">
+  Status: <span id="paymentStatus">Verifying...</span>
+</div>
 
         <div class="note">
             * Please bring this receipt or a screenshot on the appointment day.
@@ -279,7 +282,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('date').textContent = data.appointmentDate || 'N/A';
 
         // ✅ Payment ID
-        document.getElementById('paymentId').textContent = paymentId || data.paymentId || 'Not Available';
+       document.getElementById('paymentId').textContent = data.orderId || 'N/A';
+
 
         // ✅ Status
         if (data.paymentStatus === 'Paid') {
