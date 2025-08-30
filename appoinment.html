@@ -373,19 +373,9 @@ header h1 { font-size:2rem; color: var(--primary); margin-bottom:10px; animation
 </style>
 
 <script>
-document.getElementById('appointmentForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    document.getElementById('paymentModal').style.display = 'block';
-});
-
 // 3D popup logic
 const modal3d = document.getElementById('modal3d');
 const backMessage = document.getElementById('backMessage');
-
-document.getElementById('payHospital').addEventListener('click', function(){
-    backMessage.textContent = "Sorry this option is not available right now.\nPlease call 9948076665 to book your appointment.\n \n ఈ ఆప్షన్ అందుబాటులో లేదు. దయచేసి 9948076665 కి కాల్ చేయండి.";
-    modal3d.classList.add('show-back');
-});
 
 document.getElementById('payOnline').addEventListener('click', function(){
     backMessage.textContent = "Redirecting to Cashfree Gateway...";
@@ -410,6 +400,7 @@ document.getElementById('closeModal').addEventListener('click', function(){
 
 
 <script>
+// ✅ Set min date
 document.addEventListener('DOMContentLoaded', function() {
     const today = new Date();
     const yyyy = today.getFullYear();
@@ -421,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Form submit
-document.getElementById('appointmentForm').addEventListener('submit', function(e){
+document.getElementById('appointmentForm').addEventListener('submit', async function(e){
     e.preventDefault();
 
     const fullName = document.getElementById('fullName').value;
@@ -431,13 +422,14 @@ document.getElementById('appointmentForm').addEventListener('submit', function(e
     const role = document.getElementById('role').value;
     const date = document.getElementById('date').value;
     const time = document.getElementById('time').value;
+    const reason = document.getElementById('reason').value;
 
     if(!fullName || !phone || !age || !gender || !role || !date || !time){
         alert('Please fill all required fields(అన్ని వివరాలు సరైనదిగా నింపండి.)');
         return;
     }
 
-    // Store phone in localStorage for receipt page
+    // Store patient phone for receipt lookup
     localStorage.setItem('patientPhone', phone);
 
     // Show payment modal
@@ -445,24 +437,68 @@ document.getElementById('appointmentForm').addEventListener('submit', function(e
 });
 
 // Pay at Hospital
-document.getElementById('payHospital').addEventListener('click', function(){
-    // Generate a placeholder pending payment ID
-    const pendingPaymentId = 'PENDING-' + Date.now();
-    window.location.href = `receipt.html?payment_id=${pendingPaymentId}`;
+document.getElementById('payHospital').addEventListener('click', async function(){
+    // ✅ Save appointment in backend with "Not Paid"
+    const formData = {
+        name: document.getElementById('fullName').value,
+        phone: document.getElementById('phone').value,
+        age: document.getElementById('age').value,
+        gender: document.getElementById('gender').value,
+        department: document.getElementById('role').value,
+        appointmentDate: document.getElementById('date').value + " " + document.getElementById('time').value,
+        reason: document.getElementById('reason').value
+    };
+
+    try {
+        await fetch("https://your-backend-domain.com/save-appointment-offline", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        });
+
+        window.location.href = `receipt.html?payment_status=NotPaid`;
+    } catch (err) {
+        alert("Error saving offline appointment");
+    }
 });
 
 // Pay Online (Cashfree)
-document.getElementById('payOnline').addEventListener('click', function(){
-    // Example: redirect to Cashfree with return URL to receipt
-    const cashfreeLink = "https://payments.cashfree.com/forms/op-booking?redirect_url=https://srikamalahospital.store/receipt.html";
-    window.location.href = cashfreeLink;
+document.getElementById('payOnline').addEventListener('click', async function(){
+    const formData = {
+        name: document.getElementById('fullName').value,
+        phone: document.getElementById('phone').value,
+        age: document.getElementById('age').value,
+        gender: document.getElementById('gender').value,
+        department: document.getElementById('role').value,
+        appointmentDate: document.getElementById('date').value + " " + document.getElementById('time').value,
+        reason: document.getElementById('reason').value
+    };
+
+    try {
+        const res = await fetch("https://your-backend-domain.com/generate-payment-link", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await res.json();
+
+        if (data.link_url) {
+            window.location.href = data.link_url; // ✅ Redirect to Cashfree
+        } else {
+            alert("Failed to start payment. Please try again.");
+        }
+    } catch (err) {
+        console.error("Payment error:", err);
+        alert("Error generating payment link");
+    }
 });
 
 // Close modal
 document.getElementById('closeModal').addEventListener('click', function(){
     document.getElementById('paymentModal').style.display = 'none';
 });
-
 </script>
+
 </body>
 </html>
