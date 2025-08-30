@@ -450,7 +450,7 @@ document.getElementById('payHospital').addEventListener('click', async function(
     };
 
     try {
-        await fetch("https://your-backend-domain.com/save-appointment-offline", {
+        await fetch("https://hospital-backend-78ur.onrender.com/save-appointment-offline", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData)
@@ -503,5 +503,6 @@ document.getElementById('closeModal').addEventListener('click', function(){
 
 </body>
 </html>
+
 
 
