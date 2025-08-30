@@ -2,238 +2,302 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Appointment Receipt - Sri Kamala Hospital</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #fff;
-      padding: 40px;
-      margin: 0;
-    }
+    <title>Appointment Receipt - Sri Kamala Hospital</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            padding: 40px;
+            margin: 0;
+        }
 
-    .receipt-box {
-      max-width: 700px;
-      margin: auto;
-      border: 1px solid #ccc;
-      padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-      background-color: #fefefe;
-    }
+        .container {
+            max-width: 500px;
+            margin: 60px auto;
+            padding: 30px;
+        }
 
-    h1,
-    h2 {
-      text-align: center;
-      color: #00a6b8;
-      margin-bottom: 10px;
-    }
+        input,
+        select,
+        .book-btn {
+            width: 100%;
+        }
 
-    .hospital-info {
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 16px;
-      color: #333;
-    }
+        .receipt-box {
+            max-width: 700px;
+            margin: auto;
+            border: 1px solid #ccc;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            background-color: #fefefe;
+        }
 
-    .receipt-details {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 30px;
-    }
+        h1,
+        h2 {
+            text-align: center;
+            color: #00a6b8;
+            margin-bottom: 10px;
+        }
 
-    .receipt-details td {
-      padding: 12px 15px;
-      border-bottom: 1px solid #ddd;
-    }
+        .hospital-info {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 16px;
+            color: #333;
+        }
 
-    .receipt-details td.label {
-      font-weight: bold;
-      color: #444;
-      width: 40%;
-    }
+        .receipt-details {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
 
-    .note {
-      font-size: 15px;
-      color: #c0392b;
-      text-align: center;
-      margin-top: 20px;
-    }
+        .receipt-details td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
 
-    .print-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin: 30px auto 0;
-      padding: 12px 24px;
-      background-color: #00b88a;
-      color: #fff;
-      border: none;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0, 80, 184, 0.3);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      animation: fadeIn 0.6s ease-in-out;
-    }
+        .receipt-details td.label {
+            font-weight: bold;
+            color: #444;
+            width: 40%;
+        }
 
-    .print-btn:hover {
-      background-color: #003f96;
-      transform: scale(1.05);
-      box-shadow: 0 6px 20px rgba(0, 80, 184, 0.4);
-      animation: pulse 1.2s infinite;
-    }
+        .note {
+            font-size: 15px;
+            color: #c0392b;
+            text-align: center;
+            margin-top: 20px;
+        }
 
-    .print-btn:active {
-      animation: clickBounce 0.3s ease;
-    }
+        .status-paid {
+            color: #00b88a;
+            font-weight: bold;
+        }
 
-    img {
-      display: block;
-      margin: 0 auto;
-    }
+        .status-not-paid {
+            color: #e74c3c;
+            font-weight: bold;
+        }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(15px);
-      }
+        .print-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px auto 0;
+            padding: 12px 24px;
+            background-color: #00b88a;
+            color: #fff;
+            border: none;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 80, 184, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 0.6s ease-in-out;
+        }
 
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+        .print-btn:hover {
+            background-color: #003f96;
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 80, 184, 0.4);
+            animation: pulse 1.2s infinite;
+        }
 
-    @keyframes pulse {
-      0% {
-        box-shadow: 0 0 0 0 rgba(0, 80, 184, 0.7);
-      }
+        .print-btn:active {
+            animation: clickBounce 0.3s ease;
+        }
 
-      70% {
-        box-shadow: 0 0 0 10px rgba(0, 80, 184, 0);
-      }
+        .modal {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-      100% {
-        box-shadow: 0 0 0 0 rgba(0, 80, 184, 0);
-      }
-    }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
 
-    @keyframes clickBounce {
-      0% {
-        transform: scale(0.95);
-      }
+        img {
+            display: block;
+            margin: 0 auto;
+        }
 
-      50% {
-        transform: scale(1.05);
-      }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
 
-      100% {
-        transform: scale(1);
-      }
-    }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    @media print {
-      .print-btn {
-        display: none;
-      }
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 80, 184, 0.7);
+            }
 
-      body {
-        background: white;
-        padding: 0;
-      }
+            70% {
+                box-shadow: 0 0 0 10px rgba(0, 80, 184, 0);
+            }
 
-      .receipt-box {
-        box-shadow: none;
-        border: none;
-        padding: 0;
-      }
-    }
-  </style>
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 80, 184, 0);
+            }
+        }
+
+        @keyframes clickBounce {
+            0% {
+                transform: scale(0.95);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @media print {
+            .print-btn {
+                display: none;
+            }
+
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .receipt-box {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+            }
+        }
+    </style>
 </head>
 
 <body>
-  <div class="receipt-box">
-    <img src="ChatGPT Image Apr 19, 2025, 01_22_02 AM.png" width="90" height="80" alt="Hospital Logo">
-    <h1>Sri Kamala Hospital</h1>
-    <div class="hospital-info">
-      Opp. Tirumala Grand Restaurant, Suryapet - 508213<br>
-      Phone: 9948076665 | Email: srikamalahospitalsrpt@gmail.com
-    </div>
-    <h2>Appointment Receipt</h2>
-    <table class="receipt-details">
-      <tr>
-        <td class="label">Token Number:</td>
-        <td id="token"></td>
-      </tr>
-      <tr>
-        <td class="label">Name:</td>
-        <td id="name"></td>
-      </tr>
-      <tr>
-        <td class="label">Age:</td>
-        <td id="age"></td>
-      </tr>
-      <tr>
-        <td class="label">Phone:</td>
-        <td id="phone"></td>
-      </tr>
-      <tr>
-        <td class="label">Department:</td>
-        <td id="department"></td>
-      </tr>
-      <tr>
-        <td class="label">Appointment Date:</td>
-        <td id="date"></td>
-      </tr>
-      <tr>
-        <td class="label">Payment ID:</td>
-        <td id="paymentId"></td>
-      </tr>
-    </table>
+    <div class="receipt-box">
+        <img src="https://i.ibb.co/6y4t41g/ChatGPT-Image-Apr-19-2025-01-22-02-AM.png" width="90" height="80" alt="Hospital Logo">
+        <h1>Sri Kamala Hospital</h1>
+        <div class="hospital-info">
+            Opp. Tirumala Grand resturant, Suryapet - 508213<br>
+            Phone: 9948076665 | Email: srikamalahospitalsrpt@gmail.com
+        </div>
+        <h2>Appointment Receipt</h2>
+        <br><br><br>
+        <table class="receipt-details">
+            <tr>
+                <td class="label">Token Number:</td>
+                <td id="token"></td>
+            </tr>
+            <tr>
+                <td class="label">Name:</td>
+                <td id="name"></td>
+            </tr>
+            <tr>
+                <td class="label">Age:</td>
+                <td id="age"></td>
+            </tr>
+            <tr>
+                <td class="label">Phone:</td>
+                <td id="phone"></td>
+            </tr>
+            <tr>
+                <td class="label">Department:</td>
+                <td id="department"></td>
+            </tr>
+            <tr>
+                <td class="label">Appointment Date:</td>
+                <td id="date"></td>
+            </tr>
+            <tr>
+                <td class="label">Payment ID:</td>
+                <td id="paymentId"></td>
+            </tr>
+        </table>
+<div class="status">
+  Status: <span id="paymentStatus"></span>
+</div>
 
-    <div class="note">
-      * Please bring this receipt or a screenshot on the appointment day.
+        <div class="note">
+            * Please bring this receipt or a screenshot on the appointment day.
+        </div>
+        <button class="print-btn" onclick="window.print()">🖨️ Print Receipt</button>
     </div>
-    <button class="print-btn" onclick="window.print()">🖨️ Print Receipt</button>
-  </div>
 
-  <script>
+    <script>
 document.addEventListener('DOMContentLoaded', async () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const paymentId = urlParams.get('payment_id');
-  const token = urlParams.get('token'); // fetch by token
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const orderId = urlParams.get('orderId');   // ✅ corrected
+    const paymentId = urlParams.get('paymentId'); // ✅ corrected
 
-  if (!token) {
-    alert("❌ Missing token. Cannot fetch appointment.");
-    return;
-  }
+    const noteDiv = document.querySelector('.note');
+    const paymentStatusElement = document.getElementById('paymentStatus');
 
-  const noteDiv = document.querySelector('.note');
-  noteDiv.textContent = (paymentId && paymentId.startsWith('PENDING-'))
-    ? '💡 Payment Pending. Please pay at the hospital on your appointment day.'
-    : '* Please bring this receipt or a screenshot on the appointment day.';
+    if (!token || !orderId) {
+        alert("❌ Missing appointment details. Cannot load receipt.");
+        noteDiv.textContent = '❌ An error occurred. Please contact the hospital for assistance.';
+        return;
+    }
 
-  try {
-    const res = await fetch(`https://hospital-backend-78ur.onrender.com/get-appointment?token=${token}`);
-    if (!res.ok) throw new Error("Network response was not ok");
-    const data = await res.json();
+    try {
+        // ✅ Verify + update status from backend
+        const res = await fetch('https://hospital-backend-78ur.onrender.com/check-payment-status-and-update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId, token })
+        });
 
-    document.getElementById('token').textContent = data.token || 'N/A';
-    document.getElementById('name').textContent = data.name || 'N/A';
-    document.getElementById('age').textContent = data.age || 'N/A';
-    document.getElementById('phone').textContent = data.phone || 'N/A';
-    document.getElementById('department').textContent = data.department || 'N/A';
-    document.getElementById('date').textContent = data.appointmentDate || 'N/A';
-    document.getElementById('paymentId').textContent = paymentId || 'N/A';
+        if (!res.ok) throw new Error("Failed to verify payment.");
 
-  } catch (err) {
-    console.error('❌ Error loading receipt:', err);
-    alert("❌ Failed to load appointment details. Please try again.");
-  }
+        const data = await res.json();
+
+        // ✅ Populate receipt fields
+        document.getElementById('token').textContent = data.token || 'N/A';
+        document.getElementById('name').textContent = data.name || 'N/A';
+        document.getElementById('age').textContent = data.age || 'N/A';
+        document.getElementById('phone').textContent = data.phone || 'N/A';
+        document.getElementById('department').textContent = data.department || 'N/A';
+        document.getElementById('date').textContent = data.appointmentDate || 'N/A';
+
+        // ✅ Payment ID
+        document.getElementById('paymentId').textContent = paymentId || data.paymentId || 'Not Available';
+
+        // ✅ Status
+        if (data.paymentStatus === 'Paid') {
+            paymentStatusElement.textContent = 'Paid ✅';
+            paymentStatusElement.classList.add('status-paid');
+            noteDiv.textContent = '* Please bring this receipt or a screenshot on the appointment day.';
+        } else {
+            paymentStatusElement.textContent = 'Not Paid ❌';
+            paymentStatusElement.classList.add('status-not-paid');
+            noteDiv.innerHTML = '<strong>💡 Payment Failed.</strong> Please visit the hospital to complete the payment.';
+        }
+
+    } catch (err) {
+        console.error('❌ Error loading receipt:', err);
+        noteDiv.innerHTML = '<strong>❌ Failed to verify payment.</strong> Please contact the hospital.';
+        document.getElementById('token').textContent = token; 
+        document.getElementById('paymentId').textContent = paymentId || 'N/A';
+    }
 });
 </script>
 
