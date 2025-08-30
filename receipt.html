@@ -194,7 +194,7 @@
 
 <body>
     <div class="receipt-box">
-        <img src="https://i.ibb.co/6y4t41g/ChatGPT-Image-Apr-19-2025-01-22-02-AM.png" width="90" height="80" alt="Hospital Logo">
+        <img src="ChatGPT Image Apr 19, 2025, 01_22_02 AM.png" width="90" height="80" alt="Hospital Logo">
         <h1>Sri Kamala Hospital</h1>
         <div class="hospital-info">
             Opp. Tirumala Grand resturant, Suryapet - 508213<br>
@@ -246,9 +246,9 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
-    const orderId = urlParams.get('orderId');   // ✅ corrected
-    const paymentId = urlParams.get('paymentId'); // ✅ corrected
-
+   const orderId = urlParams.get('order_id') || urlParams.get('orderId');
+   // ✅ corrected
+    
     const noteDiv = document.querySelector('.note');
     const paymentStatusElement = document.getElementById('paymentStatus');
 
