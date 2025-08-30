@@ -349,43 +349,43 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     function populateReceipt(data, status) {
         // Set values from data
-        document.getElementById('token').textContent = data.token || token || 'N/A';
-        document.getElementById('name').textContent = data.name || 'N/A';
-        document.getElementById('age').textContent = data.age || 'N/A';
-        document.getElementById('gender').textContent = data.gender || 'N/A';
-        document.getElementById('phone').textContent = data.phone || 'N/A';
-        document.getElementById('department').textContent = data.department || 'N/A';
-        document.getElementById('reason').textContent = data.reason || 'Not specified';
-        
+         document.getElementById('token').textContent = data.token || token || 'N/A';
+    document.getElementById('name').textContent = data.name || 'N/A';
+    document.getElementById('age').textContent = data.age || 'N/A';
+    document.getElementById('gender').textContent = data.gender || 'N/A';
+    document.getElementById('phone').textContent = data.phone || 'N/A';
+    document.getElementById('department').textContent = data.department || 'N/A';
+    document.getElementById('reason').textContent = data.reason || 'Not specified';
+    
         // Parse date and time
         if (data.appointmentDate) {
-            const [datePart, timePart] = data.appointmentDate.split(' ');
-            document.getElementById('date').textContent = datePart || 'N/A';
-            document.getElementById('time').textContent = timePart || 'N/A';
-        } else {
-            document.getElementById('date').textContent = 'N/A';
-            document.getElementById('time').textContent = 'N/A';
-        }
+        const [datePart, timePart] = data.appointmentDate.split(' ');
+        document.getElementById('date').textContent = datePart || 'N/A';
+        document.getElementById('time').textContent = timePart || 'N/A';
+    } else {
+        document.getElementById('date').textContent = 'N/A';
+        document.getElementById('time').textContent = 'N/A';
+    }
         
         // Set payment ID
         document.getElementById('paymentId').textContent = data.orderId || orderId || 'N/A';
         
         // Set payment status and stamp
-        const paymentStatus = status || 'Not Paid';
+        const normalizedStatus = (status || '').toUpperCase();
         
-        if (paymentStatus === 'Paid') {
-            paymentStatusElement.textContent = 'Paid ✅';
-            paymentStatusElement.className = 'status-paid';
-            stampElement.textContent = 'PAID';
-            stampElement.classList.add('paid-stamp');
-            noteDiv.textContent = '* Please bring this receipt or a screenshot on the appointment day.';
-        } else {
+        if (normalizedStatus === 'PAID' || normalizedStatus === 'SUCCESS') {
+        paymentStatusElement.textContent = 'Paid ✅';
+        paymentStatusElement.className = 'status-paid';
+        stampElement.textContent = 'PAID';
+        stampElement.classList.add('paid-stamp');
+        noteDiv.textContent = '* Please bring this receipt or a screenshot on the appointment day.';
+    } else {
             paymentStatusElement.textContent = 'Not Paid ❌';
-            paymentStatusElement.className = 'status-not-paid';
-            stampElement.textContent = 'NOT PAID';
-            stampElement.classList.add('not-paid-stamp');
-            noteDiv.innerHTML = '<strong>💡 Payment Pending.</strong> Please visit the hospital to complete the payment.';
-        }
+        paymentStatusElement.className = 'status-not-paid';
+        stampElement.textContent = 'NOT PAID';
+        stampElement.classList.add('not-paid-stamp');
+        noteDiv.innerHTML = '<strong>💡 Payment Pending.</strong> Please visit the hospital to complete the payment.';
+    }
     }
 });
 </script>
