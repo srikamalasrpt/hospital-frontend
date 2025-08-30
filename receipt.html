@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Appointment Receipt - Sri Kamala Hospital</title>
     <style>
         body {
@@ -34,6 +33,7 @@
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
             background-color: #fefefe;
+            position: relative;
         }
 
         h1,
@@ -133,6 +133,37 @@
             margin: 0 auto;
         }
 
+        /* Stamp styles */
+        .stamp {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 120px;
+            height: 120px;
+            border: 5px solid;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(15deg);
+            opacity: 0.9;
+            font-weight: bold;
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+
+        .paid-stamp {
+            border-color: #00b88a;
+            color: #00b88a;
+            box-shadow: 0 0 10px rgba(0, 184, 138, 0.3);
+        }
+
+        .not-paid-stamp {
+            border-color: #e74c3c;
+            color: #e74c3c;
+            box-shadow: 0 0 10px rgba(231, 76, 60, 0.3);
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -194,6 +225,10 @@
 
 <body>
     <div class="receipt-box">
+        <div id="stamp" class="stamp">
+            <!-- Stamp content will be filled by JavaScript -->
+        </div>
+        
         <img src="ChatGPT Image Apr 19, 2025, 01_22_02 AM.png" width="90" height="80" alt="Hospital Logo">
         <h1>Sri Kamala Hospital</h1>
         <div class="hospital-info">
@@ -216,6 +251,10 @@
                 <td id="age"></td>
             </tr>
             <tr>
+                <td class="label">Gender:</td>
+                <td id="gender"></td>
+            </tr>
+            <tr>
                 <td class="label">Phone:</td>
                 <td id="phone"></td>
             </tr>
@@ -228,18 +267,24 @@
                 <td id="date"></td>
             </tr>
             <tr>
+                <td class="label">Appointment Time:</td>
+                <td id="time"></td>
+            </tr>
+            <tr>
+                <td class="label">Reason for Visit:</td>
+                <td id="reason"></td>
+            </tr>
+            <tr>
                 <td class="label">Payment ID:</td>
                 <td id="paymentId"></td>
             </tr>
+            <tr>
+                <td class="label">Payment Status:</td>
+                <td id="paymentStatusText"></td>
+            </tr>
         </table>
-<div class="status">
-  Status: <span id="paymentStatus"></span>
-</div>
-<div class="status">
-  Status: <span id="paymentStatus">Verifying...</span>
-</div>
 
-        <div class="note">
+        <div class="note" id="note">
             * Please bring this receipt or a screenshot on the appointment day.
         </div>
         <button class="print-btn" onclick="window.print()">🖨️ Print Receipt</button>
@@ -249,61 +294,100 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
-   const orderId = urlParams.get('order_id') || urlParams.get('orderId');
-   // ✅ corrected
+    const orderId = urlParams.get('order_id') || urlParams.get('orderId');
+    const paymentStatus = urlParams.get('status');
     
-    const noteDiv = document.querySelector('.note');
-    const paymentStatusElement = document.getElementById('paymentStatus');
+    const noteDiv = document.getElementById('note');
+    const paymentStatusElement = document.getElementById('paymentStatusText');
+    const stampElement = document.getElementById('stamp');
 
-    if (!token || !orderId) {
-        alert("❌ Missing appointment details. Cannot load receipt.");
-        noteDiv.textContent = '❌ An error occurred. Please contact the hospital for assistance.';
-        return;
+    // Try to get data from localStorage as fallback
+    let appointmentData = localStorage.getItem('appointmentData');
+    
+    if (appointmentData) {
+        appointmentData = JSON.parse(appointmentData);
+        
+        // If we have a token parameter, check if it matches
+        if (token && appointmentData.token !== token) {
+            // Token doesn't match, try to fetch from backend
+            await verifyWithBackend(token, orderId);
+        } else {
+            // Use localStorage data
+            populateReceipt(appointmentData, paymentStatus);
+        }
+    } else if (token) {
+        // No localStorage data but token exists - fetch from backend
+        await verifyWithBackend(token, orderId);
+    } else {
+        // No data available
+        noteDiv.innerHTML = '<strong>❌ Missing appointment details.</strong> Cannot load receipt.';
     }
+    
+    async function verifyWithBackend(token, orderId) {
+        try {
+            // Verify + update status from backend
+            const res = await fetch('https://hospital-backend-78ur.onrender.com/check-payment-status-and-update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderId, token })
+            });
 
-    try {
-        // ✅ Verify + update status from backend
-        const res = await fetch('https://hospital-backend-78ur.onrender.com/check-payment-status-and-update', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orderId, token })
-        });
+            if (!res.ok) throw new Error("Failed to verify payment.");
 
-        if (!res.ok) throw new Error("Failed to verify payment.");
-
-        const data = await res.json();
-
-        // ✅ Populate receipt fields
-        document.getElementById('token').textContent = data.token || 'N/A';
+            const data = await res.json();
+            populateReceipt(data, data.paymentStatus);
+        } catch (err) {
+            console.error('❌ Error verifying with backend:', err);
+            noteDiv.innerHTML = '<strong>❌ Failed to verify payment.</strong> Please contact the hospital.';
+            
+            // Still show the token if available
+            if (token) {
+                document.getElementById('token').textContent = token;
+            }
+        }
+    }
+    
+    function populateReceipt(data, status) {
+        // Set values from data
+        document.getElementById('token').textContent = data.token || token || 'N/A';
         document.getElementById('name').textContent = data.name || 'N/A';
         document.getElementById('age').textContent = data.age || 'N/A';
+        document.getElementById('gender').textContent = data.gender || 'N/A';
         document.getElementById('phone').textContent = data.phone || 'N/A';
         document.getElementById('department').textContent = data.department || 'N/A';
-        document.getElementById('date').textContent = data.appointmentDate || 'N/A';
-
-        // ✅ Payment ID
-       document.getElementById('paymentId').textContent = data.orderId || 'N/A';
-
-
-        // ✅ Status
-        if (data.paymentStatus === 'Paid') {
+        document.getElementById('reason').textContent = data.reason || 'Not specified';
+        
+        // Parse date and time
+        if (data.appointmentDate) {
+            const [datePart, timePart] = data.appointmentDate.split(' ');
+            document.getElementById('date').textContent = datePart || 'N/A';
+            document.getElementById('time').textContent = timePart || 'N/A';
+        } else {
+            document.getElementById('date').textContent = 'N/A';
+            document.getElementById('time').textContent = 'N/A';
+        }
+        
+        // Set payment ID
+        document.getElementById('paymentId').textContent = data.orderId || orderId || 'N/A';
+        
+        // Set payment status and stamp
+        const paymentStatus = status || 'Not Paid';
+        
+        if (paymentStatus === 'Paid') {
             paymentStatusElement.textContent = 'Paid ✅';
-            paymentStatusElement.classList.add('status-paid');
+            paymentStatusElement.className = 'status-paid';
+            stampElement.textContent = 'PAID';
+            stampElement.classList.add('paid-stamp');
             noteDiv.textContent = '* Please bring this receipt or a screenshot on the appointment day.';
         } else {
             paymentStatusElement.textContent = 'Not Paid ❌';
-            paymentStatusElement.classList.add('status-not-paid');
-            noteDiv.innerHTML = '<strong>💡 Payment Failed.</strong> Please visit the hospital to complete the payment.';
+            paymentStatusElement.className = 'status-not-paid';
+            stampElement.textContent = 'NOT PAID';
+            stampElement.classList.add('not-paid-stamp');
+            noteDiv.innerHTML = '<strong>💡 Payment Pending.</strong> Please visit the hospital to complete the payment.';
         }
-
-    } catch (err) {
-        console.error('❌ Error loading receipt:', err);
-        noteDiv.innerHTML = '<strong>❌ Failed to verify payment.</strong> Please contact the hospital.';
-        document.getElementById('token').textContent = token; 
-        document.getElementById('paymentId').textContent = paymentId || 'N/A';
     }
 });
 </script>
-
 </body>
 </html>
