@@ -382,7 +382,7 @@ document.getElementById('payOnline').addEventListener('click', function(){
     modal3d.classList.add('show-back');
     setTimeout(() => {
         // Example Cashfree link with redirect URL (replace with your Cashfree payment link)
-        const cashfreeLink = "https://payments.cashfree.com/forms?code=op-booking";
+        const cashfreeLink = "https://payments.cashfree.com/forms/op-booking?redirect_url=https://srikamalahospital.store/receipt.html";
         window.location.href = cashfreeLink;
     }, 1000);
 });
@@ -503,4 +503,5 @@ document.getElementById('closeModal').addEventListener('click', function(){
 
 </body>
 </html>
+
 
