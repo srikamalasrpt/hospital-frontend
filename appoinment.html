@@ -475,7 +475,7 @@ document.getElementById('payOnline').addEventListener('click', async function(){
     };
 
     try {
-        const res = await fetch("https://your-backend-domain.com/generate-payment-link", {
+        const res = await fetch("https://hospital-backend-78ur.onrender.com/generate-payment-link", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData)
