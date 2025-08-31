@@ -320,12 +320,12 @@
         </div>
     </div>
 
-    <script>
+   <script>
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     const orderId = urlParams.get('order_id') || urlParams.get('orderId');
-    
+
     const loadingDiv = document.getElementById('loading');
     const errorDiv = document.getElementById('error');
     const receiptContent = document.getElementById('receipt-content');
@@ -339,41 +339,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        // Always verify with backend to get latest payment status
+        // Verify with backend to get latest payment status
         const res = await fetch('https://hospital-backend-78ur.onrender.com/check-payment-status-and-update', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ orderId, token })
         });
 
-        if (!res.ok) {
-            throw new Error(`Server returned ${res.status}: ${res.statusText}`);
-        }
-
+        if (!res.ok) throw new Error(`Server returned ${res.status}: ${res.statusText}`);
         const data = await res.json();
-        
-        if (!data) {
-            throw new Error('No data received from server');
-        }
 
-        // Show receipt content
+        if (!data) throw new Error('No data received from server');
+
         loadingDiv.style.display = 'none';
         receiptContent.style.display = 'block';
-        
+
         populateReceipt(data);
 
     } catch (err) {
         console.error('❌ Error loading receipt:', err);
         showError('Failed to load receipt details. Please contact the hospital.');
-        
-        // Still show the token if available
-        if (token) {
-            document.getElementById('token').textContent = token;
-        }
+        if (token) document.getElementById('token').textContent = token;
     }
-    
+
     function populateReceipt(data) {
-        // Set values from data
         document.getElementById('token').textContent = data.token || 'N/A';
         document.getElementById('name').textContent = data.name || 'N/A';
         document.getElementById('age').textContent = data.age || 'N/A';
@@ -381,8 +370,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('phone').textContent = data.phone || 'N/A';
         document.getElementById('department').textContent = data.department || 'N/A';
         document.getElementById('reason').textContent = data.reason || 'Not specified';
-        
-        // Parse date and time
+
         if (data.appointmentDate) {
             const [datePart, timePart] = data.appointmentDate.split(' ');
             document.getElementById('date').textContent = datePart || 'N/A';
@@ -391,20 +379,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('date').textContent = 'N/A';
             document.getElementById('time').textContent = 'N/A';
         }
-        
-        // Set payment details
+
         document.getElementById('paymentId').textContent = data.orderId || 'N/A';
-        
-        if (data.paymentDate) {
-            const paymentDate = new Date(data.paymentDate).toLocaleString('en-IN');
-            document.getElementById('paymentDate').textContent = paymentDate;
-        } else {
-            document.getElementById('paymentDate').textContent = 'N/A';
-        }
-        
-        // Set payment status and stamp
+        document.getElementById('paymentDate').textContent = data.paymentDate ? new Date(data.paymentDate).toLocaleString('en-IN') : 'N/A';
+
+        // Payment status
         const normalizedStatus = (data.paymentStatus || '').toUpperCase();
-        
+
+        stampElement.classList.remove('paid-stamp', 'not-paid-stamp');
+
         if (normalizedStatus === 'PAID' || normalizedStatus === 'SUCCESS') {
             paymentStatusElement.textContent = 'Paid ✅';
             paymentStatusElement.className = 'status-paid';
@@ -419,7 +402,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             noteDiv.innerHTML = '<strong>💡 Payment Pending.</strong> Please visit the hospital to complete the payment.';
         }
     }
-    
+
     function showError(message) {
         loadingDiv.style.display = 'none';
         errorDiv.style.display = 'block';
@@ -427,5 +410,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 </script>
+
 </body>
 </html>
