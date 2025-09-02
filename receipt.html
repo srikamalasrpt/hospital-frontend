@@ -84,6 +84,11 @@
             font-weight: bold;
         }
 
+        .status-pending {
+            color: #f39c12;
+            font-weight: bold;
+        }
+
         .print-btn {
             display: flex;
             align-items: center;
@@ -162,6 +167,12 @@
             border-color: #e74c3c;
             color: #e74c3c;
             box-shadow: 0 0 10px rgba(231, 76, 60, 0.3);
+        }
+
+        .pending-stamp {
+            border-color: #f39c12;
+            color: #f39c12;
+            box-shadow: 0 0 10px rgba(243, 156, 18, 0.3);
         }
 
         @keyframes fadeIn {
@@ -282,6 +293,14 @@
                 <td class="label">Payment Status:</td>
                 <td id="paymentStatusText"></td>
             </tr>
+            <tr>
+                <td class="label">Payment Method:</td>
+                <td id="paymentMethod"></td>
+            </tr>
+            <tr>
+                <td class="label">Payment Time:</td>
+                <td id="paymentTime"></td>
+            </tr>
         </table>
 
         <div class="note" id="note">
@@ -309,14 +328,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        // Always verify with backend to get latest payment status
-        const res = await fetch('https://hospital-backend-78ur.onrender.com/check-payment-status-and-update', {
-            method: 'POST',
+        // Try to get appointment by token first (more reliable)
+        let endpoint = 'https://hospital-backend-78ur.onrender.com/get-appointment-by-token';
+        let queryParam = `?token=${token}`;
+        
+        // If no token, try by order ID
+        if (!token && orderId) {
+            endpoint = 'https://hospital-backend-78ur.onrender.com/get-appointment-by-order';
+            queryParam = `?orderId=${orderId}`;
+        }
+        
+        console.log('Fetching from:', endpoint + queryParam);
+        
+        const res = await fetch(endpoint + queryParam, {
+            method: 'GET',
             headers: { 
-                'Content-Type': 'application/json',
                 'Accept': 'application/json'
-            },
-            body: JSON.stringify({ orderId, token })
+            }
         });
 
         if (!res.ok) {
@@ -330,11 +358,43 @@ document.addEventListener('DOMContentLoaded', async () => {
             throw new Error('No data received from server');
         }
 
+        console.log('Appointment data:', data);
+        
+        // If payment is not marked as paid, verify with payment gateway
+        if (data.paymentStatus !== 'Paid') {
+            console.log('Payment not marked as paid, verifying with payment gateway...');
+            
+            try {
+                const verifyRes = await fetch('https://hospital-backend-78ur.onrender.com/check-payment-status-and-update', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ orderId: data.orderId, token: data.token })
+                });
+
+                if (verifyRes.ok) {
+                    const verifiedData = await verifyRes.json();
+                    console.log('Verified data:', verifiedData);
+                    
+                    // Use the verified data if payment status changed
+                    if (verifiedData.paymentStatus === 'Paid') {
+                        populateReceipt(verifiedData);
+                        return;
+                    }
+                }
+            } catch (verifyError) {
+                console.error('Error verifying payment:', verifyError);
+                // Continue with original data if verification fails
+            }
+        }
+        
         populateReceipt(data);
 
     } catch (err) {
-        console.error('❌ Error verifying with backend:', err);
-        noteDiv.innerHTML = '<strong>❌ Failed to verify payment.</strong> Please contact the hospital.';
+        console.error('❌ Error fetching appointment:', err);
+        noteDiv.innerHTML = '<strong>❌ Failed to load receipt details.</strong> Please contact the hospital.';
         
         // Still show the token if available
         if (token) {
@@ -343,6 +403,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     function populateReceipt(data) {
+        console.log('Populating receipt with:', data);
+        
         // Set values from data
         document.getElementById('token').textContent = data.token || 'N/A';
         document.getElementById('name').textContent = data.name || 'N/A';
@@ -351,6 +413,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('phone').textContent = data.phone || 'N/A';
         document.getElementById('department').textContent = data.department || 'N/A';
         document.getElementById('reason').textContent = data.reason || 'Not specified';
+        
+        // Set payment details
+        document.getElementById('paymentId').textContent = data.orderId || 'N/A';
+        document.getElementById('paymentMethod').textContent = data.paymentDetails?.paymentMethod || 'N/A';
+        
+        // Format payment time
+        if (data.paymentDetails?.paymentTime) {
+            const paymentDate = new Date(data.paymentDetails.paymentTime);
+            document.getElementById('paymentTime').textContent = paymentDate.toLocaleString();
+        } else if (data.paymentDate) {
+            const paymentDate = new Date(data.paymentDate);
+            document.getElementById('paymentTime').textContent = paymentDate.toLocaleString();
+        } else {
+            document.getElementById('paymentTime').textContent = 'N/A';
+        }
     
         // Parse date and time
         if (data.appointmentDate) {
@@ -362,24 +439,27 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('time').textContent = 'N/A';
         }
         
-        // Set payment ID
-        document.getElementById('paymentId').textContent = data.orderId || 'N/A';
-        
         // Set payment status and stamp
         const normalizedStatus = (data.paymentStatus || '').toUpperCase();
         
-        if (normalizedStatus === 'PAID' || normalizedStatus === 'SUCCESS') {
+        if (normalizedStatus === 'PAID') {
             paymentStatusElement.textContent = 'Paid ✅';
             paymentStatusElement.className = 'status-paid';
             stampElement.textContent = 'PAID';
             stampElement.className = 'stamp paid-stamp';
             noteDiv.textContent = '* Please bring this receipt or a screenshot on the appointment day.';
+        } else if (normalizedStatus === 'PENDING') {
+            paymentStatusElement.textContent = 'Pending ⏳';
+            paymentStatusElement.className = 'status-pending';
+            stampElement.textContent = 'PENDING';
+            stampElement.className = 'stamp pending-stamp';
+            noteDiv.innerHTML = '<strong>💡 Payment Pending.</strong> Your payment is being processed. Please wait or contact the hospital.';
         } else {
             paymentStatusElement.textContent = 'Not Paid ❌';
             paymentStatusElement.className = 'status-not-paid';
             stampElement.textContent = 'NOT PAID';
             stampElement.className = 'stamp not-paid-stamp';
-            noteDiv.innerHTML = '<strong>💡 Payment Pending.</strong> Please visit the hospital to complete the payment.';
+            noteDiv.innerHTML = '<strong>💡 Payment Not Completed.</strong> Please visit the hospital to complete the payment.';
         }
     }
 });
