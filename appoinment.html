@@ -1043,19 +1043,27 @@ document.getElementById('payOnline').addEventListener('click', async function(){
         const res = await fetch(`${window.BACKEND_BASE}/generate-payment-link`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({...formData, redirect_url: `https://srikamalahospital.store/receipt.html?token=${encodeURIComponent(token)}&status=Paid`})
+            body: JSON.stringify({
+                ...formData,
+                // Use current host for return if on localhost; otherwise use production domain
+                redirect_url: (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+                    ? `${window.location.origin}/receipt.html?token=${encodeURIComponent(token)}&status=Paid`
+                    : `https://srikamalahospital.store/receipt.html?token=${encodeURIComponent(token)}&status=Paid`
+            })
         });
 
-        const data = await res.json();
+        let data = null;
+        try { data = await res.json(); } catch (e) {}
 
-        if (data.link_url) {
+        if (res.ok && data && data.link_url) {
             window.location.href = data.link_url; // Redirect to Cashfree
         } else {
-            alert("Failed to start payment. Please try again.");
+            const reason = data && (data.message || data.details) ? `\n${data.message || ''}\n${typeof data.details === 'string' ? data.details : JSON.stringify(data.details || {})}` : '';
+            alert("Failed to start payment. Please try again." + reason);
         }
     } catch (err) {
         console.error("Payment error:", err);
-        alert("Error generating payment link");
+        alert("Error generating payment link. Please check your connection and try again.");
     }
 });
 
