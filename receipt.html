@@ -429,7 +429,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const BACKEND_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-                ? 'http://localhost:5000'
+                ? (window.location.port ? window.location.origin : 'http://localhost:3000')
                 : 'https://hospital-backend-78ur.onrender.com';
             const urlParams = new URLSearchParams(window.location.search);
             const token = urlParams.get('token');
