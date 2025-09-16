@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diagnosis - Sri Kamala Hospital</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="diagnosis.css">
+  <style>
+    /* Nav Bar Styling */
+    nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(90deg, #00b894 0%, #00aaff 100%);
+      padding: 0.7em 0;
+      border-radius: 0 0 18px 18px;
+      box-shadow: 0 2px 12px rgba(0,186,148,0.10);
+      margin-bottom: 18px;
+      gap: 0.5em;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.13rem;
+      padding: 0.5em 1.2em;
+      border-radius: 6px;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      letter-spacing: 0.5px;
+      position: relative;
+      z-index: 1;
+    }
+    nav a:hover, nav a:focus {
+      background: #fff;
+      color: #00aaff;
+      box-shadow: 0 2px 8px #00b89422;
+      outline: none;
+    }
+    nav a.active, nav a[aria-current="page"] {
+      background: #fff;
+      color: #00b894;
+      box-shadow: 0 2px 8px #00b89422;
+      cursor: default;
+    }
+    @media (max-width: 600px) {
+      nav {
+        flex-direction: column;
+        gap: 0.2em;
+        padding: 0.5em 0;
+        border-radius: 0 0 12px 12px;
+      }
+      nav a {
+        font-size: 1rem;
+        padding: 0.4em 0.8em;
+      }
+    }
+    /* Advanced UI & Animations for Blood Test */
+    body {
+      background: linear-gradient(135deg, #e0f7fa 0%, #f5faff 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .hero {
+      background: linear-gradient(90deg, #00b894 0%, #00aaff 100%);
+      color: #fff;
+      padding: 70px 0 40px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero h2 {
+      font-size: 2.7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      animation: fadeInDown 1s;
+    }
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-40px);}
+      100% { opacity: 1; transform: translateY(0);}
+    }
+    .diagnosis-section {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      margin-top: -60px;
+      z-index: 2;
+      position: relative;
+    }
+    .diagnosis-card {
+      background: #fff;
+      border-radius: 22px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+      padding: 38px 38px 32px 38px;
+      min-width: 370px;
+      max-width: 420px;
+      position: relative;
+      overflow: visible;
+      animation: cardPop 0.8s cubic-bezier(.68,-0.55,.27,1.55);
+      box-sizing: border-box;
+      width: 100%;
+    }
+    @keyframes cardPop {
+      0% { transform: scale(0.85) translateY(40px); opacity: 0;}
+      80% { transform: scale(1.05) translateY(-8px);}
+      100% { transform: scale(1) translateY(0); opacity: 1;}
+    }
+    .diagnosis-card h3 {
+      color: #00aaff;
+      font-size: 1.7rem;
+      margin-top: 18px;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+      font-weight: 700;
+      text-shadow: 0 2px 8px #e0f7fa;
+    }
+    .diagnosis-card p {
+      color: #333;
+      font-size: 1.08rem;
+      margin-bottom: 18px;
+    }
+    .diagnosis-card ul {
+      text-align: left;
+      margin: 0 auto 18px auto;
+      padding-left: 18px;
+      color: #00796b;
+      font-size: 1.05rem;
+      font-weight: 500;
+      list-style: disc inside;
+      animation: fadeInUp 1.2s;
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px);}
+      100% { opacity: 1; transform: translateY(0);}
+    }
+    .report-download {
+      background: #e0f7fa;
+      border-radius: 10px;
+      padding: 16px 12px 12px 12px;
+      margin-top: 18px;
+      margin-bottom: 0;
+      text-align: center;
+      animation: fadeInUp 1.5s;
+    }
+    .report-download h4 {
+      color: #0077cc;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .main-btn {
+      display: inline-block;
+      padding: 12px 28px;
+      background: linear-gradient(90deg, #00b894 0%, #00aaff 100%);
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.08rem;
+      box-shadow: 0 2px 12px rgba(0,186,148,0.13);
+      transition: background 0.3s, transform 0.2s;
+      margin-top: 8px;
+      text-align: center;
+      text-decoration: none;
+    }
+    .main-btn:hover {
+      background: linear-gradient(90deg, #00aaff 0%, #00b894 100%);
+      transform: scale(1.06);
+    }
+    .book-test-btn {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+      animation: fadeInUp 1.7s;
+    }
+    /* Blood Test SVG Animation */
+    .blood-svg-container {
+      width: 120px;
+      height: 180px;
+      margin: 0 auto 10px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    .blood-tube {
+      filter: drop-shadow(0 4px 16px #00b89433);
+    }
+    .blood-fill {
+      animation: bloodFillAnim 2.5s cubic-bezier(.68,-0.55,.27,1.55) forwards;
+      transform-origin: bottom;
+    }
+    @keyframes bloodFillAnim {
+      0% { height: 0; }
+      100% { height: 60px; }
+    }
+    .blood-drop {
+      opacity: 0;
+      animation: bloodDropAnim 2.2s 2.2s cubic-bezier(.68,-0.55,.27,1.55) forwards;
+    }
+    @keyframes bloodDropAnim {
+      0% { opacity: 0; transform: translateY(-20px) scaleY(0.5);}
+      40% { opacity: 1; transform: translateY(0) scaleY(1.1);}
+      60% { opacity: 1; transform: translateY(10px) scaleY(1);}
+      100% { opacity: 0; transform: translateY(40px) scaleY(0.7);}
+    }
+    .sparkle {
+      opacity: 0;
+      animation: sparkleAnim 1.2s 2.7s linear forwards;
+    }
+    @keyframes sparkleAnim {
+      0% { opacity: 0; transform: scale(0.5);}
+      40% { opacity: 1; transform: scale(1.2);}
+      100% { opacity: 0; transform: scale(0.7);}
+    }
+    /* Floating blood cells animation */
+    .blood-cell {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle at 60% 40%, #e53935 80%, #b71c1c 100%);
+      width: 18px; height: 12px;
+      opacity: 0.7;
+      animation: floatCell 6s infinite linear;
+    }
+    .blood-cell.cell1 { left: 10px; top: 120px; animation-delay: 0s;}
+    .blood-cell.cell2 { left: 80px; top: 140px; animation-delay: 1.2s;}
+    .blood-cell.cell3 { left: 50px; top: 160px; animation-delay: 2.1s;}
+    @keyframes floatCell {
+      0% { transform: translateY(0) scale(1);}
+      50% { transform: translateY(-30px) scale(1.15);}
+      100% { transform: translateY(0) scale(1);}
+    }
+    /* Chatbot styles (improved) */
+    #chatbot {
+      position: fixed;
+      bottom: 90px;
+      right: 30px;
+      width: 320px;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      display: none;
+      flex-direction: column;
+      z-index: 1000;
+      animation: fadeInUp 0.5s;
+      overflow: hidden;
+    }
+    .chat-header {
+      background: linear-gradient(90deg, #00b894 0%, #00aaff 100%);
+      color: #fff;
+      padding: 14px 18px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-bottom: 1px solid #e0f7fa;
+    }
+    .chat-body {
+      padding: 14px 14px 0 14px;
+      min-height: 90px;
+      max-height: 180px;
+      overflow-y: auto;
+      background: #f5faff;
+    }
+    .chat-footer {
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      background: #e0f7fa;
+      border-top: 1px solid #b2ebf2;
+    }
+    .chat-footer input {
+      flex: 1;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 1rem;
+      margin-right: 8px;
+      background: #fff;
+      box-shadow: 0 1px 4px #b2ebf233;
+    }
+    .chat-footer button {
+      background: #00b894;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .chat-footer button:hover {
+      background: #00aaff;
+    }
+    .chat-msg {
+      margin-bottom: 8px;
+      padding: 7px 12px;
+      border-radius: 8px;
+      background: #e0f7fa;
+      color: #00354a;
+      font-size: 0.98rem;
+      word-break: break-word;
+      animation: fadeInUp 0.4s;
+    }
+    #chat-toggle {
+      position: fixed;
+      bottom: 30px;
+      right: 38px;
+      background: linear-gradient(90deg, #00b894 0%, #00aaff 100%);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      font-size: 2rem;
+      box-shadow: 0 4px 16px #00b89433;
+      cursor: pointer;
+      z-index: 1001;
+      transition: background 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: popBtn 0.7s;
+    }
+    #chat-toggle:hover {
+      background: linear-gradient(90deg, #00aaff 0%, #00b894 100%);
+      transform: scale(1.08);
+    }
+    @keyframes popBtn {
+      0% { transform: scale(0.7);}
+      80% { transform: scale(1.1);}
+      100% { transform: scale(1);}
+    }
+    footer {
+      margin-top: 60px;
+      text-align: center;
+      color: #888;
+      font-size: 1.02rem;
+      background: none;
+      border: none;
+      box-shadow: none;
+      padding-bottom: 30px;
+    }
+    /* Responsive */
+    @media (max-width: 900px) {
+      .diagnosis-section {
+        margin-top: -30px;
+      }
+      .diagnosis-card {
+        min-width: 70vw;
+        max-width: 90vw;
+        padding: 24px 4vw;
+      }
+      .blood-svg-container {
+        width: 100px;
+        height: 150px;
+      }
+    }
+    @media (max-width: 600px) {
+      .diagnosis-section {
+        flex-direction: column;
+        align-items: center;
+        margin-top: 0;
+      }
+      .diagnosis-card {
+        min-width: 90vw;
+        max-width: 98vw;
+        padding: 18px 6vw;
+      }
+      .blood-svg-container {
+        width: 90px;
+        height: 140px;
+      }
+      #chatbot {
+        width: 98vw;
+        right: 1vw;
+        bottom: 80px;
+        max-width: 100vw;
+      }
+      #chat-toggle {
+        right: 10px;
+        bottom: 10px;
+      }
+      .hero h2 {
+        font-size: 2rem;
+      }
+      header h1 {
+        font-size: 1.3rem;
+      }
+      nav a {
+        font-size: 1rem;
+        padding: 0 6px;
+      }
+    }
+    @media (max-width: 400px) {
+      .diagnosis-card {
+        min-width: 98vw;
+        max-width: 100vw;
+        padding: 8px 2vw;
+      }
+      .blood-svg-container {
+        width: 70px;
+        height: 100px;
+      }
+      .main-btn {
+        font-size: 0.95rem;
+        padding: 10px 10vw;
+      }
+    }
+  </style>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Sri Kamala Hospital</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="appoinment.html">Appointment</a>
+      <a href="diagnosis.html" class="active" aria-current="page">Diagnosis</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>Diagnosis &amp; Testing</h2>
+    <!-- Animated blood cells floating in hero -->
+    <div class="blood-cell cell1"></div>
+    <div class="blood-cell cell2"></div>
+    <div class="blood-cell cell3"></div>
+  </section>
+
+  <div class="diagnosis-section">
+    <div class="diagnosis-card animate">
+      <div class="blood-svg-container">
+        <!-- Animated SVG: Blood Test Tube with Filling Blood and Drop -->
+        <svg class="blood-tube" width="100" height="160" viewBox="0 0 100 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Tube outline -->
+          <rect x="35" y="20" width="30" height="120" rx="15" fill="#e0f7fa" stroke="#00b894" stroke-width="3"/>
+          <!-- Blood fill (animated) -->
+          <rect class="blood-fill" x="35" y="80" width="30" height="0" rx="15" fill="#e53935"/>
+          <!-- Cap -->
+          <rect x="35" y="10" width="30" height="18" rx="6" fill="#00aaff" stroke="#0077cc" stroke-width="2"/>
+          <!-- Blood drop (animated) -->
+          <ellipse class="blood-drop" cx="50" cy="145" rx="10" ry="16" fill="#e53935"/>
+          <!-- Sparkle -->
+          <circle class="sparkle" cx="60" cy="35" r="4" fill="#fff" opacity="0.7"/>
+        </svg>
+      </div>
+      <h3>Blood Test</h3>
+      <p>
+        Experience advanced, accurate, and quick blood testing with real-time status and animated feedback.<br>
+        <span style="color:#00b894;font-weight:600;">Our diagnostics include:</span>
+      </p>
+      <ul>
+        <li>Complete Blood Count (CBC)</li>
+        <li>Blood Sugar</li>
+        <li>Hemoglobin</li>
+        <li>Cholesterol</li>
+      </ul>
+      <div class="report-download">
+        <h4>Want to see a Sample Report?</h4>
+        <a href="sample.jpeg" class="main-btn" download>Download Sample Report</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="book-test-btn">
+    <a href="bloodtestbook.html" class="main-btn">Book Blood Test</a>
+  </div>
+
+  <footer>
+    <div id="chatbot">
+      <div class="chat-header">💬 Need Help? Chat with us!</div>
+      <div class="chat-body" id="chat-body"></div>
+      <div class="chat-footer">
+        <input type="text" id="chat-input" placeholder="Type your message..." />
+        <button onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+    <button id="chat-toggle" onclick="toggleChat()">💬</button>
+    <p>&copy; 2025 Sri Kamala Hospital. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Animate blood fill on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const fill = document.querySelector('.blood-fill');
+      if (fill) {
+        fill.style.height = '60px';
+      }
+    });
+
+    // Chatbot logic (same as before, but improved UI)
+    let chatVisible = false;
+    function toggleChat() {
+      chatVisible = !chatVisible;
+      document.getElementById("chatbot").style.display = chatVisible ? "flex" : "none";
+      if (chatVisible) {
+        setTimeout(() => botReply("Hi! How can I help you today? 👋"), 500);
+      }
+    }
+    function sendMessage() {
+      const input = document.getElementById("chat-input");
+      const msg = input.value.trim();
+      if (!msg) return;
+      addMessage("You", msg);
+      input.value = "";
+      setTimeout(() => botReply(getBotResponse(msg)), 800);
+    }
+    function addMessage(sender, message) {
+      const chat = document.getElementById("chat-body");
+      const bubble = document.createElement("div");
+      bubble.className = "chat-msg";
+      bubble.innerHTML = `<strong>${sender}:</strong> ${message}`;
+      chat.appendChild(bubble);
+      chat.scrollTop = chat.scrollHeight;
+    }
+    function botReply(message) {
+      addMessage("Bot", message);
+    }
+    function getBotResponse(input) {
+      const msg = input.toLowerCase();
+      if (msg.includes("bookop") || msg.includes("appointment")) {
+        return 'You can book an appointment <a href="appoinment.html" target="_blank">here</a>.';
+      }
+      if (msg.includes("time") || msg.includes("timing")) {
+        return "We are open from <strong>8AM to 8PM</strong>, all 7 days.";
+      }
+      if (msg.includes("doctor")) {
+        return 'You can view our doctors <a href="doctors.html" target="_blank">here</a>.';
+      }
+      if (msg.includes("location") || msg.includes("where")) {
+        return "We are located at <strong>123 Health Road, YourCity</strong>.";
+      }
+      if (msg.includes("blood test")) {
+        return 'You can book blood tests <a href="bloodtestbook.html" target="_blank">here</a>.';
+      }
+      if (msg.includes("emergency")) {
+        return "Please call our emergency line: <strong>+91-XXXXXXXXXX</strong>";
+      }
+      if (msg.includes("contact")) {
+        return 'You can contact us via the form <a href="contact.html" target="_blank">here</a>.';
+      }
+      return "Sorry, I didn’t understand that. Can you rephrase?";
+    }
+  </script>
+</body>
+</html>

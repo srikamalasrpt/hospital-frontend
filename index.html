@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sri Kamala Hospital</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="favicon.ico" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    /* Hospital-themed animated background */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      background: linear-gradient(135deg, #e0f7fa 0%, #b2f7ef 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+    .animated-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .animated-bg svg {
+      position: absolute;
+      animation: float 8s ease-in-out infinite alternate;
+      opacity: 0.12;
+    }
+    .animated-bg .stethoscope { left: 5vw; top: 10vh; width: 90px; animation-delay: 0s;}
+    .animated-bg .syringe { right: 8vw; top: 30vh; width: 70px; animation-delay: 2s;}
+    .animated-bg .pill { left: 40vw; top: 60vh; width: 60px; animation-delay: 1s;}
+    .animated-bg .heartbeat { right: 20vw; top: 70vh; width: 100px; animation-delay: 3s;}
+    @keyframes float {
+      0% { transform: translateY(0) scale(1);}
+      100% { transform: translateY(-30px) scale(1.08);}
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(90deg, #00b894 60%, #0984e3 100%);
+      color: #fff;
+      padding: 32px 0 18px 0;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 2px 16px #00b89422;
+      overflow: visible;
+    }
+    header img {
+      border-radius: 50%;
+      border: 4px solid #fff;
+      box-shadow: 0 2px 12px #0984e355;
+      animation: logoPulse 2.5s infinite alternate;
+      background: #fff;
+    }
+    @keyframes logoPulse {
+      0% { transform: scale(1);}
+      100% { transform: scale(1.08);}
+    }
+    header h1 {
+      margin: 10px 0 8px 0;
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+      font-weight: 800;
+      text-shadow: 0 2px 8px #0984e355;
+      animation: fadeInDown 1.2s;
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-40px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    nav {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      font-size: 1.1rem;
+      z-index: 2;
+      position: relative;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 8px 18px;
+      border-radius: 20px;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    nav a:hover, nav a:focus {
+      background: #fff;
+      color: #00b894;
+      box-shadow: 0 2px 8px #0984e322;
+    }
+
+    /* Features Section */
+    .features {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 40px 0 30px 0;
+      z-index: 2;
+      position: relative;
+      flex-wrap: wrap;
+    }
+    .feature-box {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px #00b89422;
+      padding: 32px 28px 24px 28px;
+      text-align: center;
+      width: 260px;
+      min-width: 220px;
+      margin: 10px 0;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 1.2s;
+    }
+    .feature-box:hover {
+      transform: translateY(-10px) scale(1.04);
+      box-shadow: 0 8px 32px #0984e344;
+    }
+    .feature-box i {
+      font-size: 2.8rem;
+      color: #00b894;
+      margin-bottom: 12px;
+      animation: iconBounce 2s infinite;
+    }
+    @keyframes iconBounce {
+      0%, 100% { transform: translateY(0);}
+      50% { transform: translateY(-10px);}
+    }
+    .feature-box h4 {
+      margin: 10px 0 8px 0;
+      font-size: 1.3rem;
+      color: #0984e3;
+      font-weight: 700;
+    }
+    .feature-box p {
+      color: #555;
+      font-size: 1rem;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+
+    /* OP Booking Section */
+    .op-booking {
+      background: linear-gradient(90deg, #e0f7fa 60%, #b2f7ef 100%);
+      border-radius: 18px;
+      margin: 40px auto 30px auto;
+      max-width: 600px;
+      box-shadow: 0 4px 24px #00b89422;
+      text-align: center;
+      padding: 36px 24px 30px 24px;
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
+      animation: fadeInUp 1.5s;
+    }
+    .op-booking .icon-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .op-booking .animated-icon {
+      font-size: 3.2rem;
+      color: #0984e3;
+      animation: rotateCalendar 2.5s infinite linear;
+      filter: drop-shadow(0 2px 8px #00b89433);
+    }
+    @keyframes rotateCalendar {
+      0% { transform: rotate(-10deg);}
+      50% { transform: rotate(10deg);}
+      100% { transform: rotate(-10deg);}
+    }
+    .op-booking h3 {
+      font-size: 1.4rem;
+      color: #00b894;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+      animation: fadeInLeft 1.2s;
+    }
+    .op-booking p {
+      color: #333;
+      font-size: 1.1rem;
+      margin-bottom: 0;
+      animation: fadeInRight 1.2s;
+    }
+    @keyframes fadeInLeft {
+      from { opacity: 0; transform: translateX(-40px);}
+      to { opacity: 1; transform: translateX(0);}
+    }
+    @keyframes fadeInRight {
+      from { opacity: 0; transform: translateX(40px);}
+      to { opacity: 1; transform: translateX(0);}
+    }
+
+    /* Book OP Button */
+    .book-btn-container {
+      margin: 0 0 40px 0;
+      z-index: 2;
+      position: relative;
+    }
+    .op-btn {
+      background: linear-gradient(90deg, #00b894 60%, #0984e3 100%);
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: 700;
+      padding: 14px 44px;
+      border-radius: 30px;
+      border: none;
+      box-shadow: 0 4px 16px #00b89433;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      letter-spacing: 1px;
+      outline: none;
+      animation: pulseBtn 2s infinite;
+      display: inline-block;
+      text-shadow: 0 2px 8px #0984e355;
+    }
+    .op-btn:hover, .op-btn:focus {
+      background: linear-gradient(90deg, #0984e3 60%, #00b894 100%);
+      transform: scale(1.05);
+      box-shadow: 0 8px 32px #0984e344;
+    }
+    @keyframes pulseBtn {
+      0% { box-shadow: 0 0 0 0 #00b89444;}
+      70% { box-shadow: 0 0 0 12px #00b89411;}
+      100% { box-shadow: 0 0 0 0 #00b89444;}
+    }
+
+    /* Facilities Section */
+    .facility-section {
+      margin: 40px 0 30px 0;
+      z-index: 2;
+      position: relative;
+    }
+    .section-title {
+      text-align: center;
+      font-size: 2rem;
+      color: #0984e3;
+      font-weight: 800;
+      margin-bottom: 24px;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 8px #00b89422;
+      animation: fadeInDown 1.2s;
+    }
+    .facility-wrapper {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .facility-card {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px #00b89422;
+      padding: 32px 28px 24px 28px;
+      text-align: center;
+      width: 260px;
+      min-width: 220px;
+      margin: 10px 0;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 1.2s;
+    }
+    .facility-card:hover {
+      transform: translateY(-10px) scale(1.04);
+      box-shadow: 0 8px 32px #0984e344;
+    }
+    .facility-card .icon-top {
+      font-size: 2.5rem;
+      color: #0984e3;
+      margin-bottom: 12px;
+      animation: iconBounce 2s infinite;
+    }
+    .facility-card h3 {
+      margin: 10px 0 8px 0;
+      font-size: 1.2rem;
+      color: #00b894;
+      font-weight: 700;
+    }
+    .facility-card p {
+      color: #555;
+      font-size: 1rem;
+    }
+    .main-btn {
+      background: linear-gradient(90deg, #00b894 60%, #0984e3 100%);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 10px 28px;
+      border-radius: 20px;
+      border: none;
+      box-shadow: 0 2px 8px #00b89433;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
+      display: inline-block;
+      text-decoration: none;
+    }
+    .main-btn:hover, .main-btn:focus {
+      background: linear-gradient(90deg, #0984e3 60%, #00b894 100%);
+      transform: scale(1.05);
+      box-shadow: 0 8px 32px #0984e344;
+    }
+
+    /* Highlights Section */
+    .highlights {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 40px 0 30px 0;
+      z-index: 2;
+      position: relative;
+      flex-wrap: wrap;
+    }
+    .highlight-box {
+      background: linear-gradient(135deg, #e0f7fa 60%, #b2f7ef 100%);
+      border-radius: 18px;
+      box-shadow: 0 4px 24px #00b89422;
+      padding: 32px 28px 24px 28px;
+      text-align: center;
+      width: 200px;
+      min-width: 160px;
+      margin: 10px 0;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 1.2s;
+    }
+    .highlight-box:hover {
+      transform: translateY(-10px) scale(1.04);
+      box-shadow: 0 8px 32px #0984e344;
+    }
+    .highlight-box i {
+      font-size: 2.5rem;
+      color: #00b894;
+      margin-bottom: 12px;
+      animation: iconBounce 2s infinite;
+    }
+    .highlight-box h3 {
+      margin: 10px 0 8px 0;
+      font-size: 1.5rem;
+      color: #0984e3;
+      font-weight: 700;
+    }
+    .highlight-box p {
+      color: #555;
+      font-size: 1rem;
+    }
+
+    /* Testimonials Section */
+    .testimonials {
+      background: linear-gradient(90deg, #e0f7fa 60%, #b2f7ef 100%);
+      border-radius: 18px;
+      margin: 40px auto 30px auto;
+      max-width: 600px;
+      box-shadow: 0 4px 24px #00b89422;
+      text-align: center;
+      padding: 36px 24px 30px 24px;
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
+      animation: fadeInUp 1.5s;
+    }
+    .testimonial-heading {
+      font-size: 1.5rem;
+      color: #00b894;
+      font-weight: 700;
+      margin-bottom: 18px;
+      letter-spacing: 1px;
+    }
+    .testimonial-box {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px #0984e322;
+      padding: 24px 18px;
+      margin: 0 auto;
+      max-width: 400px;
+      animation: fadeInUp 1.2s;
+      position: relative;
+    }
+    .testimonial-box:before {
+      content: "❝";
+      font-size: 2.5rem;
+      color: #00b894;
+      position: absolute;
+      left: 12px;
+      top: 8px;
+      opacity: 0.2;
+    }
+    .testimonial-box p {
+      color: #333;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+    .testimonial-box h4 {
+      color: #0984e3;
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    /* Newsletter Section */
+    .newsletter {
+      background: linear-gradient(90deg, #e0f7fa 60%, #b2f7ef 100%);
+      border-radius: 18px;
+      margin: 40px auto 30px auto;
+      max-width: 600px;
+      box-shadow: 0 4px 24px #00b89422;
+      text-align: center;
+      padding: 36px 24px 30px 24px;
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
+      animation: fadeInUp 1.5s;
+    }
+    .newsletter-form {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+    .newsletter-form input[type="email"] {
+      padding: 10px 18px;
+      border-radius: 20px;
+      border: 1px solid #00b894;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.2s;
+      min-width: 200px;
+    }
+    .newsletter-form input[type="email"]:focus {
+      border: 2px solid #0984e3;
+    }
+    .newsletter-form .main-btn {
+      padding: 10px 28px;
+      font-size: 1rem;
+      border-radius: 20px;
+      margin-left: 0;
+    }
+
+    /* Chatbot and Footer */
+    footer {
+      background: linear-gradient(90deg, #00b894 60%, #0984e3 100%);
+      color: #fff;
+      padding: 40px 0 20px 0;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      border-top-left-radius: 32px;
+      border-top-right-radius: 32px;
+      box-shadow: 0 -2px 16px #00b89422;
+      margin-top: 40px;
+    }
+    #chatbot {
+      display: none;
+      flex-direction: column;
+      position: fixed;
+      bottom: 100px;
+      right: 40px;
+      width: 320px;
+      max-width: 90vw;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px #0984e344;
+      z-index: 1000;
+      overflow: hidden;
+      animation: fadeInUp 0.5s;
+      border: 2px solid #00b894;
+    }
+    .chat-header {
+      background: linear-gradient(90deg, #00b894 60%, #0984e3 100%);
+      color: #fff;
+      padding: 14px 18px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border-bottom: 1px solid #e0f7fa;
+    }
+    .chat-body {
+      padding: 16px;
+      height: 180px;
+      overflow-y: auto;
+      background: #e0f7fa;
+      font-size: 1rem;
+      color: #333;
+    }
+    .chat-footer {
+      display: flex;
+      border-top: 1px solid #e0f7fa;
+      background: #f8fdfd;
+      padding: 10px 12px;
+      align-items: center;
+    }
+    .chat-footer input[type="text"] {
+      flex: 1;
+      border: 1px solid #00b894;
+      border-radius: 20px;
+      padding: 8px 14px;
+      font-size: 1rem;
+      outline: none;
+      margin-right: 8px;
+    }
+    .chat-footer button {
+      background: linear-gradient(90deg, #00b894 60%, #0984e3 100%);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .chat-footer button:hover {
+      background: linear-gradient(90deg, #0984e3 60%, #00b894 100%);
+    }
+    #chat-toggle {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      background: linear-gradient(90deg, #00b894 60%, #0984e3 100%);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 2rem;
+      box-shadow: 0 4px 24px #0984e344;
+      cursor: pointer;
+      z-index: 1001;
+      transition: background 0.2s, transform 0.2s;
+      animation: pulseBtn 2s infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #chat-toggle:hover {
+      background: linear-gradient(90deg, #0984e3 60%, #00b894 100%);
+      transform: scale(1.08);
+    }
+    .chat-msg {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 14px;
+      background: #fff;
+      color: #0984e3;
+      box-shadow: 0 2px 8px #00b89411;
+      font-size: 1rem;
+      word-break: break-word;
+      animation: fadeInUp 0.5s;
+    }
+    .chat-msg strong {
+      color: #00b894;
+      font-weight: 700;
+    }
+    .location-info {
+      margin-top: 30px;
+      color: #fff;
+      font-size: 1.1rem;
+      text-align: center;
+      animation: fadeInUp 1.2s;
+    }
+    .location-info h4 {
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .location-info a {
+      display: inline-block;
+      background: #fff;
+      color: #00b894;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 10px;
+      box-shadow: 0 2px 8px #0984e322;
+      transition: background 0.2s, color 0.2s;
+    }
+    .location-info a:hover {
+      background: #00b894;
+      color: #fff;
+    }
+
+    /* Bottom Footer */
+    .bottom-footer {
+      background: #e0f7fa;
+      color: #0984e3;
+      padding: 18px 0 10px 0;
+      font-size: 1rem;
+      text-align: center;
+      border-top: 1px solid #b2f7ef;
+      margin-top: 0;
+      z-index: 2;
+      position: relative;
+    }
+    .bottom-footer a {
+      color: #0984e3;
+      text-decoration: none;
+      margin: 0 8px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .bottom-footer a:hover {
+      color: #00b894;
+      text-decoration: underline;
+    }
+
+    /* OP Booking Loading Modal Styles */
+    .op-loading-modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.45);
+      align-items: center;
+      justify-content: center;
+      animation: fadeInModal 0.4s;
+    }
+    @keyframes fadeInModal {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .op-loading-content {
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 8px 32px #0984e344;
+      padding: 40px 32px 32px 32px;
+      min-width: 320px;
+      max-width: 90vw;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .scan-svg {
+      width: 120px;
+      height: 180px;
+      margin: 0 auto 18px auto;
+      display: block;
+      position: relative;
+    }
+    .scan-person {
+      animation: scanPersonMove 2.5s linear infinite;
+      transform-origin: 50% 50%;
+    }
+    @keyframes scanPersonMove {
+      0% { transform: translateY(0);}
+      50% { transform: translateY(8px);}
+      100% { transform: translateY(0);}
+    }
+    .scan-bar {
+      animation: scanBarMove 2.5s linear infinite;
+    }
+    @keyframes scanBarMove {
+      0% { transform: translateY(0);}
+      50% { transform: translateY(60px);}
+      100% { transform: translateY(0);}
+    }
+    .paper-svg {
+      width: 80px;
+      height: 60px;
+      margin: 0 auto 0 auto;
+      display: block;
+      position: relative;
+      opacity: 0;
+      animation: paperAppear 1s 2.5s forwards;
+    }
+    @keyframes paperAppear {
+      from { opacity: 0; transform: translateY(-20px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .pen-svg {
+      width: 40px;
+      height: 40px;
+      position: absolute;
+      left: 50%;
+      top: 60%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      animation: penWrite 1.2s 3.2s forwards;
+    }
+    @keyframes penWrite {
+      from { opacity: 0; transform: translate(-50%, -50%) rotate(-30deg);}
+      40% { opacity: 1; }
+      to { opacity: 1; transform: translate(-50%, -50%) rotate(0deg);}
+    }
+    .op-loading-title {
+      font-size: 1.2rem;
+      color: #0984e3;
+      font-weight: 700;
+      margin-bottom: 8px;
+      margin-top: 8px;
+    }
+    .op-loading-desc {
+      color: #555;
+      font-size: 1rem;
+      margin-bottom: 0;
+    }
+    .op-loading-progress {
+      margin: 18px auto 0 auto;
+      width: 80%;
+      height: 8px;
+      background: #e0f7fa;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+    .op-loading-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #00b894 60%, #0984e3 100%);
+      border-radius: 8px;
+      transition: width 0.2s;
+    }
+    @media (max-width: 600px) {
+      .op-loading-content { min-width: 0; padding: 18px 6px 18px 6px;}
+      .scan-svg { width: 80px; height: 120px;}
+      .paper-svg { width: 50px; height: 36px;}
+      .pen-svg { width: 28px; height: 28px;}
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Animated SVG Hospital-themed Background -->
+  <div class="animated-bg">
+    <!-- Stethoscope SVG -->
+    <svg class="stethoscope" viewBox="0 0 64 64">
+      <circle cx="48" cy="48" r="10" fill="#00b894"/>
+      <rect x="44" y="10" width="8" height="30" rx="4" fill="#0984e3"/>
+      <rect x="12" y="10" width="8" height="30" rx="4" fill="#0984e3"/>
+      <path d="M16 40 Q32 60 48 48" stroke="#0984e3" stroke-width="4" fill="none"/>
+    </svg>
+    <!-- Syringe SVG -->
+    <svg class="syringe" viewBox="0 0 64 64">
+      <rect x="20" y="10" width="24" height="8" rx="4" fill="#00b894"/>
+      <rect x="28" y="18" width="8" height="30" rx="4" fill="#0984e3"/>
+      <rect x="30" y="48" width="4" height="8" fill="#b2f7ef"/>
+      <rect x="28" y="56" width="8" height="4" fill="#0984e3"/>
+    </svg>
+    <!-- Pill SVG -->
+    <svg class="pill" viewBox="0 0 64 64">
+      <rect x="10" y="28" width="44" height="12" rx="6" fill="#00b894"/>
+      <rect x="32" y="28" width="22" height="12" rx="6" fill="#0984e3"/>
+    </svg>
+    <!-- Heartbeat SVG -->
+    <svg class="heartbeat" viewBox="0 0 100 40">
+      <polyline points="0,20 20,20 30,10 40,30 50,10 60,30 70,20 100,20" fill="none" stroke="#0984e3" stroke-width="4"/>
+      <circle cx="50" cy="10" r="4" fill="#00b894"/>
+    </svg>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <img src="ChatGPT Image Apr 19, 2025, 01_22_02 AM.png" height="60" width="60" alt="Hospital Logo" />
+    <h1>
+      <span style="vertical-align: middle;">
+        <i class="fa-solid fa-hospital" style="color:#fff; margin-right:8px; text-shadow:0 2px 8px #0984e355;"></i>
+        Sri Kamala Hospital
+      </span>
+    </h1>
+    <nav>
+      <a href="index.html"><i class="fa fa-home"></i> Home</a>
+      <a href="about.html"><i class="fa fa-info-circle"></i> About</a>
+      <a href="services.html"><i class="fa fa-stethoscope"></i> Services</a>
+      <a href="doctors.html"><i class="fa fa-user-md"></i> Doctors</a>
+    </nav>
+  </header>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="feature-box" style="animation-delay:0.1s;">
+      <i class="fas fa-user-md"></i>
+      <h4>Expert Doctors</h4>
+      <p>Our team consists of experienced professionals.</p>
+    </div>
+    <div class="feature-box" style="animation-delay:0.2s;">
+      <i class="fas fa-hospital"></i>
+      <h4>Modern Facility</h4>
+      <p>We use state-of-the-art equipment for diagnosis and treatment.</p>
+    </div>
+    <div class="feature-box" style="animation-delay:0.3s;">
+      <i class="fas fa-ambulance"></i>
+      <h4>24/7 Emergency</h4>
+      <p>Emergency services are available at all hours.</p>
+    </div>
+  </section>
+
+  <!-- OP Booking -->
+  <section class="op-booking animated-booking">
+    <div class="icon-wrap">
+      <i class="fas fa-calendar-check animated-icon"></i>
+    </div>
+    <h3>బయటి రోగుల బుకింగ్ అందుబాటులో ఉంది</h3>
+    <p>మీ కన్సల్టేషన్‌ను ఆన్‌లైన్‌లో బుక్ చేసుకొని సమయాన్ని సేవ్ చేసుకోండి.</p>
+    <div style="margin-top:18px;">
+      <button class="op-btn" style="text-decoration:none;" onclick="showOpLoadingModal()">Book OP</button>
+    </div>
+    <div style="margin-top:18px;">
+      <span style="color:#0984e3; font-size:1.1rem;">
+        <i class="fa-solid fa-clock"></i> OP Timings: <b>8AM - 8PM</b>
+      </span>
+    </div>
+  </section>
+
+  <!-- OP Booking Loading Modal -->
+  <div class="op-loading-modal" id="op-loading-modal">
+    <div class="op-loading-content">
+      <!-- Scanning SVG Animation -->
+      <svg class="scan-svg" viewBox="0 0 120 180">
+        <!-- Person (body) -->
+        <g class="scan-person">
+          <ellipse cx="60" cy="50" rx="18" ry="22" fill="#b2f7ef" />
+          <circle cx="60" cy="32" r="16" fill="#00b894" />
+          <rect x="48" y="72" width="24" height="50" rx="12" fill="#0984e3" />
+          <rect x="32" y="80" width="16" height="44" rx="8" fill="#b2f7ef" />
+          <rect x="72" y="80" width="16" height="44" rx="8" fill="#b2f7ef" />
+        </g>
+        <!-- Scanning Bar -->
+        <rect class="scan-bar" x="30" y="30" width="60" height="10" rx="5" fill="#00b894" opacity="0.7"/>
+      </svg>
+      <!-- Paper appears after scan -->
+      <svg class="paper-svg" id="paper-svg" viewBox="0 0 80 60">
+        <rect x="8" y="8" width="64" height="44" rx="6" fill="#fff" stroke="#0984e3" stroke-width="2"/>
+        <rect x="16" y="18" width="48" height="6" rx="2" fill="#b2f7ef"/>
+        <rect x="16" y="28" width="32" height="4" rx="2" fill="#b2f7ef"/>
+        <rect x="16" y="36" width="40" height="4" rx="2" fill="#b2f7ef"/>
+      </svg>
+      <!-- Pen appears and writes -->
+      <svg class="pen-svg" id="pen-svg" viewBox="0 0 40 40">
+        <rect x="16" y="4" width="8" height="24" rx="4" fill="#0984e3"/>
+        <polygon points="20,28 24,36 16,36" fill="#00b894"/>
+        <rect x="18" y="36" width="4" height="4" rx="2" fill="#555"/>
+      </svg>
+      <div class="op-loading-title">Processing your OP Booking...</div>
+      <div class="op-loading-desc">Scanning patient details and generating appointment slip.</div>
+      <div class="op-loading-progress">
+        <div class="op-loading-bar" id="op-loading-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Facilities -->
+  <section class="facility-section">
+    <h2 class="section-title">Facilities</h2>
+    <div class="facility-wrapper">
+      <div class="facility-card diagnosis-card" style="animation-delay:0.1s;">
+        <i class="fas fa-vials icon-top"></i>
+        <h3>Diagnosis</h3>
+        <p>Advanced diagnostic lab tests</p><br />
+        <a href="diagnosis.html" class="main-btn" style="text-decoration:none;">Explore Diagnosis</a>
+      </div>
+      <div class="facility-card medical-shop-card" style="animation-delay:0.2s;">
+        <i class="fas fa-pills icon-top" style="font-size: 2.5rem; color: #008080; margin-bottom: 12px;"></i>
+        <h3>Medical Shop</h3>
+        <p>24x7 pharmacy available for all medicines</p><br />
+        <a href="medical-shop.html" class="main-btn" style="text-decoration:none;">Explore Medical</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Highlights -->
+  <section class="highlights">
+    <div class="highlight-box wow" style="animation-delay:0.1s;">
+      <i class="fas fa-hospital-symbol"></i>
+      <h3>10+</h3>
+      <p>Departments</p>
+    </div>
+    <div class="highlight-box wow" style="animation-delay:0.2s;">
+      <i class="fas fa-user-md"></i>
+      <h3>+</h3>
+      <p>Qualified Doctors</p>
+    </div>
+    <div class="highlight-box wow" style="animation-delay:0.3s;">
+      <i class="fas fa-smile-beam"></i>
+      <h3>1000+</h3>
+      <p>Happy Patients</p>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials">
+    <h2 class="testimonial-heading">What Our Patients Say</h2>
+    <div class="testimonial-box fade-in">
+      <p>
+        “The staff at Sri Kamala Hospital were extremely helpful and caring.
+        I felt very safe and well-treated.”
+      </p>
+      <h4>– Lokesh .</h4>
+    </div>
+    <div class="testimonial-box fade-in" style="margin-top:18px;">
+      <p>
+        “Excellent facilities and very professional doctors. The online OP booking saved me a lot of time!”
+      </p>
+      <h4>– Sravani .</h4>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="newsletter">
+    <h3>Subscribe to our Newsletter</h3>
+    <form class="newsletter-form" onsubmit="event.preventDefault(); showNewsletterSuccess();">
+      <input type="email" placeholder="Enter your email" required />
+      <button type="submit" class="main-btn">Subscribe</button>
+    </form>
+    <div id="newsletter-success" style="display:none; color:#00b894; font-weight:600; margin-top:12px;">
+      <i class="fa fa-check-circle"></i> Thank you for subscribing!
+    </div>
+  </section>
+
+  <!-- Footer with Chatbot and Location -->
+  <footer>
+    <div id="chatbot">
+      <div class="chat-header">💬 Need Help? Chat with us!</div>
+      <div class="chat-body" id="chat-body"></div>
+      <div class="chat-footer">
+        <input type="text" id="chat-input" placeholder="Type your message..." />
+        <button onclick="sendMessage()"><i class="fa fa-paper-plane"></i></button>
+      </div>
+    </div>
+
+    <button id="chat-toggle" onclick="toggleChat()"><i class="fa fa-comments"></i></button>
+
+    <div class="location-info">
+      <h4><i class="fa fa-map-marker-alt"></i> Our Location</h4>
+      <p>
+        <strong>M.G Road Opp. Tirumala Grand Resturant, Suryapet</strong><br /><br />
+        <a
+          href="https://www.google.com/maps/place/SRI+KAMALA+HOSPITAL/@17.147934,79.6200033,17z/data=!3m1!4b1!4m14!1m7!3m6!1s0x3a34dba63f29a213:0x2dfe41301d2da441!2sSRI+KAMALA+HOSPITAL!8m2!3d17.147934!4d79.6225782!16s%2Fg%2F11ls_d7dtt!3m5!1s0x3a34dba63f29a213:0x2dfe41301d2da441!8m2!3d17.147934!4d79.6225782!16s%2Fg%2F11ls_d7dtt?entry=ttu&g_ep=EgoyMDI1MDgyNS4wIKXMDSoASAFQAw%3D%3D"
+          target="_blank"
+        >
+          📍 Get Directions
+        </a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Bottom Footer -->
+  <div class="bottom-footer">
+    <p>&copy; 2025 Sri Kamala Hospital. All rights reserved.</p>
+    <div style="margin-top:8px;">
+      <a href="privacy.html">Privacy Policy</a> |
+      <a href="terms.html">Terms & Conditions</a> |
+      <a href="refund.html">Cancellation & Refund</a> |
+      <a href="shipping.html">Shipping & Delivery</a> |
+      <a href="contact.html">Contact Us</a>
+    </div>
+  </div>
+
+  <!-- Chatbot & Newsletter Script -->
+  <script>
+    let chatVisible = false;
+    function toggleChat() {
+      chatVisible = !chatVisible;
+      document.getElementById("chatbot").style.display = chatVisible ? "flex" : "none";
+      if (chatVisible) {
+        setTimeout(() => botReply("Hi! How can I help you today? 👋"), 500);
+      }
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("chat-input");
+      const msg = input.value.trim();
+      if (!msg) return;
+      addMessage("You", msg);
+      input.value = "";
+      setTimeout(() => botReply(getBotResponse(msg)), 800);
+    }
+
+    function addMessage(sender, message) {
+      const chat = document.getElementById("chat-body");
+      const bubble = document.createElement("div");
+      bubble.className = "chat-msg";
+      bubble.innerHTML = `<strong>${sender}:</strong> ${message}`;
+      chat.appendChild(bubble);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function botReply(message) {
+      addMessage("Bot", message);
+    }
+
+    function getBotResponse(input) {
+      const msg = input.toLowerCase();
+      if (msg.includes("bookop") || msg.includes("appointment")) {
+        return 'You can book an appointment <a href="appoinment.html" target="_blank">here</a>.';
+      }
+      if (msg.includes("time") || msg.includes("timing")) {
+        return "We are open from <strong>8AM to 8PM</strong>, all 7 days.";
+      }
+      if (msg.includes("doctor")) {
+        return 'You can view our doctors <a href="doctors.html" target="_blank">here</a>.';
+      }
+      if (msg.includes("location") || msg.includes("where")) {
+        return "We are located at <strong>M.G Road Opp. Tirumala Grand Resturant, Suryapet</strong>.";
+      }
+      if (msg.includes("blood test")) {
+        return 'You can book blood tests <a href="bloodtestbook.html" target="_blank">here</a>.';
+      }
+      if (msg.includes("emergency")) {
+        return "Please call our emergency line: <strong>+91-9948076665</strong>";
+      }
+      if (msg.includes("contact")) {
+        return 'You can contact us via the form <a href="contact.html" target="_blank">here</a>.';
+      }
+      return "Sorry, I didn’t understand that. Can you rephrase?";
+    }
+
+    // Newsletter success animation (3 sec)
+    function showNewsletterSuccess() {
+      const el = document.getElementById('newsletter-success');
+      el.style.display = 'block';
+      setTimeout(() => {
+        el.style.display = 'none';
+      }, 3000); // Show for 3 seconds instead of 1.5
+    }
+
+    // OP Booking Loading Modal Logic
+    function showOpLoadingModal() {
+      const modal = document.getElementById('op-loading-modal');
+      const bar = document.getElementById('op-loading-bar');
+      modal.style.display = 'flex';
+      bar.style.width = '0%';
+
+      // Animate progress bar over 3 seconds (smoothly)
+      bar.style.transition = 'width 3s linear';
+      setTimeout(() => {
+        bar.style.width = '100%';
+      }, 10); // slight delay to trigger transition
+
+      // After 3 seconds, redirect
+      setTimeout(() => {
+        window.location.href = "appoinment.html";
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

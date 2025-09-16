@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us - Sri Kamala Hospital</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa 0%, #f5faff 100%);
+      color: #333;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      width: 100%;
+      background: linear-gradient(90deg, #00b894 60%, #0984e3 100%);
+      box-shadow: 0 2px 12px #00b89422;
+      position: sticky;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 62px;
+      transition: background 0.3s;
+    }
+    .navbar .navbar-container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+    .navbar .navbar-logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1px;
+      text-decoration: none;
+      gap: 10px;
+      padding: 10px 0;
+    }
+    .navbar .navbar-logo i {
+      font-size: 1.5em;
+      color: #fff;
+      margin-right: 6px;
+    }
+    .navbar .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .navbar .navbar-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.08rem;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .navbar .navbar-links a.active,
+    .navbar .navbar-links a:hover {
+      background: #fff;
+      color: #00b894;
+      box-shadow: 0 2px 8px #00b89422;
+    }
+    @media (max-width: 800px) {
+      .navbar .navbar-container {
+        padding: 0 10px;
+      }
+      .navbar .navbar-links {
+        gap: 12px;
+      }
+      .navbar .navbar-logo {
+        font-size: 1.1rem;
+      }
+    }
+    @media (max-width: 600px) {
+      .navbar .navbar-container {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0 4vw;
+      }
+      .navbar .navbar-links {
+        width: 100%;
+        gap: 0;
+        margin-top: 4px;
+      }
+      .navbar .navbar-links a {
+        padding: 8px 8px;
+        font-size: 1rem;
+      }
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #ffffff;
+      padding: 40px 30px 30px 30px;
+      border-radius: 22px;
+      box-shadow: 0 8px 32px rgba(0, 184, 148, 0.13);
+      animation: fadeInUp 1s cubic-bezier(.4,2,.6,1);
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      color: #00b894;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #00b894;
+      display: inline-block;
+      padding-bottom: 5px;
+      letter-spacing: 1px;
+      font-weight: 700;
+      text-shadow: 0 2px 8px #b2f7ef33;
+    }
+
+    h2 {
+      font-size: 1.35rem;
+      color: #0984e3;
+      margin-top: 40px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    p, li {
+      font-size: 1.08rem;
+      line-height: 1.6;
+    }
+
+    .contact-section {
+      margin-top: 30px;
+    }
+
+    .contact-item {
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.08rem;
+      animation: fadeIn 0.7s;
+    }
+
+    .contact-item i {
+      color: #00b894;
+      font-size: 1.2em;
+      min-width: 22px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0;}
+      to { opacity: 1;}
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1);}
+      50% { transform: scale(1.15);}
+      100% { transform: scale(1);}
+    }
+
+    .contact-item strong {
+      color: #444;
+      min-width: 120px;
+      font-weight: 500;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    .back-button {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .back-button a {
+      display: inline-block;
+      padding: 12px 24px;
+      background: linear-gradient(90deg, #00b894 60%, #0984e3 100%);
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.08rem;
+      box-shadow: 0 2px 8px #00b89422;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .back-button a:hover {
+      background: linear-gradient(90deg, #0984e3 60%, #00b894 100%);
+      transform: translateY(-2px) scale(1.04);
+    }
+
+    /* Advanced Animated Contact Form */
+    .contact-form-section {
+      margin-top: 48px;
+      margin-bottom: 24px;
+      background: linear-gradient(120deg, #e0f7fa 60%, #f8fdfd 100%);
+      border-radius: 18px;
+      box-shadow: 0 2px 16px rgba(0,184,148,0.08);
+      padding: 32px 24px 24px 24px;
+      animation: fadeInUp 1.2s cubic-bezier(.4,2,.6,1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-form-section h2 {
+      color: #00b894;
+      margin-bottom: 18px;
+      font-size: 1.3rem;
+      letter-spacing: 0.5px;
+    }
+
+    form.animated-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px 32px;
+      justify-content: space-between;
+      align-items: flex-start;
+      animation: fadeIn 1.2s;
+    }
+
+    .form-group {
+      flex: 1 1 260px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      margin-bottom: 12px;
+      min-width: 220px;
+    }
+
+    .form-group label {
+      font-weight: 500;
+      color: #0984e3;
+      margin-bottom: 7px;
+      letter-spacing: 0.2px;
+      font-size: 1.02rem;
+      transition: color 0.2s;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      padding: 12px 14px;
+      border: 2px solid #e0f7fa;
+      border-radius: 8px;
+      font-size: 1.08rem;
+      background: #f8fdfd;
+      color: #333;
+      outline: none;
+      transition: border 0.3s, box-shadow 0.3s;
+      box-shadow: 0 1px 4px #00b89411;
+      resize: none;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border: 2px solid #00b894;
+      box-shadow: 0 2px 12px #00b89422;
+    }
+
+    .form-group .input-icon {
+      position: absolute;
+      right: 14px;
+      top: 38px;
+      color: #00b894;
+      font-size: 1.1em;
+      pointer-events: none;
+      opacity: 0.7;
+      transition: color 0.2s;
+    }
+
+    .form-group input:focus ~ .input-icon,
+    .form-group textarea:focus ~ .input-icon {
+      color: #0984e3;
+      opacity: 1;
+    }
+
+    .form-group textarea {
+      min-height: 90px;
+      max-height: 220px;
+    }
+
+    .form-actions {
+      flex-basis: 100%;
+      text-align: right;
+      margin-top: 10px;
+    }
+
+    .form-actions button {
+      background: linear-gradient(90deg, #00b894 60%, #0984e3 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 32px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 12px #00b89422;
+      transition: background 0.2s, transform 0.18s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-actions button:active {
+      transform: scale(0.97);
+    }
+
+    .form-actions button:before {
+      content: "";
+      position: absolute;
+      left: -60%;
+      top: 0;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, #fff6, #00b89433 80%);
+      z-index: 1;
+      transform: skewX(-20deg);
+      transition: left 0.5s;
+    }
+
+    .form-actions button:hover:before {
+      left: 110%;
+    }
+
+    .form-success,
+    .form-error {
+      margin-top: 18px;
+      font-size: 1.08rem;
+      font-weight: 500;
+      border-radius: 8px;
+      padding: 12px 18px;
+      display: none;
+      animation: fadeIn 0.7s;
+    }
+    .form-success {
+      background: #e0fbe6;
+      color: #009e60;
+      border: 1.5px solid #00b894;
+      display: none;
+    }
+    .form-error {
+      background: #ffeaea;
+      color: #d63031;
+      border: 1.5px solid #d63031;
+      display: none;
+    }
+
+    /* Floating animated gradient background for the form */
+    .form-bg-anim {
+      position: absolute;
+      left: -80px;
+      top: -80px;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle at 60% 40%, #00b89455 60%, #0984e355 100%);
+      filter: blur(32px);
+      z-index: 0;
+      animation: floatAnim 7s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    @keyframes floatAnim {
+      0% { transform: translateY(0) scale(1);}
+      100% { transform: translateY(30px) scale(1.08);}
+    }
+
+    @media (max-width: 900px) {
+      .container { padding: 24px 6vw;}
+      .contact-form-section { padding: 18px 4vw;}
+    }
+    @media (max-width: 600px) {
+      .form-group { min-width: 100%; }
+      .contact-item strong {
+        min-width: unset;
+        display: block;
+        margin-bottom: 5px;
+      }
+      .container { padding: 12px 2vw;}
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="index.html" class="navbar-logo">
+        <i class="fa-solid fa-house-medical"></i>
+        Sri Kamala Hospital
+      </a>
+      <div class="navbar-links">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="doctors.html">Doctors</a>
+        <a href="appoinment.html">Appointment</a>
+        <a href="diagnosis.html">Diagnosis</a>
+        <a href="contact.html" class="active">Contact</a>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <h1>Contact Us</h1>
+    <p>
+      Thank you for visiting Sri Kamala Hospital. We are here to support you in every possible way. You can contact us through the details below for appointments, services, or any kind of feedback.
+    </p>
+
+    <div class="contact-section">
+      <h2>General Contact Information</h2>
+      <div class="contact-item"><i class="fas fa-map-marker-alt"></i><strong>Address:</strong> M.G. Road, Suryapet</div>
+      <div class="contact-item"><i class="fas fa-phone"></i><strong>Phone:</strong> +91 99480 76665</div>
+      <div class="contact-item"><i class="fas fa-envelope"></i><strong>Email:</strong> srikamalahospitalsrpt@gmail.com</div>
+      <div class="contact-item"><i class="fas fa-ambulance"></i><strong>Emergency:</strong> +91 99480 76665 (24/7)</div>
+    </div>
+
+    <div class="contact-section">
+      <h2>Working Hours</h2>
+      <p>Our hospital operates 24/7. Departmental hours are as follows:</p>
+      <ul>
+        <li><strong>Outpatient:</strong> 8:00 AM - 6:00 PM (Mon - Sat)</li>
+        <li><strong>Lab Services:</strong> 7:00 AM - 8:00 PM (Daily)</li>
+        <li><strong>Emergency:</strong> Open 24 hours</li>
+      </ul>
+    </div>
+
+    <div class="contact-section">
+      <h2>Feedback & Complaints</h2>
+      <p>
+        For any feedback, concerns, or suggestions about your experience with Sri Kamala Hospital, email us at:
+        <strong>srikamalahospitalsrpt@gmail.com</strong>. We appreciate your input as it helps us improve.
+      </p>
+    </div>
+
+    <!-- Advanced Animated Contact Form -->
+    <div class="contact-form-section" id="contact-form-section">
+      <div class="form-bg-anim"></div>
+      <h2>Send Us a Message</h2>
+      <form class="animated-form" id="contactForm" autocomplete="off" novalidate>
+        <div class="form-group">
+          <label for="name">Your Name</label>
+          <input type="text" id="name" name="name" required placeholder="Enter your name" autocomplete="off" />
+          <i class="fas fa-user input-icon"></i>
+        </div>
+        <div class="form-group">
+          <label for="email">Your Email</label>
+          <input type="email" id="email" name="email" required placeholder="Enter your email" autocomplete="off" />
+          <i class="fas fa-envelope input-icon"></i>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" name="phone" required pattern="^[0-9+\-\s]{8,16}$" placeholder="e.g. 9948076665" autocomplete="off" />
+          <i class="fas fa-phone input-icon"></i>
+        </div>
+        <div class="form-group" style="flex-basis:100%;">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" required placeholder="Type your message here..."></textarea>
+          <i class="fas fa-comment-dots input-icon"></i>
+        </div>
+        <div class="form-actions">
+          <button type="submit" id="submitBtn">
+            <span id="btnText">Send Message</span>
+            <i class="fas fa-paper-plane" style="margin-left:8px;"></i>
+          </button>
+        </div>
+        <div class="form-success" id="formSuccess">Thank you! Your message has been sent. We will get back to you soon.</div>
+        <div class="form-error" id="formError">Oops! Please fill all fields correctly.</div>
+      </form>
+    </div>
+  <script>
+    // Animated form validation and feedback
+    const form = document.getElementById('contactForm');
+    const btn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const formSuccess = document.getElementById('formSuccess');
+    const formError = document.getElementById('formError');
+
+    function validateEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+    function validatePhone(phone) {
+      return /^[0-9+\-\s]{8,16}$/.test(phone);
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      formSuccess.style.display = 'none';
+      formError.style.display = 'none';
+
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const phone = form.phone.value.trim();
+      const message = form.message.value.trim();
+
+      let valid = true;
+      if (!name || !email || !phone || !message) valid = false;
+      if (!validateEmail(email)) valid = false;
+      if (!validatePhone(phone)) valid = false;
+
+      if (!valid) {
+        formError.style.display = 'block';
+        formError.textContent = "Oops! Please fill all fields correctly.";
+        return;
+      }
+
+      // Animate button
+      btn.disabled = true;
+      btnText.textContent = "Sending...";
+      btn.classList.add('sending');
+      setTimeout(() => {
+        btnText.textContent = "Send Message";
+        btn.disabled = false;
+        formSuccess.style.display = 'block';
+        formError.style.display = 'none';
+        form.reset();
+        setTimeout(() => {
+          formSuccess.style.display = 'none';
+        }, 4000);
+      }, 1400);
+    });
+
+    // Animate input icons on focus
+    document.querySelectorAll('.form-group input, .form-group textarea').forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentNode.querySelector('.input-icon').style.color = '#0984e3';
+        this.parentNode.querySelector('.input-icon').style.opacity = 1;
+      });
+      input.addEventListener('blur', function() {
+        this.parentNode.querySelector('.input-icon').style.color = '#00b894';
+        this.parentNode.querySelector('.input-icon').style.opacity = 0.7;
+      });
+    });
+  </script>
+</body>
+</html>

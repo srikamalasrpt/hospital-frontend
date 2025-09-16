@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="icon" type="image/png" href="ChatGPT Image Apr 19, 2025, 01_22_02 AM.png">
+  <title>Admin Dashboard - OP & Diagnosis Bookings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src https://hospital-backend-78ur.onrender.com;">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0fbfb;
+      padding: 40px;
+      margin: 0;
+      animation: fadeIn 0.6s ease-in;
+    }
+
+    h1 {
+      text-align: center;
+      color: #00a6b8;
+      margin-top: 40px;
+      animation: slideIn 0.6s ease-out;
+    }
+
+    .section {
+      margin-top: 50px;
+      animation: fadeInTable 0.8s ease;
+    }
+
+    .filter {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .filter input {
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      width: 260px;
+      font-size: 16px;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .filter input:focus {
+      outline: none;
+      box-shadow: 0 0 8px #00a6b8;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    th, td {
+      padding: 14px 16px;
+      border: 1px solid #e0e0e0;
+      text-align: left;
+    }
+
+    th {
+      background: linear-gradient(135deg, #00acc1, #007e91);
+      color: white;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9fdfd;
+    }
+
+    tr:hover {
+      background-color: #e2f4f4;
+      transition: background-color 0.3s;
+    }
+
+    .note {
+      margin-top: 30px;
+      text-align: center;
+      color: #888;
+    }
+
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #00acc1;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      vertical-align: middle;
+    }
+
+    #logoutBtn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #ff5b5b;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      z-index: 9999;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      transition: background 0.3s ease;
+    }
+
+    #logoutBtn:hover {
+      background: #d32f2f;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInTable {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .admin-warning {
+      color: #d32f2f;
+      background: #fff3f3;
+      border: 1px solid #ffbdbd;
+      padding: 12px 18px;
+      border-radius: 8px;
+      margin: 24px auto 0 auto;
+      max-width: 600px;
+      text-align: center;
+      font-size: 1.08em;
+      font-weight: 500;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <button id="logoutBtn" aria-label="Logout">🚪 Logout</button>
+
+  <div class="admin-warning" id="adminWarning" role="alert" aria-live="assertive">
+    ⚠️ You are not authorized to view this page. Please login as admin.
+  </div>
+
+  <h1>🗂️ OP Bookings</h1>
+  <div class="filter">
+    <input type="text" id="searchInput" placeholder="🔍 Search by name or phone..." autocomplete="off" aria-label="Search by name or phone">
+  </div>
+  <div class="section">
+    <table>
+      <thead>
+        <tr>
+          <th>Token</th>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Department</th>
+          <th>Date</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody id="appointmentTable"></tbody>
+    </table>
+  </div>
+
+  <h1>🧪 Diagnosis Bookings</h1>
+  <div class="section">
+    <table>
+      <thead>
+        <tr>
+          <th>Token</th>
+          <th>Name</th>
+          <th>Gender</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Age</th>
+          <th>Tests</th>
+        </tr>
+      </thead>
+      <tbody id="diagnosisTable"></tbody>
+    </table>
+  </div>
+
+  <div class="note" id="noteMessage">
+    <span class="loader" aria-label="Loading"></span> Loading data...
+  </div>
+
+  <script>
+    // --- Security: Prevent clickjacking ---
+    if (window.top !== window.self) {
+      window.top.location = window.self.location;
+    }
+
+    // --- Admin Authentication (JWT) ---
+    function isAdminAuthenticated() {
+      return !!localStorage.getItem('adminJwt');
+    }
+
+    function showUnauthorized() {
+      document.getElementById('adminWarning').style.display = 'block';
+      document.body.style.pointerEvents = 'none';
+      document.body.style.opacity = '0.7';
+      // Hide all main content
+      document.querySelectorAll('h1, .filter, .section, .note').forEach(el => el.style.display = 'none');
+    }
+
+    // Check authentication on page load
+    if (!isAdminAuthenticated()) {
+      showUnauthorized();
+      // Optionally, redirect after a delay
+      setTimeout(() => {
+        window.location.href = 'admin.html?unauthorized=1';
+      }, 1800);
+    }
+
+    // --- End of Auth Check ---
+
+    const appointmentTable = document.getElementById('appointmentTable');
+    const diagnosisTable = document.getElementById('diagnosisTable');
+    const searchInput = document.getElementById('searchInput');
+    const note = document.getElementById('noteMessage');
+    let appointments = [];
+
+    // --- Advanced Feature: Periodic Auto-Refresh ---
+    let autoRefreshInterval = null;
+    function startAutoRefresh() {
+      if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+      autoRefreshInterval = setInterval(() => {
+        loadAppointments();
+        loadDiagnosis();
+      }, 60 * 1000); // Refresh every 60 seconds
+    }
+
+    // --- Advanced Feature: Export to CSV ---
+    function exportTableToCSV(tableId, filename) {
+      const table = document.getElementById(tableId);
+      let csv = [];
+      const rows = table.querySelectorAll('tr');
+      for (let row of rows) {
+        let cols = Array.from(row.querySelectorAll('th,td')).map(td => {
+          let text = td.innerText.replace(/"/g, '""');
+          return `"${text}"`;
+        });
+        csv.push(cols.join(','));
+      }
+      const csvContent = csv.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Add export buttons
+    function addExportButtons() {
+      if (!document.getElementById('exportOPBtn')) {
+        const opBtn = document.createElement('button');
+        opBtn.id = 'exportOPBtn';
+        opBtn.textContent = '⬇️ Export OP Bookings (CSV)';
+        opBtn.style.margin = '10px 10px 0 0';
+        opBtn.style.background = '#00acc1';
+        opBtn.style.color = '#fff';
+        opBtn.style.border = 'none';
+        opBtn.style.borderRadius = '7px';
+        opBtn.style.padding = '8px 18px';
+        opBtn.style.fontWeight = 'bold';
+        opBtn.style.cursor = 'pointer';
+        opBtn.setAttribute('aria-label', 'Export OP Bookings as CSV');
+        opBtn.onclick = () => exportTableToCSV('appointmentTable', 'op_bookings.csv');
+        document.querySelector('.filter').appendChild(opBtn);
+      }
+      if (!document.getElementById('exportDiagBtn')) {
+        const diagBtn = document.createElement('button');
+        diagBtn.id = 'exportDiagBtn';
+        diagBtn.textContent = '⬇️ Export Diagnosis Bookings (CSV)';
+        diagBtn.style.margin = '10px 0 0 0';
+        diagBtn.style.background = '#00acc1';
+        diagBtn.style.color = '#fff';
+        diagBtn.style.border = 'none';
+        diagBtn.style.borderRadius = '7px';
+        diagBtn.style.padding = '8px 18px';
+        diagBtn.style.fontWeight = 'bold';
+        diagBtn.style.cursor = 'pointer';
+        diagBtn.setAttribute('aria-label', 'Export Diagnosis Bookings as CSV');
+        diagBtn.onclick = () => exportTableToCSV('diagnosisTable', 'diagnosis_bookings.csv');
+        document.querySelectorAll('.section')[1].insertAdjacentElement('beforebegin', diagBtn);
+      }
+    }
+
+    // --- Security: Sanitize output for table rendering ---
+    function escapeHTML(str) {
+      if (typeof str !== 'string') return str;
+      return str.replace(/[&<>"'`=\/]/g, function (s) {
+        return ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;',
+          '/': '&#x2F;',
+          '`': '&#x60;',
+          '=': '&#x3D;'
+        })[s];
+      });
+    }
+
+    const BACKEND_BASE = 'https://hospital-backend-78ur.onrender.com';
+
+    async function loadAppointments() {
+      try {
+        const res = await fetch(`${BACKEND_BASE}/admin/appointments`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('adminJwt') || ''}`
+          },
+          credentials: 'omit', // Don't send cookies
+          cache: 'no-store'
+        });
+        if (!res.ok) throw new Error('Not authorized or failed');
+        appointments = await res.json();
+        renderAppointments(appointments);
+      } catch (err) {
+        note.innerHTML = '⚠️ Failed to load OP bookings.';
+      }
+    }
+
+    function renderAppointments(data) {
+      appointmentTable.innerHTML = '';
+      if (!data.length) {
+        note.innerHTML = '📭 No OP bookings found.';
+        return;
+      }
+      note.innerHTML = '';
+      data.forEach(item => {
+        appointmentTable.innerHTML += `
+          <tr>
+            <td>${escapeHTML(item.token || '—')}</td>
+            <td>${escapeHTML(item.name)}</td>
+            <td>${escapeHTML(item.phone)}</td>
+            <td>${escapeHTML(item.department || '—')}</td>
+            <td>${escapeHTML(item.date || '—')}</td>
+            <td>₹${escapeHTML(String(item.amount || 0))}</td>
+          </tr>`;
+      });
+    }
+
+    async function loadDiagnosis() {
+      try {
+        const res = await fetch(`${BACKEND_BASE}/admin/diagnosis`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('adminJwt') || ''}`
+          },
+          credentials: 'omit',
+          cache: 'no-store'
+        });
+        if (!res.ok) throw new Error('Not authorized or failed');
+        const diagnosis = await res.json();
+        renderDiagnosis(diagnosis);
+      } catch (err) {
+        diagnosisTable.innerHTML = '<tr><td colspan="7">⚠️ Failed to load diagnosis bookings.</td></tr>';
+      }
+    }
+
+    function renderDiagnosis(data) {
+      diagnosisTable.innerHTML = '';
+      if (!data.length) {
+        diagnosisTable.innerHTML = '<tr><td colspan="7">📭 No diagnosis bookings found.</td></tr>';
+        return;
+      }
+      data.forEach(item => {
+        diagnosisTable.innerHTML += `
+          <tr>
+            <td>${escapeHTML(item.token)}</td>
+            <td>${escapeHTML(item.name)}</td>
+            <td>${escapeHTML(item.gender)}</td>
+            <td>${escapeHTML(item.phone)}</td>
+            <td>${escapeHTML(item.email)}</td>
+            <td>${escapeHTML(item.age || '—')}</td>
+            <td>${(item.tests || []).map(escapeHTML).join(', ')}</td>
+          </tr>`;
+      });
+    }
+
+    // --- Advanced Feature: Search by Multiple Fields ---
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase();
+      const filtered = appointments.filter(item =>
+        (item.name && item.name.toLowerCase().includes(query)) ||
+        (item.phone && item.phone.includes(query)) ||
+        (item.department && item.department.toLowerCase().includes(query)) ||
+        (item.token && String(item.token).toLowerCase().includes(query))
+      );
+      renderAppointments(filtered);
+    });
+
+    // --- Initialization ---
+    if (isAdminAuthenticated()) {
+      loadAppointments();
+      loadDiagnosis();
+      addExportButtons();
+      startAutoRefresh();
+    }
+
+    // --- Secure Logout: Remove all admin tokens ---
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('adminAuthToken');
+      localStorage.removeItem('paymentConfirmed');
+      localStorage.removeItem('appointmentToken');
+      // Clear all localStorage keys that may be set by this app
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('admin') || key.startsWith('payment') || key.startsWith('appointment')) {
+          localStorage.removeItem(key);
+        }
+      });
+      window.location.replace('admin.html');
+    });
+
+    // --- Security Note ---
+    // This dashboard only uses a localStorage token for demo purposes.
+    // In production, always:
+    //   - Authenticate and authorize on the backend for every API call.
+    //   - Use secure, httpOnly cookies or JWTs.
+    //   - Never trust client-side checks for sensitive data.
+    //   - Use HTTPS for all requests.
+    //   - Sanitize all user-generated content before rendering.
+    //   - Set proper HTTP security headers (CSP, X-Frame-Options, etc).
+  </script>
+</body>
+</html>

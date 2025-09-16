@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="ChatGPT Image Apr 19, 2025, 01_22_02 AM.png">
+  <title>Admin Login - OP Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Google Fonts for modern look -->
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:600,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Montserrat', 'Segoe UI', sans-serif;
+      background: linear-gradient(120deg, #00b894 0%, #00acc1 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeInBg 1.2s;
+      overflow: hidden;
+    }
+
+    .animated-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.18;
+      animation: floatBubble 12s infinite linear;
+      background: linear-gradient(135deg, #00b894 60%, #00acc1 100%);
+    }
+    @keyframes floatBubble {
+      0% { transform: translateY(100vh) scale(0.7);}
+      100% { transform: translateY(-10vh) scale(1.2);}
+    }
+
+    .login-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 410px;
+      margin: 0 auto;
+    }
+
+    .login-box {
+      background: rgba(255,255,255,0.98);
+      padding: 44px 36px 32px 36px;
+      border-radius: 22px;
+      box-shadow: 0 12px 40px rgba(0, 185, 148, 0.18), 0 2px 8px rgba(0,0,0,0.07);
+      text-align: center;
+      width: 100%;
+      animation: slideIn 0.8s cubic-bezier(.4,2,.6,1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-box h2 {
+      color: #00acc1;
+      margin-bottom: 18px;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      animation: fadeInDown 0.7s;
+    }
+
+    .login-box .admin-icon {
+      font-size: 2.5rem;
+      color: #00b894;
+      margin-bottom: 10px;
+      animation: pulse 1.5s infinite;
+    }
+
+    .login-box .category-select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 18px;
+      border: 2px solid #eee;
+      border-radius: 10px;
+      font-size: 15px;
+      background: #f8fdfd;
+      transition: border-color 0.3s;
+    }
+    .login-box .category-select:focus {
+      border-color: #00b894;
+      outline: none;
+      box-shadow: 0 0 8px rgba(0, 185, 148, 0.18);
+    }
+
+    .login-box input[type="password"] {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 18px;
+      border: 2px solid #eee;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+      background: #f8fdfd;
+    }
+
+    .login-box input:focus {
+      outline: none;
+      border-color: #00b894;
+      box-shadow: 0 0 8px rgba(0, 185, 148, 0.18);
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(to right, #00b894, #00acc1);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      box-shadow: 0 2px 8px rgba(0,185,148,0.10);
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .login-box button:active {
+      transform: scale(0.98);
+    }
+    .login-box button:hover {
+      background: linear-gradient(to right, #00acc1, #007e6a);
+      transform: scale(1.04);
+    }
+
+    .login-box .forgot-link {
+      display: block;
+      margin-top: 8px;
+      color: #00acc1;
+      font-size: 13px;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .login-box .forgot-link:hover {
+      color: #007e6a;
+      text-decoration: underline;
+    }
+
+    .error, .success {
+      font-size: 14px;
+      margin-top: 10px;
+      min-height: 20px;
+      transition: color 0.3s;
+      text-align: center;
+    }
+    .error { color: #c0392b; }
+    .success { color: #00b894; }
+
+    .dashboard {
+      display: none;
+      animation: fadeIn 0.7s;
+      z-index: 3;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: #f8fdfd;
+    }
+
+    /* Dashboard overlay menu */
+    .dashboard-menu {
+      position: absolute;
+      top: 24px; left: 24px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,185,148,0.10);
+      padding: 18px 22px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: fadeInLeft 0.7s;
+    }
+    .dashboard-menu h3 {
+      margin: 0 0 8px 0;
+      color: #00b894;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+    .dashboard-menu button {
+      background: #00b894;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 15px;
+      cursor: pointer;
+      margin-bottom: 2px;
+      transition: background 0.2s;
+    }
+    .dashboard-menu button:hover {
+      background: #00acc1;
+    }
+
+    /* Animations */
+    @keyframes fadeInBg {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0;}
+      to { opacity: 1;}
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    @keyframes fadeInLeft {
+      from { opacity: 0; transform: translateX(-40px);}
+      to { opacity: 1; transform: translateX(0);}
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-40px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    @keyframes pulse {
+      0% { transform: scale(1);}
+      50% { transform: scale(1.13);}
+      100% { transform: scale(1);}
+    }
+
+    /* Responsive */
+    @media (max-width: 500px) {
+      .login-box { padding: 28px 10px 22px 10px; }
+      .dashboard-menu { top: 10px; left: 10px; padding: 12px 10px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="animated-bg" aria-hidden="true"></div>
+  <div class="login-container">
+    <div class="login-box" id="loginBox">
+      <div class="admin-icon"><i class="fas fa-user-shield"></i></div>
+      <h2>Admin Login</h2>
+      <form id="loginForm" autocomplete="off">
+        <select class="category-select" id="adminCategory" required>
+          <option value="" disabled selected>Select Admin Category</option>
+          <option value="super">Super Admin (Full Access)</option>
+          <option value="doctor">Doctor Panel (View/Update Patients)</option>
+          <option value="reception">Reception Desk (Appointments)</option>
+          <option value="accounts">Accounts (Payments/Refunds)</option>
+          <option value="reports">Reports & Analytics</option>
+        </select>
+        <input type="password" id="adminPassword" placeholder="Enter admin password" required />
+        <button type="submit"><i class="fas fa-sign-in-alt"></i> Login</button>
+        <a href="#" class="forgot-link" id="forgotLink"><i class="fas fa-key"></i> Forgot Password?</a>
+        <div class="error" id="errorBox"></div>
+        <div class="success" id="successBox"></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="dashboard" id="dashboard">
+    <div class="dashboard-menu" id="dashboardMenu">
+      <h3><i class="fas fa-bars"></i> Dashboard Menu</h3>
+      <button onclick="switchCategory('super')"><i class="fas fa-user-shield"></i> Super Admin</button>
+      <button onclick="switchCategory('doctor')"><i class="fas fa-user-md"></i> Doctor Panel</button>
+      <button onclick="switchCategory('reception')"><i class="fas fa-concierge-bell"></i> Reception Desk</button>
+      <button onclick="switchCategory('accounts')"><i class="fas fa-file-invoice-dollar"></i> Accounts</button>
+      <button onclick="switchCategory('reports')"><i class="fas fa-chart-line"></i> Reports</button>
+      <button onclick="logout()" style="background:#c0392b;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+    <iframe id="dashboardFrame" src="admin-dashboard.html" style="border:none;width:100vw;height:100vh;"></iframe>
+  </div>
+
+  <script>
+    // Animated bubbles background
+    function createBubbles() {
+      const bg = document.querySelector('.animated-bg');
+      for (let i = 0; i < 18; i++) {
+        const b = document.createElement('div');
+        b.className = 'bubble';
+        const size = Math.random() * 60 + 30;
+        b.style.width = b.style.height = size + 'px';
+        b.style.left = Math.random() * 100 + 'vw';
+        b.style.bottom = (-Math.random() * 40) + 'vh';
+        b.style.animationDuration = (8 + Math.random() * 8) + 's';
+        b.style.background = `linear-gradient(135deg, #00b894 ${60+Math.random()*30}%, #00acc1 100%)`;
+        bg.appendChild(b);
+      }
+    }
+    createBubbles();
+
+    // Backend base for admin auth/API
+    const BACKEND_BASE = 'https://hospital-backend-78ur.onrender.com';
+
+    // Dashboard pages for each category
+    const dashboardPages = {
+      super: 'admin-dashboard.html',
+      doctor: 'doctor-panel.html',
+      reception: 'reception-desk.html',
+      accounts: 'accounts-dashboard.html',
+      reports: 'reports-analytics.html'
+    };
+
+    const form = document.getElementById('loginForm');
+    const errorBox = document.getElementById('errorBox');
+    const successBox = document.getElementById('successBox');
+    const loginBox = document.getElementById('loginBox');
+    const dashboard = document.getElementById('dashboard');
+    const dashboardFrame = document.getElementById('dashboardFrame');
+    const adminCategory = document.getElementById('adminCategory');
+    let currentCategory = null;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      validateLogin();
+    });
+
+    async function validateLogin() {
+      const category = adminCategory.value;
+      const input = document.getElementById('adminPassword').value;
+      errorBox.textContent = '';
+      successBox.textContent = '';
+
+      if (!category) {
+        errorBox.textContent = 'Please select an admin category.';
+        return;
+      }
+      if (!input) {
+        errorBox.textContent = 'Please enter the password.';
+        return;
+      }
+      try {
+        const res = await fetch(`${BACKEND_BASE}/admin/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ category, password: input })
+        });
+        if (!res.ok) {
+          errorBox.textContent = '❌ Login failed. Check password/category.';
+          shake(loginBox);
+          return;
+        }
+        const { token, role } = await res.json();
+        localStorage.setItem('adminJwt', token);
+        localStorage.setItem('adminRole', role);
+
+        loginBox.style.display = 'none';
+        dashboard.style.display = 'block';
+        dashboardFrame.src = dashboardPages[category];
+        currentCategory = category;
+      } catch (e) {
+        errorBox.textContent = '❌ Network error. Please try again.';
+        shake(loginBox);
+      }
+    }
+
+    // Switch dashboard category from menu
+    function switchCategory(cat) {
+      if (dashboardPages[cat]) {
+        dashboardFrame.src = dashboardPages[cat];
+        currentCategory = cat;
+        showSuccess(`Switched to ${getCategoryName(cat)}.`);
+      }
+    }
+    function getCategoryName(cat) {
+      switch(cat) {
+        case 'super': return 'Super Admin';
+        case 'doctor': return 'Doctor Panel';
+        case 'reception': return 'Reception Desk';
+        case 'accounts': return 'Accounts';
+        case 'reports': return 'Reports & Analytics';
+        default: return '';
+      }
+    }
+    function logout() {
+      dashboard.style.display = 'none';
+      loginBox.style.display = 'block';
+      form.reset();
+      adminCategory.selectedIndex = 0;
+      errorBox.textContent = '';
+      successBox.textContent = '';
+      localStorage.removeItem('adminJwt');
+      localStorage.removeItem('adminRole');
+    }
+
+    // Shake animation for error
+    function shake(el) {
+      el.style.animation = 'shake 0.4s';
+      el.addEventListener('animationend', () => {
+        el.style.animation = '';
+      }, {once:true});
+    }
+    // Add shake keyframes dynamically
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes shake {
+        0% { transform: translateX(0);}
+        20% { transform: translateX(-8px);}
+        40% { transform: translateX(8px);}
+        60% { transform: translateX(-8px);}
+        80% { transform: translateX(8px);}
+        100% { transform: translateX(0);}
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Show success message
+    function showSuccess(msg) {
+      successBox.textContent = msg;
+      setTimeout(() => { successBox.textContent = ''; }, 1800);
+    }
+
+    // Forgot password (demo only)
+    document.getElementById('forgotLink').addEventListener('click', function(e) {
+      e.preventDefault();
+      errorBox.textContent = '';
+      successBox.textContent = '';
+      setTimeout(() => {
+        errorBox.textContent = '';
+        successBox.textContent = '';
+      }, 3000);
+      let cat = adminCategory.value;
+      if (!cat) {
+        errorBox.textContent = 'Select a category to recover password.';
+        return;
+      }
+      let hint = '';
+      switch(cat) {
+        case 'super': hint = 'Hint: Hospital main admin password.'; break;
+        case 'doctor': hint = 'Hint: Doctor panel password.'; break;
+        case 'reception': hint = 'Hint: Reception desk password.'; break;
+        case 'accounts': hint = 'Hint: Accounts password.'; break;
+        case 'reports': hint = 'Hint: Reports password.'; break;
+        default: hint = '';
+      }
+      successBox.textContent = `Password hint: ${hint}`;
+    });
+
+    // Enter key on password field submits form
+    document.getElementById('adminPassword').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        form.dispatchEvent(new Event('submit'));
+      }
+    });
+  </script>
+</body>
+</html>

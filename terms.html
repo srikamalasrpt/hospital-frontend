@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Terms and Conditions - Sri Kamala Hospital</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Font Awesome for icon in navbar -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f8fdfd;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Navbar Styles */
+    .navbar {
+      width: 100%;
+      background: linear-gradient(90deg, #00b894 60%, #0984e3 100%);
+      box-shadow: 0 2px 12px #00b89422;
+      position: sticky;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 62px;
+      transition: background 0.3s;
+    }
+    .navbar .navbar-container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+    .navbar .navbar-logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1px;
+      text-decoration: none;
+      gap: 10px;
+      padding: 10px 0;
+    }
+    .navbar .navbar-logo i {
+      font-size: 1.5em;
+      color: #fff;
+      margin-right: 6px;
+    }
+    .navbar .navbar-links {
+      display: flex;
+      gap: 22px;
+      align-items: center;
+    }
+    .navbar .navbar-links a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1.05em;
+      padding: 8px 12px;
+      border-radius: 5px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .navbar .navbar-links a:hover,
+    .navbar .navbar-links a.active {
+      background: #e0f7fa;
+      color: #00796b;
+    }
+    header, footer {
+      background: #e0f7fa;
+      padding: 24px 20px;
+      text-align: center;
+    }
+    main {
+      flex: 1;
+      max-width: 800px;
+      margin: 32px auto;
+      padding: 24px 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    h1 {
+      color: #00796b;
+      margin-bottom: 0.5em;
+    }
+    h2 {
+      color: #00b894;
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+    }
+    ul {
+      padding-left: 1.2em;
+      margin-top: 0.5em;
+      margin-bottom: 1em;
+    }
+    li {
+      margin-bottom: 0.5em;
+    }
+    a.back-button {
+      display: inline-block;
+      margin-top: 10px;
+      color: #00796b;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    a.back-button:hover {
+      color: #004d40;
+      text-decoration: underline;
+    }
+    @media (max-width: 800px) {
+      .navbar .navbar-container {
+        padding: 0 10px;
+      }
+      .navbar .navbar-links {
+        gap: 12px;
+      }
+      .navbar .navbar-logo {
+        font-size: 1.1rem;
+      }
+    }
+    @media (max-width: 600px) {
+      main {
+        padding: 16px 6px;
+        margin: 16px 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      header, footer {
+        padding: 16px 6px;
+      }
+      .navbar .navbar-container {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0 4vw;
+      }
+      .navbar .navbar-links {
+        width: 100%;
+        gap: 0;
+        margin-top: 4px;
+      }
+      .navbar .navbar-links a {
+        padding: 8px 8px;
+      }
+      .navbar .navbar-logo {
+        font-size: 1rem;
+        padding: 8px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-container">
+    <a href="index.html" class="navbar-logo">
+      <i class="fa-solid fa-hospital"></i>
+      Sri Kamala Hospital
+    </a>
+    <div class="navbar-links">
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="diagnosis.html">Diagnosis</a>
+      <a href="appoinment.html">Appointment</a>
+      <a href="contact.html">Contact</a>
+      <a href="terms.html" class="active">Terms</a>
+    </div>
+  </div>
+</nav>
+<header>
+  <h1>Terms and Conditions</h1>
+</header>
+<main>
+  <p>By booking appointments or using services via Sri Kamala Hospital’s website, you agree to these terms.</p>
+  <h2>1. Services</h2>
+  <p>We provide healthcare appointment booking and diagnostic test scheduling.</p>
+
+  <h2>2. User Responsibilities</h2>
+  <ul>
+    <li>You must provide accurate personal details.</li>
+    <li>Any misuse or false bookings may result in cancellation.</li>
+  </ul>
+
+  <h2>3. Payments</h2>
+  <p>Payments are processed securely through third-party gateways. We do not store your card or UPI details.</p>
+
+  <h2>4. Liability</h2>
+  <p>We are not liable for delays or failures caused by factors beyond our control (e.g., technical errors or third-party issues).</p>
+</main>
+<footer>
+
+</footer>
+<div class="bottom-footer">
+  <p>&copy; 2025 Sri Kamala Hospital. All rights reserved.</p>
+  <div style="margin-top:8px;">
+    <a href="privacy.html">Privacy Policy</a> |
+    <a href="terms.html">Terms & Conditions</a> |
+    <a href="refund.html">Cancellation & Refund</a> |
+    <a href="shipping.html">Shipping & Delivery</a> |
+    <a href="contact.html">Contact Us</a>
+  </div>
+</div>
+</body>
+</html>
