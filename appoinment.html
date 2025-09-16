@@ -922,9 +922,12 @@ function checkAndResetCounter() {
 // ✅ Set min date
 document.addEventListener('DOMContentLoaded', function() {
     // Use localhost for testing, production URL for live site
-    window.BACKEND_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? 'http://localhost:5000' 
-        : 'https://hospital-backend-78ur.onrender.com';
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        // If a local port is present (e.g., app served by a dev server), use same origin; otherwise default to 3000
+        window.BACKEND_BASE = window.location.port ? window.location.origin : 'http://localhost:3000';
+    } else {
+        window.BACKEND_BASE = 'https://hospital-backend-78ur.onrender.com';
+    }
     checkAndResetCounter();
     const today = new Date();
     const yyyy = today.getFullYear();
