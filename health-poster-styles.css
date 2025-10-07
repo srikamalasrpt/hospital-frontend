@@ -1,0 +1,1030 @@
+/**
+ * Health Poster Styles
+ * Professional styling for daily health awareness posters
+ */
+
+/* Poster Popup Overlay */
+.poster-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.poster-popup-container {
+    background: white;
+    border-radius: 15px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.4s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Card-like structure */
+.card-poster {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 2px solid #e9ecef;
+    border-radius: 20px;
+    box-shadow: 
+        0 25px 80px rgba(0, 0, 0, 0.15),
+        0 10px 30px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+.card-poster::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #e53935 0%, #00b894 50%, #2196f3 100%);
+    z-index: 1;
+}
+
+.card-poster::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    animation: cardShimmer 3s infinite;
+    z-index: 0;
+}
+
+@keyframes cardShimmer {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.poster-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: linear-gradient(90deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    border-radius: 15px 15px 0 0;
+    position: relative;
+    z-index: 2;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.countdown-timer {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1em;
+    animation: countdownPulse 1s infinite;
+}
+
+@keyframes countdownPulse {
+    0%, 100% {
+        transform: scale(1);
+        background: rgba(255, 255, 255, 0.2);
+    }
+    50% {
+        transform: scale(1.1);
+        background: rgba(255, 255, 255, 0.3);
+    }
+}
+
+.poster-popup-header h3 {
+    margin: 0;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.close-poster-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 50%;
+    transition: background 0.3s;
+}
+
+.close-poster-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.poster-popup-content {
+    padding: 0;
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(90vh - 80px);
+    scroll-behavior: smooth;
+}
+
+/* Health Poster Styles */
+.health-poster {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+    background: white;
+    animation: posterSlideIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border: 1px solid #e9ecef;
+}
+
+/* Card-like enhancements */
+.health-poster {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 2px solid #e9ecef;
+    border-radius: 20px;
+    box-shadow: 
+        0 15px 40px rgba(0, 0, 0, 0.1),
+        0 5px 15px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+.health-poster::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #e53935 0%, #00b894 50%, #2196f3 100%);
+    z-index: 1;
+}
+
+.health-poster::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    animation: posterShimmer 3s infinite;
+    z-index: 0;
+}
+
+@keyframes posterShimmer {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+/* Auto-vanish animation */
+.poster-popup-overlay.vanishing {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.5s ease-out;
+}
+
+.poster-popup-overlay.vanishing .poster-popup-container {
+    transform: translateY(-20px);
+    transition: all 0.5s ease-out;
+}
+
+/* Enhanced Animations */
+@keyframes posterSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.animated-poster {
+    animation: posterSlideIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.animated-header {
+    animation: headerSlideDown 0.6s ease-out;
+}
+
+@keyframes headerSlideDown {
+    0% {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.animated-profile {
+    animation: profileBounce 0.8s ease-out 0.2s both;
+}
+
+@keyframes profileBounce {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.animated-icon {
+    animation: iconPulse 2s infinite;
+}
+
+@keyframes iconPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+}
+
+.animated-banner {
+    animation: bannerGlow 0.8s ease-out 0.3s both;
+}
+
+@keyframes bannerGlow {
+    0% {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.animated-title {
+    animation: titleSlideIn 0.8s ease-out 0.4s both;
+}
+
+@keyframes titleSlideIn {
+    0% {
+        transform: translateX(-30px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.animated-description {
+    animation: descriptionFadeIn 0.8s ease-out 0.5s both;
+}
+
+@keyframes descriptionFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Health Image Container */
+.health-image-container {
+    position: relative;
+    margin: 15px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    animation: imageZoomIn 0.8s ease-out 0.6s both;
+}
+
+@keyframes imageZoomIn {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.health-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.health-image:hover {
+    transform: scale(1.05);
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(0, 0, 0, 0.1), transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.floating-icons {
+    display: flex;
+    gap: 15px;
+    animation: floatingIcons 3s ease-in-out infinite;
+}
+
+@keyframes floatingIcons {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-10px) rotate(5deg);
+    }
+    50% {
+        transform: translateY(-5px) rotate(-3deg);
+    }
+    75% {
+        transform: translateY(-8px) rotate(2deg);
+    }
+}
+
+.floating-icon {
+    font-size: 2em;
+    animation: iconFloat 2s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.floating-icon:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.floating-icon:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.floating-icon:nth-child(3) {
+    animation-delay: 1s;
+}
+
+@keyframes iconFloat {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-15px) scale(1.1);
+    }
+}
+
+.animated-section-title {
+    animation: sectionTitleSlide 0.6s ease-out 0.7s both;
+}
+
+@keyframes sectionTitleSlide {
+    0% {
+        transform: translateX(-20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.animated-item {
+    animation: itemSlideIn 0.5s ease-out both;
+}
+
+@keyframes itemSlideIn {
+    0% {
+        transform: translateX(-30px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.animated-symptom-icon,
+.animated-prevention-icon {
+    animation: iconSpin 0.6s ease-out;
+}
+
+@keyframes iconSpin {
+    0% {
+        transform: rotate(-180deg) scale(0);
+    }
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+.animated-cta {
+    animation: ctaPulse 0.8s ease-out 1s both;
+}
+
+@keyframes ctaPulse {
+    0% {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.animated-doctor {
+    animation: doctorSlideUp 0.6s ease-out 1.1s both;
+}
+
+@keyframes doctorSlideUp {
+    0% {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.animated-hospital {
+    animation: hospitalSlideUp 0.6s ease-out 1.2s both;
+}
+
+@keyframes hospitalSlideUp {
+    0% {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.animated-logo {
+    animation: logoRotate 0.8s ease-out 1.3s both;
+}
+
+@keyframes logoRotate {
+    0% {
+        transform: rotate(-180deg) scale(0);
+    }
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+.animated-actions {
+    animation: actionsSlideUp 0.6s ease-out 1.4s both;
+}
+
+@keyframes actionsSlideUp {
+    0% {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.animated-btn {
+    animation: btnBounce 0.5s ease-out 1.5s both;
+    transition: all 0.3s ease;
+}
+
+@keyframes btnBounce {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.animated-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Poster Header (Social Media Style) */
+.poster-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    color: white;
+    border-radius: 15px 15px 0 0;
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #e53935, #00b894);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-name {
+    font-weight: 600;
+    font-size: 0.9em;
+    margin: 0;
+}
+
+.post-time {
+    font-size: 0.75em;
+    opacity: 0.8;
+    margin: 0;
+}
+
+.media-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.media-controls span {
+    font-size: 0.9em;
+    opacity: 0.8;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.media-controls span:hover {
+    opacity: 1;
+}
+
+/* Main Content */
+.poster-content {
+    padding: 0;
+}
+
+.main-banner {
+    padding: 20px 15px;
+    color: white;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.main-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    animation: shimmer 3s infinite;
+}
+
+.main-title {
+    font-size: 1.3em;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+}
+
+.main-description {
+    font-size: 0.9em;
+    margin: 0;
+    opacity: 0.95;
+    position: relative;
+    z-index: 1;
+}
+
+.content-body {
+    padding: 20px 15px;
+    background: white;
+}
+
+.section-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 15px 0;
+    text-align: center;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 8px;
+}
+
+.symptoms-list, .prevention-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.symptom-item, .prevention-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #e53935;
+    transition: all 0.3s ease;
+}
+
+.prevention-item {
+    border-left-color: #00b894;
+}
+
+.symptom-item:hover, .prevention-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.symptom-icon, .prevention-icon {
+    font-size: 1.2em;
+    min-width: 24px;
+    text-align: center;
+}
+
+.symptom-text, .prevention-text {
+    font-size: 0.9em;
+    color: #2c3e50;
+    font-weight: 500;
+    flex: 1;
+}
+
+.call-to-action {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    border: 2px solid #dee2e6;
+    margin: 20px 0;
+}
+
+.cta-text {
+    font-size: 0.9em;
+    color: #495057;
+    margin: 0 0 5px 0;
+    font-weight: 600;
+}
+
+.cta-english {
+    font-size: 0.8em;
+    color: #6c757d;
+    margin: 0;
+    font-style: italic;
+}
+
+/* Doctor Information */
+.doctor-info {
+    padding: 15px;
+    color: white;
+    text-align: center;
+}
+
+.doctor-name {
+    font-size: 1.1em;
+    font-weight: 700;
+    margin: 0 0 5px 0;
+    color: #fff;
+}
+
+.doctor-qualification, .doctor-specialization, .doctor-position {
+    font-size: 0.8em;
+    margin: 2px 0;
+    opacity: 0.9;
+    line-height: 1.3;
+}
+
+/* Hospital Information */
+.hospital-info {
+    padding: 15px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-align: left;
+}
+
+.hospital-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+}
+
+.logo-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    margin-bottom: 5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.logo-text {
+    font-size: 0.7em;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.hospital-details {
+    flex: 1;
+}
+
+.hospital-name {
+    font-size: 1.2em;
+    font-weight: 700;
+    margin: 0 0 5px 0;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.hospital-contact, .hospital-address {
+    font-size: 0.8em;
+    margin: 2px 0;
+    opacity: 0.9;
+    line-height: 1.3;
+}
+
+/* Action Buttons */
+.poster-actions {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.book-appointment {
+    background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+}
+
+.book-appointment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(229, 57, 53, 0.4);
+}
+
+.book-bloodtest {
+    background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
+}
+
+.book-bloodtest:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { 
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to { 
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .poster-popup-container {
+        max-width: 95vw;
+        max-height: 95vh;
+        margin: 10px;
+    }
+    
+    .health-poster {
+        max-width: 100%;
+    }
+    
+    .main-title {
+        font-size: 1.1em;
+    }
+    
+    .main-description {
+        font-size: 0.8em;
+    }
+    
+    .section-title {
+        font-size: 1em;
+    }
+    
+    .symptom-text, .prevention-text {
+        font-size: 0.85em;
+    }
+    
+    .hospital-info {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    
+    .poster-actions {
+        flex-direction: column;
+    }
+    
+    .action-btn {
+        font-size: 0.85em;
+        padding: 10px 12px;
+    }
+    
+    .header-controls {
+        gap: 10px;
+    }
+    
+    .countdown-timer {
+        width: 30px;
+        height: 30px;
+        font-size: 1em;
+    }
+    
+    .poster-popup-header h3 {
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .poster-header {
+        padding: 10px 12px;
+    }
+    
+    .profile-pic {
+        width: 35px;
+        height: 35px;
+        font-size: 1em;
+    }
+    
+    .profile-name {
+        font-size: 0.8em;
+    }
+    
+    .post-time {
+        font-size: 0.7em;
+    }
+    
+    .main-banner {
+        padding: 15px 12px;
+    }
+    
+    .content-body {
+        padding: 15px 12px;
+    }
+    
+    .symptom-item, .prevention-item {
+        padding: 8px 10px;
+        gap: 8px;
+    }
+    
+    .symptom-icon, .prevention-icon {
+        font-size: 1em;
+        min-width: 20px;
+    }
+    
+    .symptom-text, .prevention-text {
+        font-size: 0.8em;
+    }
+    
+    .doctor-info, .hospital-info {
+        padding: 12px;
+    }
+    
+    .doctor-name {
+        font-size: 1em;
+    }
+    
+    .doctor-qualification, .doctor-specialization, .doctor-position {
+        font-size: 0.75em;
+    }
+    
+    .hospital-name {
+        font-size: 1.1em;
+    }
+    
+    .hospital-contact, .hospital-address {
+        font-size: 0.75em;
+    }
+    
+    .poster-actions {
+        padding: 12px;
+    }
+    
+    .action-btn {
+        font-size: 0.8em;
+        padding: 8px 10px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .poster-popup-overlay {
+        position: static;
+        background: none;
+    }
+    
+    .poster-popup-container {
+        box-shadow: none;
+        border: 2px solid #000;
+    }
+    
+    .close-poster-btn {
+        display: none;
+    }
+    
+    .poster-actions {
+        display: none;
+    }
+}

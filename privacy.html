@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Privacy Policy - Sri Kamala Hospital</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8fdfd;
+      color: #333;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      width: 100%;
+      background: linear-gradient(90deg, #00b894 60%, #0984e3 100%);
+      box-shadow: 0 2px 12px #00b89422;
+      position: sticky;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 62px;
+      transition: background 0.3s;
+    }
+    .navbar .navbar-container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+    .navbar .navbar-logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1px;
+      text-decoration: none;
+      gap: 10px;
+      padding: 10px 0;
+    }
+    .navbar .navbar-logo i {
+      font-size: 1.5em;
+      color: #fff;
+      margin-right: 6px;
+    }
+    .navbar .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .navbar .navbar-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.08rem;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .navbar .navbar-links a.active,
+    .navbar .navbar-links a:hover {
+      background: #fff;
+      color: #00b894;
+      box-shadow: 0 2px 8px #00b89422;
+    }
+    @media (max-width: 800px) {
+      .navbar .navbar-container {
+        padding: 0 10px;
+      }
+      .navbar .navbar-links {
+        gap: 12px;
+      }
+      .navbar .navbar-logo {
+        font-size: 1.1rem;
+      }
+    }
+    @media (max-width: 600px) {
+      .navbar .navbar-container {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0 4vw;
+      }
+      .navbar .navbar-links {
+        width: 100%;
+        gap: 0;
+        margin-top: 4px;
+      }
+      .navbar .navbar-links a {
+        padding: 8px 8px;
+        font-size: 1rem;
+      }
+    }
+
+    /* Mobile Navigation Styles */
+    .mobile-nav-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      z-index: 1001;
+      margin-left: 0;
+      background: linear-gradient(135deg, #00b894 0%, #0984e3 100%);
+      border: none;
+      outline: none;
+      border-radius: 15px;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mobile-nav-toggle span {
+      width: 22px;
+      height: 3px;
+      background: #fff;
+      margin: 4px 0;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .mobile-nav-toggle:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0, 184, 148, 0.5);
+    }
+
+    .mobile-nav-toggle.active {
+      transform: rotate(90deg) scale(1.1);
+    }
+
+    .mobile-nav-toggle.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .mobile-nav-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .mobile-nav-toggle.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -6px);
+    }
+
+    /* Mobile Navigation Overlay */
+    .mobile-nav-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(0, 184, 148, 0.95) 0%, rgba(9, 132, 227, 0.95) 100%);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 0;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-100%);
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .mobile-nav-header {
+      padding: 25px 25px 15px 25px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+      margin-bottom: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      text-align: center;
+    }
+
+    .mobile-nav-header h3 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      letter-spacing: 1px;
+      background: linear-gradient(45deg, #fff, #e0f7fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+    }
+
+    .mobile-nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      padding: 0 25px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .mobile-nav-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: 600;
+      padding: 18px 25px;
+      border-radius: 25px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 300px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mobile-nav-links a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.6s;
+    }
+
+    .mobile-nav-links a:hover::before {
+      left: 100%;
+    }
+
+    .mobile-nav-links a:hover {
+      transform: translateX(10px) scale(1.02);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .mobile-nav-links a i {
+      font-size: 1.4rem;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .mobile-nav-links a:hover i {
+      transform: scale(1.2) rotate(5deg);
+    }
+
+    /* Hide mobile nav on desktop */
+    @media (min-width: 769px) {
+      .mobile-nav-toggle,
+      .mobile-nav-header,
+      .mobile-nav-links,
+      .mobile-nav-overlay {
+        display: none !important;
+      }
+    }
+
+    /* Show mobile nav on mobile */
+    @media (max-width: 768px) {
+      .mobile-nav-toggle {
+        display: flex;
+        position: absolute;
+        top: 20px;
+        right: 5px;
+        order: 2;
+        z-index: 1001;
+      }
+      
+      nav {
+        display: none !important;
+      }
+      
+      .mobile-nav-overlay.open {
+        display: flex;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+        visibility: visible;
+        animation: navbarSlideDown 0.4s cubic-bezier(.77,0,.18,1);
+      }
+      
+      body.nav-open {
+        overflow: hidden;
+      }
+    }
+
+    @keyframes navbarSlideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-100%);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    main {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    h2 {
+      color: #00b894;
+    }
+
+    section {
+      margin-bottom: 30px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #e0f7fa;
+      font-size: 14px;
+      color: #555;
+    }
+
+    a {
+      color: #0078d7;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+</head>
+<body>
+
+<header>
+  <h1>Sri Kamala Hospital</h1>
+  <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <nav id="nav-menu">
+    <a href="index.html"><i class="fa fa-home"></i> Home</a>
+    <a href="about.html"><i class="fa fa-info-circle"></i> About</a>
+    <a href="services.html"><i class="fa fa-stethoscope"></i> Services</a>
+    <a href="doctors.html"><i class="fa fa-user-md"></i> Doctors</a>
+  </nav>
+  
+  <!-- Mobile Navigation Overlay -->
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay">
+    <div class="mobile-nav-header">
+      <h3>Sri Kamala Hospital</h3>
+    </div>
+    <div class="mobile-nav-links">
+      <a href="index.html"><i class="fa fa-home"></i> Home</a>
+      <a href="about.html"><i class="fa fa-info-circle"></i> About</a>
+      <a href="services.html"><i class="fa fa-stethoscope"></i> Services</a>
+      <a href="doctors.html"><i class="fa fa-user-md"></i> Doctors</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section>
+    <p><strong>Last Updated:</strong> May 17, 2025</p>
+    <p>At <strong>Sri Kamala Hospital</strong>, accessible from <em>Website</em>, we prioritize the privacy of our visitors. This policy explains what information we collect and how we use it.</p>
+  </section>
+
+  <section>
+    <h2>1. Information We Collect</h2>
+    <ul>
+      <li>Full Name</li>
+      <li>Contact Number</li>
+      <li>Age and Gender</li>
+      <li>Appointment Details (Date, Department)</li>
+      <li>Payment Info (via third-party gateways like Instamojo)</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>2. How We Use Your Information</h2>
+    <p>We use your information to:</p>
+    <ul>
+      <li>Book appointments</li>
+      <li>Send confirmation messages</li>
+      <li>Generate token numbers</li>
+      <li>Process payments securely</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>3. Sharing of Information</h2>
+    <p>We do <strong>not sell or rent</strong> your data. We may share it with:</p>
+    <ul>
+      <li>Payment providers like Instamojo</li>
+      <li>Legal authorities if required</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>4. Data Security</h2>
+    <p>We take security seriously. While we use industry-standard measures, no system is 100% secure online.</p>
+  </section>
+
+  <section>
+    <h2>5. Cookies</h2>
+    <p>We may use cookies to improve your experience. You can disable them in your browser settings.</p>
+  </section>
+
+  <section>
+    <h2>6. External Links</h2>
+    <p>Our site may link to others. We are not responsible for their content or privacy practices.</p>
+  </section>
+
+  <section>
+    <h2>7. Children’s Privacy</h2>
+    <p>We do not knowingly collect information from children under 13 without parental consent.</p>
+  </section>
+
+  <section>
+    <h2>8. Your Rights</h2>
+    <p>You may contact us to access, correct, or delete your data.</p>
+  </section>
+
+  <section>
+    <h2>9. Contact Us</h2>
+    <p>For questions, contact:</p>
+    <ul>
+      <li><strong>Email:</strong> srikamalahospitalsrpt@gmail.com</li>
+      <li><strong>Phone:</strong> +91-9948076665</li>
+    </ul>
+  </section>
+</main>
+<div class="bottom-footer">
+  <p>&copy; 2025 Sri Kamala Hospital. All rights reserved.</p>
+  <div style="margin-top:8px;">
+    <a href="privacy.html">Privacy Policy</a> |
+    <a href="terms.html">Terms & Conditions</a> |
+    <a href="refund.html">Cancellation & Refund</a> |
+    <a href="shipping.html">Shipping & Delivery</a> |
+    <a href="contact.html">Contact Us</a>
+  </div>
+</div>
+<footer>
+  © 2025 Sri Kamala Hospital. All rights reserved.
+</footer>
+
+<script>
+  // Mobile Navigation Functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+    const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+    
+    function toggleMenu() {
+      const isOpen = mobileNavOverlay.classList.contains('open');
+      if (isOpen) {
+        mobileNavToggle.classList.remove('active');
+        mobileNavOverlay.classList.remove('open');
+        document.body.classList.remove('nav-open');
+        document.body.style.overflow = '';
+      } else {
+        mobileNavToggle.classList.add('active');
+        mobileNavOverlay.classList.add('open');
+        document.body.classList.add('nav-open');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+    
+    if (mobileNavToggle && mobileNavOverlay) {
+      mobileNavToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleMenu();
+      });
+      
+      const navLinks = mobileNavOverlay.querySelectorAll('a');
+      navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          toggleMenu();
+        });
+      });
+      
+      document.addEventListener('click', function(event) {
+        if (!mobileNavToggle.contains(event.target) && !mobileNavOverlay.contains(event.target)) {
+          if (mobileNavOverlay.classList.contains('open')) {
+            toggleMenu();
+          }
+        }
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
