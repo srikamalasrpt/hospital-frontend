@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About | Sri Kamala Hospital</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #f9fbfc 60%, #e0f7fa 100%);
+      color: #2b2b2b;
+      min-height: 100vh;
+      animation: bodyFadeIn 1.2s;
+    }
+    @keyframes bodyFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    header {
+      background: linear-gradient(90deg, #63c6ec 60%, #a0eecb 100%);
+      color: white;
+      text-align: center;
+      padding: 36px 10px 30px 10px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      animation: headerSlide 1s cubic-bezier(.77,0,.18,1);
+    }
+    @keyframes headerSlide {
+      from { opacity: 0; transform: translateY(-40px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+
+    header h1 {
+      margin-bottom: 10px;
+      font-size: 2.3em;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      animation: popIn 0.8s;
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.95);}
+      to { opacity: 1; transform: scale(1);}
+    }
+
+    /* Navbar Styling */
+    nav {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0;
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      padding: 0 8px;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    nav a {
+      color: #fff;
+      margin: 0 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.08em;
+      letter-spacing: 0.5px;
+      transition: 
+        color 0.3s, 
+        text-shadow 0.3s, 
+        background 0.25s, 
+        box-shadow 0.25s;
+      position: relative;
+      padding: 8px 18px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    nav a::after {
+      content: "";
+      display: block;
+      width: 0;
+      height: 2.5px;
+      background: linear-gradient(90deg, #0ea5e9 60%, #f59e42 100%);
+      transition: width 0.3s;
+      margin: 0 auto;
+      border-radius: 2px;
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 5px;
+    }
+    nav a:hover, nav a.active {
+      color: #0ea5e9;
+      background: #fff;
+      box-shadow: 0 2px 12px #0ea5e91a;
+      text-shadow: 0 2px 8px #a0eecb55;
+    }
+    nav a:hover::after, nav a.active::after {
+      width: 70%;
+    }
+    nav a.active {
+      font-weight: 700;
+      color: #f59e42;
+      background: #e0f7fa;
+      box-shadow: 0 2px 12px #f59e421a;
+    }
+
+    @media (max-width: 600px) {
+      nav {
+        flex-wrap: wrap;
+        padding: 0 2vw;
+        border-radius: 8px;
+      }
+      nav a {
+        font-size: 1em;
+        padding: 7px 10px;
+        margin: 0 2px;
+      }
+    }
+
+    .page-header {
+      text-align: center;
+      padding: 60px 20px 30px;
+      background: linear-gradient(90deg, #e3f9f6 80%, #f0fdfa 100%);
+      animation: slideDown 1s ease-out;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .page-header h2 {
+      font-size: 2em;
+      color: #0e766e;
+      margin-bottom: 0.2em;
+      letter-spacing: 1px;
+      animation: fadeInUp 1.1s;
+    }
+    .page-header p {
+      font-size: 1.15em;
+      color: #00796b;
+      letter-spacing: 0.5px;
+      margin-top: 0.2em;
+      animation: fadeInUp 1.3s;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+
+    .about-content {
+      max-width: 900px;
+      margin: 48px auto 40px auto;
+      padding: 32px 24px 32px 24px;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      animation: fadeIn 1.2s ease;
+      position: relative;
+      z-index: 1;
+      width: calc(100% - 40px);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .about-content h3 {
+      margin-top: 36px;
+      color: #0e766e;
+      font-size: 1.25em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: fadeInUp 1.2s;
+    }
+    .about-content h3 i {
+      color: #0ea5e9;
+      font-size: 1.1em;
+      animation: iconPulse 1.5s infinite alternate;
+    }
+    @keyframes iconPulse {
+      from { transform: scale(1);}
+      to { transform: scale(1.18);}
+    }
+
+    .about-content p, .about-content ul {
+      line-height: 1.8;
+      margin-top: 10px;
+      font-size: 1.08em;
+      animation: fadeIn 1.3s;
+    }
+
+    .about-content ul {
+      list-style-type: none;
+      padding-left: 0;
+      margin-top: 18px;
+    }
+
+    .about-content ul li {
+      margin: 12px 0;
+      padding-left: 32px;
+      position: relative;
+      font-size: 1.05em;
+      transition: background 0.2s;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .about-content ul li:hover {
+      background: #e0f7fa44;
+    }
+
+    .about-content ul li::before {
+      content: "\f00c";
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      left: 0;
+      color: #0ea5e9;
+      font-size: 1.1em;
+      top: 2px;
+      animation: checkBounce 0.7s;
+    }
+    @keyframes checkBounce {
+      0% { transform: scale(0.7);}
+      60% { transform: scale(1.2);}
+      100% { transform: scale(1);}
+    }
+
+    footer {
+      background-color: #1e293b;
+      color: #ffffff;
+      text-align: center;
+      padding: 24px 10px 18px 10px;
+      margin-top: 40px;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.04);
+      position: relative;
+    }
+
+    #chatbot {
+      position: fixed;
+      bottom: 80px;
+      right: 24px;
+      width: 320px;
+      background: linear-gradient(120deg, #f9fafb 80%, #e0f7fa 100%);
+      border-radius: 18px;
+      box-shadow: 0 0 18px rgba(0,0,0,0.13);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 9999;
+      border: 1.5px solid #0ea5e9;
+      animation: chatbotPop 0.5s;
+    }
+    @keyframes chatbotPop {
+      from { opacity: 0; transform: scale(0.8);}
+      to { opacity: 1; transform: scale(1);}
+    }
+  
+    .chat-header {
+      background: linear-gradient(90deg, #0ea5e9 60%, #f59e42 100%);
+      color: white;
+      padding: 12px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1.08em;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+  
+    .chat-body {
+      height: 250px;
+      overflow-y: auto;
+      padding: 12px;
+      font-size: 14.5px;
+      color: #222;
+      background: #f7fafc;
+      transition: background 0.2s;
+    }
+    .chat-msg {
+      margin-bottom: 10px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: #e0f7fa;
+      color: #0e766e;
+      max-width: 90%;
+      word-break: break-word;
+      animation: fadeIn 0.5s;
+    }
+    .chat-msg strong {
+      color: #f59e42;
+      font-weight: 700;
+    }
+    .chat-msg:last-child {
+      background: #f59e42;
+      color: #fff;
+      font-weight: 500;
+      animation: chatMsgPop 0.5s;
+    }
+    @keyframes chatMsgPop {
+      from { opacity: 0; transform: translateY(20px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+  
+    .chat-footer {
+      display: flex;
+      border-top: 1px solid #ddd;
+      background: #fff;
+    }
+  
+    .chat-footer input {
+      flex: 1;
+      border: none;
+      padding: 12px;
+      outline: none;
+      font-size: 1em;
+      border-radius: 0 0 0 12px;
+      background: #f7fafc;
+      transition: background 0.2s;
+    }
+    .chat-footer input:focus {
+      background: #e0f7fa;
+    }
+  
+    .chat-footer button {
+      background: linear-gradient(90deg, #0ea5e9 60%, #f59e42 100%);
+      border: none;
+      color: #fff;
+      padding: 0 18px;
+      font-size: 1.2em;
+      border-radius: 0 0 12px 0;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .chat-footer button:hover {
+      background: #f59e42;
+    }
+  
+    #chat-toggle {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: linear-gradient(90deg, #0ea5e9 60%, #f59e42 100%);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      padding: 18px;
+      font-size: 1.5em;
+      cursor: pointer;
+      z-index: 9999;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.13);
+      transition: background 0.2s, transform 0.2s;
+      animation: pulse 1.5s infinite alternate;
+    }
+    #chat-toggle:hover {
+      background: #f59e42;
+      transform: scale(1.08);
+    }
+    @keyframes pulse {
+      from { box-shadow: 0 0 0 0 #0ea5e955;}
+      to { box-shadow: 0 0 16px 8px #f59e4255;}
+    }
+
+    /* Comprehensive Responsive Design */
+    @media (max-width: 1200px) {
+      .about-content {
+        width: calc(100% - 30px);
+        padding: 28px 20px 28px 20px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .about-content {
+        width: calc(100% - 20px);
+        padding: 24px 16px 24px 16px;
+        margin: 36px auto 30px auto;
+      }
+      .page-header {
+        padding: 40px 15px 20px 15px;
+      }
+      .page-header h2 {
+        font-size: 1.8rem;
+      }
+      .page-header p {
+        font-size: 1.1rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .about-content {
+        width: calc(100% - 15px);
+        padding: 20px 12px 20px 12px;
+        margin: 30px auto 25px auto;
+        border-radius: 12px;
+      }
+      .page-header {
+        padding: 30px 10px 15px 10px;
+        border-radius: 0 0 20px 20px;
+      }
+      .page-header h2 {
+        font-size: 1.6rem;
+        margin-bottom: 0.15em;
+      }
+      .page-header p {
+        font-size: 1rem;
+        margin-top: 0.15em;
+      }
+      .about-content h3 {
+        font-size: 1.2rem;
+        margin-top: 28px;
+      }
+      .about-content p, .about-content ul {
+        font-size: 1rem;
+        line-height: 1.7;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .about-content {
+        width: calc(100% - 10px);
+        padding: 16px 8px 16px 8px;
+        margin: 20px auto 15px auto;
+        border-radius: 10px;
+      }
+      .page-header {
+        padding: 25px 8px 12px 8px;
+        border-radius: 0 0 15px 15px;
+      }
+      .page-header h2 {
+        font-size: 1.4rem;
+        margin-bottom: 0.1em;
+      }
+      .page-header p {
+        font-size: 0.95rem;
+        margin-top: 0.1em;
+      }
+      .about-content h3 {
+        font-size: 1.1rem;
+        margin-top: 24px;
+      }
+      .about-content p, .about-content ul {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-top: 8px;
+      }
+      .about-content ul li {
+        margin: 10px 0;
+        padding-left: 28px;
+        font-size: 0.95rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .about-content {
+        width: calc(100% - 8px);
+        padding: 12px 6px 12px 6px;
+        margin: 15px auto 10px auto;
+        border-radius: 8px;
+      }
+      .page-header {
+        padding: 20px 6px 10px 6px;
+        border-radius: 0 0 12px 12px;
+      }
+      .page-header h2 {
+        font-size: 1.3rem;
+        margin-bottom: 0.05em;
+      }
+      .page-header p {
+        font-size: 0.9rem;
+        margin-top: 0.05em;
+      }
+      .about-content h3 {
+        font-size: 1rem;
+        margin-top: 20px;
+      }
+      .about-content p, .about-content ul {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-top: 6px;
+      }
+      .about-content ul li {
+        margin: 8px 0;
+        padding-left: 24px;
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .about-content {
+        width: calc(100% - 4px);
+        padding: 10px 4px 10px 4px;
+        margin: 10px auto 8px auto;
+        border-radius: 6px;
+      }
+      .page-header {
+        padding: 15px 4px 8px 4px;
+        border-radius: 0 0 10px 10px;
+      }
+      .page-header h2 {
+        font-size: 1.2rem;
+      }
+      .page-header p {
+        font-size: 0.85rem;
+      }
+      .about-content h3 {
+        font-size: 0.95rem;
+        margin-top: 16px;
+      }
+      .about-content p, .about-content ul {
+        font-size: 0.85rem;
+        line-height: 1.4;
+        margin-top: 4px;
+      }
+      .about-content ul li {
+        margin: 6px 0;
+        padding-left: 20px;
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .about-content {
+        padding: 16px 6vw;
+      }
+      #chatbot, #chat-toggle {
+        right: 8px;
+      }
+      #chatbot {
+        width: 95vw;
+        min-width: 0;
+      }
+    }
+
+    /* Mobile Navigation Styles */
+    .mobile-nav-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      z-index: 1001;
+      margin-left: 0;
+      background: linear-gradient(135deg, #00b894 0%, #0984e3 100%);
+      border: none;
+      outline: none;
+      border-radius: 15px;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mobile-nav-toggle span {
+      width: 22px;
+      height: 3px;
+      background: #fff;
+      margin: 4px 0;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .mobile-nav-toggle:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0, 184, 148, 0.5);
+    }
+
+    .mobile-nav-toggle.active {
+      transform: rotate(90deg) scale(1.1);
+    }
+
+    .mobile-nav-toggle.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .mobile-nav-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .mobile-nav-toggle.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -6px);
+    }
+
+    /* Mobile Navigation Overlay */
+    .mobile-nav-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(0, 184, 148, 0.95) 0%, rgba(9, 132, 227, 0.95) 100%);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 0;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-100%);
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .mobile-nav-header {
+      padding: 25px 25px 15px 25px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+      margin-bottom: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      text-align: center;
+    }
+
+    .mobile-nav-header h3 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      letter-spacing: 1px;
+      background: linear-gradient(45deg, #fff, #e0f7fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+    }
+
+    .mobile-nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      padding: 0 25px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .mobile-nav-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: 600;
+      padding: 18px 25px;
+      border-radius: 25px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 300px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mobile-nav-links a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.6s;
+    }
+
+    .mobile-nav-links a:hover::before {
+      left: 100%;
+    }
+
+    .mobile-nav-links a:hover {
+      transform: translateX(10px) scale(1.02);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .mobile-nav-links a i {
+      font-size: 1.4rem;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .mobile-nav-links a:hover i {
+      transform: scale(1.2) rotate(5deg);
+    }
+
+    /* Hide mobile nav on desktop */
+    @media (min-width: 769px) {
+      .mobile-nav-toggle,
+      .mobile-nav-header,
+      .mobile-nav-links,
+      .mobile-nav-overlay {
+        display: none !important;
+      }
+    }
+
+    /* Show mobile nav on mobile */
+    @media (max-width: 768px) {
+      .mobile-nav-toggle {
+        display: flex;
+        position: absolute;
+        top: 20px;
+        right: 5px;
+        order: 2;
+        z-index: 1001;
+      }
+      
+      nav {
+        display: none !important;
+      }
+      
+      .mobile-nav-overlay.open {
+        display: flex;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+        visibility: visible;
+        animation: navbarSlideDown 0.4s cubic-bezier(.77,0,.18,1);
+      }
+      
+      body.nav-open {
+        overflow: hidden;
+      }
+    }
+
+    @keyframes navbarSlideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-100%);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Sri Kamala Hospital</h1>
+    <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <nav id="nav-menu">
+      <a href="index.html"><i class="fa fa-home"></i> Home</a>
+      <a href="about.html"><i class="fa fa-info-circle"></i> About</a>
+      <a href="services.html"><i class="fa fa-stethoscope"></i> Services</a>
+      <a href="doctors.html"><i class="fa fa-user-md"></i> Doctors</a>
+    </nav>
+    
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobile-nav-overlay">
+      <div class="mobile-nav-header">
+        <h3>Sri Kamala Hospital</h3>
+      </div>
+      <div class="mobile-nav-links">
+        <a href="index.html"><i class="fa fa-home"></i> Home</a>
+        <a href="about.html"><i class="fa fa-info-circle"></i> About</a>
+        <a href="services.html"><i class="fa fa-stethoscope"></i> Services</a>
+        <a href="doctors.html"><i class="fa fa-user-md"></i> Doctors</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="page-header">
+    <h2>About Us</h2>
+    <p>Compassion. Excellence. Care.</p>
+  </section>
+
+  <div class="about-content">
+    <p><strong>Sri Kamala Hospital</strong> has been at the forefront of compassionate healthcare for over two decades. With a commitment to excellence, our team works tirelessly to offer quality and affordable medical services to the community.</p>
+
+    <h3><i class="fas fa-bullseye"></i> Our Mission</h3>
+    <p>To ensure accessible, affordable, and compassionate healthcare to all sections of society through integrity and professionalism.</p>
+
+    <h3><i class="fas fa-eye"></i> Our Vision</h3>
+    <p>To become a leading center of excellence in healthcare and medical education, where patients always come first.</p>
+
+    <h3><i class="fas fa-star"></i> Why Choose Us?</h3>
+    <ul>
+      <li>Experienced and qualified doctors</li>
+      <li>Modern medical equipment and facilities</li>
+      <li>Patient-first approach in every treatment</li>
+      <li>Transparent procedures and quality care</li>
+    </ul>
+  </div>
+
+  <footer>
+    <div id="chatbot">
+      <div class="chat-header">💬 Need Help? Chat with us!</div>
+      <div class="chat-body" id="chat-body"></div>
+      <div class="chat-footer">
+        <input type="text" id="chat-input" placeholder="Type your message..." />
+        <button onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+    
+    <button id="chat-toggle" onclick="toggleChat()">💬</button>
+    
+    <script>
+      // Mobile Navigation Functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+        const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+        
+        function toggleMenu() {
+          const isOpen = mobileNavOverlay.classList.contains('open');
+          if (isOpen) {
+            mobileNavToggle.classList.remove('active');
+            mobileNavOverlay.classList.remove('open');
+            document.body.classList.remove('nav-open');
+            document.body.style.overflow = '';
+          } else {
+            mobileNavToggle.classList.add('active');
+            mobileNavOverlay.classList.add('open');
+            document.body.classList.add('nav-open');
+            document.body.style.overflow = 'hidden';
+          }
+        }
+        
+        if (mobileNavToggle && mobileNavOverlay) {
+          mobileNavToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleMenu();
+          });
+          
+          const navLinks = mobileNavOverlay.querySelectorAll('a');
+          navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+              toggleMenu();
+            });
+          });
+          
+          document.addEventListener('click', function(event) {
+            if (!mobileNavToggle.contains(event.target) && !mobileNavOverlay.contains(event.target)) {
+              if (mobileNavOverlay.classList.contains('open')) {
+                toggleMenu();
+              }
+            }
+          });
+        }
+      });
+
+      let chatVisible = false;
+    
+      function toggleChat() {
+        chatVisible = !chatVisible;
+        document.getElementById("chatbot").style.display = chatVisible ? "flex" : "none";
+        if (chatVisible) {
+          setTimeout(() => botReply("Hi! How can I help you today? 👋"), 500);
+        }
+      }
+    
+      function sendMessage() {
+        const input = document.getElementById("chat-input");
+        const msg = input.value.trim();
+        if (!msg) return;
+        addMessage("You", msg);
+        input.value = "";
+        setTimeout(() => botReply(getBotResponse(msg)), 800);
+      }
+    
+      function addMessage(sender, message) {
+        const chat = document.getElementById("chat-body");
+        const bubble = document.createElement("div");
+        bubble.className = "chat-msg";
+        bubble.innerHTML = `<strong>${sender}:</strong> ${message}`;
+        chat.appendChild(bubble);
+        chat.scrollTop = chat.scrollHeight;
+      }
+    
+      function botReply(message) {
+        addMessage("Bot", message);
+      }
+    
+      function getBotResponse(input) {
+        const msg = input.toLowerCase();
+        if (msg.includes("bookop") || msg.includes("appointment")) {
+          return 'You can book an appointment <a href="appoinment.html" target="_blank">here</a>.';
+        }
+        if (msg.includes("time") || msg.includes("timing")) {
+          return "We are open from <strong>8AM to 8PM</strong>, all 7 days.";
+        }
+        if (msg.includes("doctor")) {
+          return 'You can view our doctors <a href="doctors.html" target="_blank">here</a>.';
+        }
+        if (msg.includes("location") || msg.includes("where")) {
+          return "We are located at <strong>123 Health Road, YourCity</strong>.";
+        }
+        if (msg.includes("blood test")) {
+          return 'You can book blood tests <a href="bloodtestbook.html" target="_blank">here</a>.';
+        }
+        if (msg.includes("emergency")) {
+          return "Please call our emergency line: <strong>+91-XXXXXXXXXX</strong>";
+        }
+        if (msg.includes("contact")) {
+          return 'You can contact us via the form <a href="contact.html" target="_blank">here</a>.';
+        }
+    
+        return "Sorry, I didn’t understand that. Can you rephrase?";
+      }
+    </script>
+    
+    <p style="margin-top:18px;">&copy; 2025 Sri Kamala Hospital. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>

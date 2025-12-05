@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Upload Health Posters</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="health-poster-styles.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .admin-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .admin-header {
+            background: linear-gradient(90deg, #e53935 0%, #00b894 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .admin-header h1 {
+            margin: 0;
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .admin-content {
+            padding: 30px;
+        }
+
+        .upload-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .upload-area {
+            text-align: center;
+            padding: 40px 20px;
+            border: 2px dashed #007bff;
+            border-radius: 10px;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            background: #e3f2fd;
+            border-color: #0056b3;
+        }
+
+        .upload-area.dragover {
+            background: #e3f2fd;
+            border-color: #0056b3;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 1.2em;
+            color: #495057;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+        }
+
+        .preview-section {
+            margin-top: 30px;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .preview-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .preview-item:hover {
+            transform: scale(1.05);
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .preview-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(0, 0, 0, 0.7), transparent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .preview-item:hover .preview-overlay {
+            opacity: 1;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .test-poster-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .test-poster-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-content {
+                padding: 20px;
+            }
+            
+            .preview-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+            
+            .admin-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* Authentication Modal Styles */
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: popupSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        @keyframes popupSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .auth-form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .auth-form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .auth-form-group input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .auth-form-group .password-toggle {
+            position: relative;
+        }
+
+        .auth-form-group .password-toggle-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0.5rem;
+        }
+
+        .auth-form-group .password-toggle-btn:hover {
+            color: #007bff;
+        }
+
+        .auth-form-group .password-strength {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .password-strength-bar {
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .password-strength-fill {
+            height: 100%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .password-strength-weak { background: #e74c3c; width: 33%; }
+        .password-strength-medium { background: #f39c12; width: 66%; }
+        .password-strength-strong { background: #27ae60; width: 100%; }
+
+        .auth-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .auth-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .auth-btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+        }
+
+        .auth-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+        }
+
+        .auth-btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e9ecef;
+        }
+
+        .auth-btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .auth-links a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+
+        .auth-error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            border: 1px solid #f5c6cb;
+        }
+
+        .auth-success {
+            background: #d4edda;
+            color: #155724;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            border: 1px solid #c3e6cb;
+        }
+
+        .auth-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            border: 1px solid #bee5eb;
+        }
+
+        .auth-info ul {
+            margin: 0.5rem 0 0 1.5rem;
+            padding: 0;
+        }
+
+        .auth-info li {
+            margin: 0.25rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Authentication Overlay -->
+    <div id="authOverlay" class="auth-overlay" style="display: none;">
+        <div class="auth-container" id="authContainer">
+            <!-- Content will be dynamically inserted -->
+        </div>
+    </div>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>🏥 Admin - Health Poster Upload</h1>
+            <p>Upload custom health awareness images for daily posters</p>
+        </div>
+        
+        <div class="admin-content">
+            <div class="upload-section">
+                <h3>📤 Upload New Poster Images</h3>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📷</div>
+                    <div class="upload-text">Click to upload or drag & drop images</div>
+                    <div class="upload-subtext">Supports JPG, PNG, GIF (Max 5MB each)</div>
+                    <input type="file" id="fileInput" multiple accept="image/*">
+                    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                        Choose Images
+                    </button>
+                </div>
+            </div>
+
+            <div id="statusMessage"></div>
+
+            <div class="preview-section">
+                <h3>🖼️ Current Poster Images</h3>
+                <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 12px; margin-bottom: 15px; color: #856404;">
+                    <strong>⏰ Daily Reset:</strong> Images will be automatically deleted at midnight (12:00 AM) each day
+                </div>
+                <div class="preview-grid" id="previewGrid">
+                    <!-- Images will be loaded here -->
+                </div>
+            </div>
+
+            <div class="admin-actions">
+                <button class="test-poster-btn" onclick="testPoster()">
+                    🎭 Test Poster Display
+                </button>
+                <button class="upload-btn" onclick="clearAllImages()" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">
+                    🗑️ Clear All Images
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Authentication System
+        const AUTH_STORAGE_KEY = 'admin_auth';
+        const PASSWORD_STORAGE_KEY = 'admin_password';
+        const DEFAULT_PASSWORD = 'admin123'; // Default password for first-time setup
+
+        // Check if password exists, if not set default
+        function initializeAuth() {
+            if (!localStorage.getItem(PASSWORD_STORAGE_KEY)) {
+                // Hash and store default password
+                const hashedPassword = hashPassword(DEFAULT_PASSWORD);
+                localStorage.setItem(PASSWORD_STORAGE_KEY, hashedPassword);
+                localStorage.setItem('admin_password_set', 'false'); // Flag for first-time setup
+            }
+        }
+
+        // Simple password hashing (for basic security)
+        function hashPassword(password) {
+            let hash = 0;
+            for (let i = 0; i < password.length; i++) {
+                const char = password.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32bit integer
+            }
+            return hash.toString();
+        }
+
+        // Verify password
+        function verifyPassword(password) {
+            const storedHash = localStorage.getItem(PASSWORD_STORAGE_KEY);
+            if (!storedHash) return false;
+            return hashPassword(password) === storedHash;
+        }
+
+        // Check authentication status
+        function isAuthenticated() {
+            const authData = localStorage.getItem(AUTH_STORAGE_KEY);
+            if (!authData) return false;
+            
+            try {
+                const auth = JSON.parse(authData);
+                const now = Date.now();
+                // Session expires after 24 hours
+                if (now - auth.timestamp > 24 * 60 * 60 * 1000) {
+                    localStorage.removeItem(AUTH_STORAGE_KEY);
+                    return false;
+                }
+                return auth.authenticated === true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // Set authentication
+        function setAuthenticated() {
+            localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({
+                authenticated: true,
+                timestamp: Date.now()
+            }));
+        }
+
+        // Show login modal
+        function showLoginModal() {
+            const authOverlay = document.getElementById('authOverlay');
+            const authContainer = document.getElementById('authContainer');
+            
+            const isFirstTime = localStorage.getItem('admin_password_set') === 'false';
+            
+            authContainer.innerHTML = `
+                <div class="auth-header">
+                    <h2>🔐 Admin Login</h2>
+                    <p>${isFirstTime ? 'Please set up your password' : 'Enter your password to continue'}</p>
+                </div>
+                <div id="authError"></div>
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="auth-form-group">
+                        <label for="loginPassword">Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="loginPassword" class="auth-input" required autocomplete="current-password">
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('loginPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="auth-actions">
+                        <button type="submit" class="auth-btn auth-btn-primary">Login</button>
+                    </div>
+                </form>
+                <div class="auth-links">
+                    <a onclick="showResetPasswordModal()">Forgot Password?</a>
+                    ${isFirstTime ? '' : ' | <a onclick="showCreatePasswordModal()">Change Password</a>'}
+                </div>
+            `;
+            
+            authOverlay.style.display = 'flex';
+            document.getElementById('loginPassword').focus();
+        }
+
+        // Handle login
+        function handleLogin(event) {
+            event.preventDefault();
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('authError');
+            
+            if (!password) {
+                errorDiv.innerHTML = '<div class="auth-error">Please enter your password</div>';
+                return;
+            }
+
+            const isFirstTime = localStorage.getItem('admin_password_set') === 'false';
+            
+            if (isFirstTime) {
+                // First time setup - create password
+                if (password.length < 6) {
+                    errorDiv.innerHTML = '<div class="auth-error">Password must be at least 6 characters long</div>';
+                    return;
+                }
+                
+                const hashedPassword = hashPassword(password);
+                localStorage.setItem(PASSWORD_STORAGE_KEY, hashedPassword);
+                localStorage.setItem('admin_password_set', 'true');
+                setAuthenticated();
+                
+                errorDiv.innerHTML = '<div class="auth-success">Password created successfully! Redirecting...</div>';
+                setTimeout(() => {
+                    document.getElementById('authOverlay').style.display = 'none';
+                    location.reload();
+                }, 1000);
+            } else {
+                // Normal login
+                if (verifyPassword(password)) {
+                    setAuthenticated();
+                    errorDiv.innerHTML = '<div class="auth-success">Login successful! Redirecting...</div>';
+                    setTimeout(() => {
+                        document.getElementById('authOverlay').style.display = 'none';
+                        location.reload();
+                    }, 500);
+                } else {
+                    errorDiv.innerHTML = '<div class="auth-error">Incorrect password. Please try again.</div>';
+                    document.getElementById('loginPassword').value = '';
+                    document.getElementById('loginPassword').focus();
+                }
+            }
+        }
+
+        // Show reset password modal
+        function showResetPasswordModal() {
+            const authContainer = document.getElementById('authContainer');
+            
+            authContainer.innerHTML = `
+                <div class="auth-header">
+                    <h2>🔑 Reset Password</h2>
+                    <p>Enter your current password to reset</p>
+                </div>
+                <div id="authError"></div>
+                <form id="resetPasswordForm" onsubmit="handleResetPassword(event)">
+                    <div class="auth-form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="currentPassword" class="auth-input" required>
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('currentPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="auth-form-group">
+                        <label for="newPassword">New Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="newPassword" class="auth-input" required oninput="checkPasswordStrength(this.value)">
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('newPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div id="passwordStrength" class="password-strength" style="display: none;">
+                            <div class="password-strength-bar">
+                                <div id="passwordStrengthFill" class="password-strength-fill"></div>
+                            </div>
+                            <div id="passwordStrengthText"></div>
+                        </div>
+                    </div>
+                    <div class="auth-form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="confirmPassword" class="auth-input" required>
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('confirmPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="auth-actions">
+                        <button type="submit" class="auth-btn auth-btn-primary">Reset Password</button>
+                        <button type="button" class="auth-btn auth-btn-secondary" onclick="showLoginModal()">Cancel</button>
+                    </div>
+                </form>
+            `;
+            
+            document.getElementById('currentPassword').focus();
+        }
+
+        // Handle reset password
+        function handleResetPassword(event) {
+            event.preventDefault();
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorDiv = document.getElementById('authError');
+            
+            // Validate current password
+            if (!verifyPassword(currentPassword)) {
+                errorDiv.innerHTML = '<div class="auth-error">Current password is incorrect</div>';
+                return;
+            }
+            
+            // Validate new password
+            if (newPassword.length < 6) {
+                errorDiv.innerHTML = '<div class="auth-error">New password must be at least 6 characters long</div>';
+                return;
+            }
+            
+            if (newPassword === currentPassword) {
+                errorDiv.innerHTML = '<div class="auth-error">New password must be different from current password</div>';
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                errorDiv.innerHTML = '<div class="auth-error">New passwords do not match</div>';
+                return;
+            }
+            
+            // Update password
+            const hashedPassword = hashPassword(newPassword);
+            localStorage.setItem(PASSWORD_STORAGE_KEY, hashedPassword);
+            localStorage.setItem('admin_password_set', 'true');
+            
+            errorDiv.innerHTML = '<div class="auth-success">Password reset successfully! Please login again.</div>';
+            setTimeout(() => {
+                localStorage.removeItem(AUTH_STORAGE_KEY);
+                showLoginModal();
+            }, 1500);
+        }
+
+        // Show create password modal
+        function showCreatePasswordModal() {
+            const authContainer = document.getElementById('authContainer');
+            
+            authContainer.innerHTML = `
+                <div class="auth-header">
+                    <h2>🔐 Create New Password</h2>
+                    <p>Set a new password for your admin account</p>
+                </div>
+                <div id="authError"></div>
+                <div class="auth-info">
+                    <strong>Password Requirements:</strong>
+                    <ul>
+                        <li>At least 6 characters long</li>
+                        <li>Should contain letters and numbers (recommended)</li>
+                        <li>Should be different from your current password</li>
+                    </ul>
+                </div>
+                <form id="createPasswordForm" onsubmit="handleCreatePassword(event)">
+                    <div class="auth-form-group">
+                        <label for="currentPasswordCreate">Current Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="currentPasswordCreate" class="auth-input" required>
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('currentPasswordCreate', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="auth-form-group">
+                        <label for="newPasswordCreate">New Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="newPasswordCreate" class="auth-input" required oninput="checkPasswordStrength(this.value, 'passwordStrengthCreate')">
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('newPasswordCreate', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div id="passwordStrengthCreate" class="password-strength" style="display: none;">
+                            <div class="password-strength-bar">
+                                <div id="passwordStrengthFillCreate" class="password-strength-fill"></div>
+                            </div>
+                            <div id="passwordStrengthTextCreate"></div>
+                        </div>
+                    </div>
+                    <div class="auth-form-group">
+                        <label for="confirmPasswordCreate">Confirm New Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="confirmPasswordCreate" class="auth-input" required>
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('confirmPasswordCreate', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="auth-actions">
+                        <button type="submit" class="auth-btn auth-btn-primary">Create Password</button>
+                        <button type="button" class="auth-btn auth-btn-secondary" onclick="showLoginModal()">Cancel</button>
+                    </div>
+                </form>
+            `;
+            
+            document.getElementById('currentPasswordCreate').focus();
+        }
+
+        // Handle create password
+        function handleCreatePassword(event) {
+            event.preventDefault();
+            const currentPassword = document.getElementById('currentPasswordCreate').value;
+            const newPassword = document.getElementById('newPasswordCreate').value;
+            const confirmPassword = document.getElementById('confirmPasswordCreate').value;
+            const errorDiv = document.getElementById('authError');
+            
+            // Validate current password
+            if (!verifyPassword(currentPassword)) {
+                errorDiv.innerHTML = '<div class="auth-error">Current password is incorrect</div>';
+                return;
+            }
+            
+            // Validate new password
+            if (newPassword.length < 6) {
+                errorDiv.innerHTML = '<div class="auth-error">New password must be at least 6 characters long</div>';
+                return;
+            }
+            
+            if (newPassword === currentPassword) {
+                errorDiv.innerHTML = '<div class="auth-error">New password must be different from current password</div>';
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                errorDiv.innerHTML = '<div class="auth-error">New passwords do not match</div>';
+                return;
+            }
+            
+            // Update password
+            const hashedPassword = hashPassword(newPassword);
+            localStorage.setItem(PASSWORD_STORAGE_KEY, hashedPassword);
+            localStorage.setItem('admin_password_set', 'true');
+            
+            errorDiv.innerHTML = '<div class="auth-success">Password created successfully! Please login again.</div>';
+            setTimeout(() => {
+                localStorage.removeItem(AUTH_STORAGE_KEY);
+                showLoginModal();
+            }, 1500);
+        }
+
+        // Toggle password visibility
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Check password strength
+        function checkPasswordStrength(password, strengthId = 'passwordStrength') {
+            const strengthDiv = document.getElementById(strengthId);
+            const strengthFill = document.getElementById(strengthId === 'passwordStrength' ? 'passwordStrengthFill' : 'passwordStrengthFillCreate');
+            const strengthText = document.getElementById(strengthId === 'passwordStrength' ? 'passwordStrengthText' : 'passwordStrengthTextCreate');
+            
+            if (!password) {
+                strengthDiv.style.display = 'none';
+                return;
+            }
+            
+            strengthDiv.style.display = 'block';
+            
+            let strength = 0;
+            let feedback = '';
+            
+            if (password.length >= 6) strength++;
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+            
+            if (strength <= 2) {
+                strengthFill.className = 'password-strength-fill password-strength-weak';
+                feedback = 'Weak password';
+            } else if (strength <= 3) {
+                strengthFill.className = 'password-strength-fill password-strength-medium';
+                feedback = 'Medium strength';
+            } else {
+                strengthFill.className = 'password-strength-fill password-strength-strong';
+                feedback = 'Strong password';
+            }
+            
+            strengthText.textContent = feedback;
+            strengthText.style.color = strengthFill.className.includes('weak') ? '#e74c3c' : 
+                                      strengthFill.className.includes('medium') ? '#f39c12' : '#27ae60';
+        }
+
+        // Load existing images on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize authentication
+            initializeAuth();
+            
+            // Check authentication
+            if (!isAuthenticated()) {
+                showLoginModal();
+                return;
+            }
+            
+            checkAndClearOldImages();
+            loadStoredImages();
+            setupDragAndDrop();
+        });
+
+        function checkAndClearOldImages() {
+            const storedDate = localStorage.getItem('adminImagesDate');
+            const today = new Date().toDateString();
+            
+            if (storedDate && storedDate !== today) {
+                localStorage.removeItem('adminPosterImages');
+                localStorage.removeItem('adminImagesDate');
+                showStatus('🗑️ Old images cleared - new day started!', 'success');
+            }
+        }
+
+        function setupDragAndDrop() {
+            const uploadArea = document.getElementById('uploadArea');
+            
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
+        }
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            
+            for (let file of files) {
+                if (!allowedTypes.includes(file.type)) {
+                    showStatus('Error: Only JPG, PNG, and GIF files are allowed!', 'error');
+                    continue;
+                }
+                
+                if (file.size > maxSize) {
+                    showStatus('Error: File size must be less than 5MB!', 'error');
+                    continue;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    saveImageToStorage(e.target.result, file.name);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveImageToStorage(imageData, fileName) {
+            let storedImages = JSON.parse(localStorage.getItem('adminPosterImages') || '[]');
+            
+            const imageObj = {
+                id: Date.now(),
+                data: imageData,
+                name: fileName,
+                uploadDate: new Date().toISOString()
+            };
+            
+            storedImages.push(imageObj);
+            
+            // Save with date tracking for daily cleanup
+            const today = new Date().toDateString();
+            localStorage.setItem('adminPosterImages', JSON.stringify(storedImages));
+            localStorage.setItem('adminImagesDate', today);
+            
+            showStatus(`✅ Image "${fileName}" uploaded successfully! (Valid until tomorrow)`, 'success');
+            loadStoredImages();
+        }
+
+        function loadStoredImages() {
+            const storedImages = JSON.parse(localStorage.getItem('adminPosterImages') || '[]');
+            const previewGrid = document.getElementById('previewGrid');
+            
+            previewGrid.innerHTML = '';
+            
+            if (storedImages.length === 0) {
+                previewGrid.innerHTML = '<p style="text-align: center; color: #6c757d; grid-column: 1/-1;">No images uploaded yet</p>';
+                return;
+            }
+            
+            storedImages.forEach(image => {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                previewItem.innerHTML = `
+                    <img src="${image.data}" alt="${image.name}" class="preview-image">
+                    <div class="preview-overlay">
+                        <button class="delete-btn" onclick="deleteImage(${image.id})">Delete</button>
+                    </div>
+                `;
+                previewGrid.appendChild(previewItem);
+            });
+        }
+
+        function deleteImage(imageId) {
+            if (confirm('Are you sure you want to delete this image?')) {
+                let storedImages = JSON.parse(localStorage.getItem('adminPosterImages') || '[]');
+                storedImages = storedImages.filter(img => img.id !== imageId);
+                localStorage.setItem('adminPosterImages', JSON.stringify(storedImages));
+                
+                showStatus('🗑️ Image deleted successfully!', 'success');
+                loadStoredImages();
+            }
+        }
+
+        function clearAllImages() {
+            if (confirm('Are you sure you want to delete ALL images? This cannot be undone!')) {
+                localStorage.removeItem('adminPosterImages');
+                showStatus('🗑️ All images cleared!', 'success');
+                loadStoredImages();
+            }
+        }
+
+        function testPoster() {
+            // Create a test poster with admin uploaded images
+            const storedImages = JSON.parse(localStorage.getItem('adminPosterImages') || '[]');
+            
+            if (storedImages.length === 0) {
+                showStatus('⚠️ No images available to test. Upload some images first!', 'error');
+                return;
+            }
+            
+            // Use the first uploaded image for testing
+            const testImage = storedImages[0].data;
+            
+            // Create test poster HTML
+            const testPosterHTML = `
+                <div class="health-poster">
+                    <div class="poster-header">
+                        <div class="profile-section">
+                            <div class="profile-pic">🏥</div>
+                            <div class="profile-info">
+                                <div class="profile-name">శ్రీ కమల హాస్పిటల్</div>
+                                <div class="post-time">ఇప్పుడు</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="poster-content">
+                        <div class="main-banner" style="background: linear-gradient(135deg, #e53935 0%, #00b894 100%);">
+                            <h2 class="main-title">అడ్మిన్ అప్‌లోడ్ చేసిన పోస్టర్</h2>
+                            <p class="main-description">కస్టమ్ హెల్త్ అవేర్‌నెస్ ఇమేజ్</p>
+                        </div>
+                        
+                        <div class="health-image-container">
+                            <img src="${testImage}" alt="Admin Uploaded Image" class="health-image" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px;">
+                        </div>
+                        
+                        <div class="content-body">
+                            <div class="call-to-action">
+                                <div class="cta-text">✅ ఈ ఇమేజ్ అడ్మిన్ ద్వారా అప్‌లోడ్ చేయబడింది</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Show test poster popup
+            const popupOverlay = document.createElement('div');
+            popupOverlay.className = 'poster-popup-overlay';
+            popupOverlay.innerHTML = `
+                <div class="poster-popup-container card-poster">
+                    <div class="poster-popup-header">
+                        <h3>🧪 టెస్ట్ పోస్టర్ - అడ్మిన్ ఇమేజ్</h3>
+                        <div class="header-controls">
+                            <button class="close-poster-btn" onclick="this.closest('.poster-popup-overlay').remove()">✕</button>
+                        </div>
+                    </div>
+                    <div class="poster-popup-content">
+                        ${testPosterHTML}
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(popupOverlay);
+            
+            // Auto-close after 5 seconds
+            setTimeout(() => {
+                if (popupOverlay.parentNode) {
+                    popupOverlay.classList.add('vanishing');
+                    setTimeout(() => {
+                        if (popupOverlay.parentNode) {
+                            popupOverlay.remove();
+                        }
+                    }, 500);
+                }
+            }, 5000);
+            
+            showStatus('🎭 Test poster displayed! Check the popup.', 'success');
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.innerHTML = `<div class="status-message status-${type}">${message}</div>`;
+            
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+            }, 5000);
+        }
+    </script>
+    
+<!-- Configuration Files -->
+<script src="../config.js"></script>
+<script src="../admin-config.js"></script>
+</body>
+</html>

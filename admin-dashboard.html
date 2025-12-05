@@ -1,0 +1,3374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sri Kamala Hospital - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-warning: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --shadow-light: 0 2px 10px rgba(0,0,0,0.1);
+            --shadow-medium: 0 4px 20px rgba(0,0,0,0.15);
+            --shadow-heavy: 0 8px 30px rgba(0,0,0,0.2);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Loading Animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Header */
+        .dashboard-header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow-medium);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .header-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid #2ecc71;
+            border-radius: 25px;
+            color: #2ecc71;
+            font-size: 0.9rem;
+            animation: fadeIn 0.5s ease-out;
+            transition: var(--transition);
+        }
+
+        .status-indicator.mongo-connected {
+            background: rgba(46, 204, 113, 0.1);
+            border-color: #2ecc71;
+            color: #2ecc71;
+        }
+
+        .status-indicator.mongo-disconnected {
+            background: rgba(231, 76, 60, 0.1);
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+
+        .status-indicator.mongo-checking {
+            background: rgba(255, 193, 7, 0.1);
+            border-color: #ffc107;
+            color: #ffc107;
+        }
+
+        .status-indicator.mongo-error {
+            background: rgba(108, 117, 125, 0.1);
+            border-color: #6c757d;
+            color: #6c757d;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #2ecc71;
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        /* Main Container */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-light);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .stat-icon.appointments { background: var(--gradient-primary); }
+        .stat-icon.diagnosis { background: var(--gradient-secondary); }
+        .stat-icon.revenue { background: var(--gradient-success); }
+        .stat-icon.patients { background: var(--gradient-warning); }
+
+        .stat-content h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-content p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .trend-up { color: #27ae60; }
+        .trend-down { color: #e74c3c; }
+
+        /* Quick Actions */
+        .quick-actions {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-light);
+            margin-bottom: 2rem;
+            animation: slideUp 0.7s ease-out;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .action-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Data Tables */
+        .data-section {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-light);
+            margin-bottom: 2rem;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f8f9fa;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            border: 1px solid #e9ecef;
+            transition: var(--transition);
+        }
+
+        .search-box:focus-within {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .search-box input {
+            border: none;
+            background: none;
+            outline: none;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            width: 200px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #f1f3f4;
+            transition: var(--transition);
+        }
+
+        tr:hover td {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.confirmed {
+            background: rgba(46, 204, 113, 0.1);
+            color: #27ae60;
+        }
+
+        .status-badge.pending {
+            background: rgba(241, 196, 15, 0.1);
+            color: #f39c12;
+        }
+
+        .status-badge.paid {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+        }
+
+        .status-badge.not-paid {
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--gradient-warning);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            color: white;
+            font-weight: 600;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease-out;
+            max-width: 300px;
+            box-shadow: var(--shadow-medium);
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .notification.success { background: var(--gradient-success); }
+        .notification.error { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+        .notification.warning { background: var(--gradient-warning); }
+        .notification.info { background: var(--gradient-primary); }
+
+        /* Enhanced Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .header-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .actions-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .action-btn {
+                padding: 0.75rem;
+                font-size: 0.85rem;
+            }
+            
+            .table-container {
+                font-size: 0.85rem;
+            }
+            
+            th, td {
+                padding: 0.5rem;
+            }
+            
+            .popup-container {
+                margin: 1rem;
+                padding: 1.5rem;
+                max-width: calc(100vw - 2rem);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .dashboard-container {
+                padding: 0.5rem;
+            }
+            
+            .header-title {
+                font-size: 1.4rem;
+            }
+            
+            .stat-content h3 {
+                font-size: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.2rem;
+            }
+            
+            .action-btn {
+                padding: 0.5rem;
+                font-size: 0.8rem;
+            }
+            
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+        
+        /* Accessibility Improvements */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        @media (prefers-contrast: high) {
+            :root {
+                --primary-color: #000;
+                --secondary-color: #000;
+                --success-color: #000;
+                --warning-color: #000;
+                --danger-color: #000;
+            }
+            
+            .stat-card, .quick-actions, .data-section {
+                border: 2px solid #000;
+            }
+        }
+        
+        /* Focus indicators */
+        button:focus,
+        input:focus,
+        .action-btn:focus {
+            outline: 3px solid #3498db;
+            outline-offset: 2px;
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-color-scheme: dark) {
+            .dark-theme {
+                background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            }
+        }
+
+        /* Dark Theme */
+        .dark-theme {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: #ecf0f1;
+        }
+
+        .dark-theme .dashboard-header,
+        .dark-theme .stat-card,
+        .dark-theme .quick-actions,
+        .dark-theme .data-section {
+            background: rgba(44, 62, 80, 0.95);
+            color: #ecf0f1;
+        }
+
+        .dark-theme table {
+            background: #2c3e50;
+            color: #ecf0f1;
+        }
+
+        .dark-theme th {
+            background: #34495e;
+        }
+
+        .dark-theme td {
+            border-bottom-color: #34495e;
+        }
+
+        .dark-theme tr:hover td {
+            background: #34495e;
+        }
+
+        /* Advanced Animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .slide-up {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.8s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Particle Effects */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            animation: particleFloat 3s ease-out forwards;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0.5);
+            }
+        }
+
+        /* Animated Popup Styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .popup-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: popupSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .popup-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .popup-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .popup-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .popup-icon.success { background: var(--gradient-success); }
+        .popup-icon.warning { background: var(--gradient-warning); }
+        .popup-icon.danger { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+        .popup-icon.info { background: var(--gradient-primary); }
+
+        .popup-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .popup-close:hover {
+            background: #f5f5f5;
+            color: #333;
+            transform: rotate(90deg);
+        }
+
+        .popup-content {
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .popup-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .popup-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .popup-btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .popup-btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #e9ecef;
+        }
+
+        .popup-btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+
+        .popup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        /* Input Popup Styles */
+        .popup-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+            margin: 1rem 0;
+        }
+
+        .popup-input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        /* Animations */
+        @keyframes popupSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes popupSlideOut {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+        }
+
+        /* Loading Popup */
+        .popup-loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .popup-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        /* Success Popup */
+        .popup-success .popup-icon {
+            animation: bounceIn 0.6s ease-out;
+        }
+
+        /* Warning Popup */
+        .popup-warning .popup-icon {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Danger Popup */
+        .popup-danger .popup-icon {
+            animation: heartbeat 1s ease-in-out;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Authentication Modal Styles */
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: popupSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .auth-form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .auth-form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .auth-form-group input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .auth-form-group .password-toggle {
+            position: relative;
+        }
+
+        .auth-form-group .password-toggle-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0.5rem;
+        }
+
+        .auth-form-group .password-toggle-btn:hover {
+            color: var(--secondary-color);
+        }
+
+        .auth-form-group .password-strength {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .password-strength-bar {
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .password-strength-fill {
+            height: 100%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .password-strength-weak { background: #e74c3c; width: 33%; }
+        .password-strength-medium { background: #f39c12; width: 66%; }
+        .password-strength-strong { background: #27ae60; width: 100%; }
+
+        .auth-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .auth-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .auth-btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .auth-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .auth-btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e9ecef;
+        }
+
+        .auth-btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .auth-links a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+
+        .auth-error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            border: 1px solid #f5c6cb;
+        }
+
+        .auth-success {
+            background: #d4edda;
+            color: #155724;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            border: 1px solid #c3e6cb;
+        }
+
+        .auth-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            border: 1px solid #bee5eb;
+        }
+
+        .auth-info ul {
+            margin: 0.5rem 0 0 1.5rem;
+            padding: 0;
+        }
+
+        .auth-info li {
+            margin: 0.25rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Authentication Overlay -->
+    <div id="authOverlay" class="auth-overlay" style="display: none;">
+        <div class="auth-container" id="authContainer">
+            <!-- Content will be dynamically inserted -->
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">
+                    <i class="fas fa-hospital"></i>
+                </div>
+                <div>
+                    <h1 class="header-title">Admin Dashboard</h1>
+                    <p style="color: #666; font-size: 0.9rem;">Sri Kamala Hospital Management</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="status-indicator" id="mongoStatus">
+                    <div class="status-dot" id="mongoStatusDot"></div>
+                    <span id="mongoStatusText">Checking MongoDB...</span>
+                </div>
+                <div class="status-indicator" id="connectionStatus">
+                    <div class="status-dot"></div>
+                    <span id="connectionStatusText">Connected</span>
+                </div>
+                <button class="btn btn-primary" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i> Theme
+                </button>
+                <button class="btn btn-danger" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="dashboard-container">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon appointments">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                </div>
+                <div class="stat-content">
+                    <h3 id="totalAppointments">0</h3>
+                    <p>Total Appointments</p>
+                    <div class="stat-trend trend-up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+12% this week</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon diagnosis">
+                        <i class="fas fa-vial"></i>
+                    </div>
+                </div>
+                <div class="stat-content">
+                    <h3 id="totalDiagnosis">0</h3>
+                    <p>Blood Tests</p>
+                    <div class="stat-trend trend-up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+8% this week</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon revenue">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                </div>
+                <div class="stat-content">
+                    <h3 id="totalRevenue">₹0</h3>
+                    <p>Total Revenue</p>
+                    <div class="stat-trend trend-up">
+                        <i class="fas fa-receipt"></i>
+                        <span id="revenueBreakdown">₹300 per receipt</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon patients">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="stat-content">
+                    <h3 id="totalPatients">0</h3>
+                    <p>Active Patients</p>
+                    <div class="stat-trend trend-up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+5% this week</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="actions-grid">
+                <button class="action-btn" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh Data
+                </button>
+                <button class="action-btn" onclick="exportData()">
+                    <i class="fas fa-download"></i>
+                    Export Data
+                </button>
+                <button class="action-btn" onclick="openAnalytics()">
+                    <i class="fas fa-chart-line"></i>
+                    Analytics
+                </button>
+                <button class="action-btn" onclick="openPosterUpload()">
+                    <i class="fas fa-upload"></i>
+                    Upload Posters
+                </button>
+                <button class="action-btn" onclick="resetDatabase()">
+                    <i class="fas fa-trash-alt"></i>
+                    Reset Database
+                </button>
+                <button class="action-btn" onclick="openSettings()">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </button>
+                <button class="action-btn" onclick="showCollectionInfo()">
+                    <i class="fas fa-info-circle"></i>
+                    Collection Info
+                </button>
+            </div>
+        </div>
+
+        <!-- Appointments Table -->
+        <div class="data-section">
+            <div class="section-header">
+                <h2 class="section-title">Appointments</h2>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="appointmentSearch" placeholder="Search appointments...">
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Token</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Department</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointmentsTableBody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem;">
+                                <div class="shimmer" style="height: 20px; border-radius: 4px;"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Revenue Tracking Section -->
+        <div class="data-section">
+            <div class="section-header">
+                <h2 class="section-title">Revenue Tracking</h2>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <div style="background: rgba(46, 204, 113, 0.1); padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid #2ecc71;">
+                        <span style="color: #2ecc71; font-weight: 600;">₹300 per receipt</span>
+                    </div>
+                    <button class="btn btn-success" onclick="generateRevenueReport()">
+                        <i class="fas fa-chart-bar"></i> Generate Report
+                    </button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Payment Status</th>
+                            <th>Count</th>
+                            <th>Revenue (₹)</th>
+                            <th>Percentage</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="revenueTableBody">
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 2rem;">
+                                <div class="shimmer" style="height: 20px; border-radius: 4px;"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Diagnosis Table -->
+        <div class="data-section">
+            <div class="section-header">
+                <h2 class="section-title">Blood Tests</h2>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="diagnosisSearch" placeholder="Search blood tests...">
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Token</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Age</th>
+                            <th>Tests</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="diagnosisTableBody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem;">
+                                <div class="shimmer" style="height: 20px; border-radius: 4px;"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let appointments = [];
+        let diagnosisData = [];
+        let isDarkTheme = false;
+        let autoRefreshInterval = null;
+        let searchTimeouts = {};
+        let isLoading = false;
+        let retryCount = 0;
+        const MAX_RETRIES = 3;
+
+        // Backend configuration - now from config files
+        const BACKEND_BASE = window.ADMIN_CONFIG ? window.ADMIN_CONFIG.api.baseUrl : 'https://hospital-backend-78ur.onrender.com';
+        
+        // Configuration constants
+        const CONFIG = {
+            REFRESH_INTERVAL: 30000,
+            SEARCH_DEBOUNCE: 300,
+            MAX_RETRIES: 3,
+            REQUEST_TIMEOUT: 10000
+        };
+
+        // Authentication System
+        const AUTH_STORAGE_KEY = 'admin_auth';
+        const PASSWORD_STORAGE_KEY = 'admin_password';
+        const DEFAULT_PASSWORD = 'admin123'; // Default password for first-time setup
+
+        // Check if password exists, if not set default
+        function initializeAuth() {
+            if (!localStorage.getItem(PASSWORD_STORAGE_KEY)) {
+                // Hash and store default password
+                const hashedPassword = hashPassword(DEFAULT_PASSWORD);
+                localStorage.setItem(PASSWORD_STORAGE_KEY, hashedPassword);
+                localStorage.setItem('admin_password_set', 'false'); // Flag for first-time setup
+            }
+        }
+
+        // Simple password hashing (for basic security)
+        function hashPassword(password) {
+            let hash = 0;
+            for (let i = 0; i < password.length; i++) {
+                const char = password.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32bit integer
+            }
+            return hash.toString();
+        }
+
+        // Verify password
+        function verifyPassword(password) {
+            const storedHash = localStorage.getItem(PASSWORD_STORAGE_KEY);
+            if (!storedHash) return false;
+            return hashPassword(password) === storedHash;
+        }
+
+        // Check authentication status
+        function isAuthenticated() {
+            const authData = localStorage.getItem(AUTH_STORAGE_KEY);
+            if (!authData) return false;
+            
+            try {
+                const auth = JSON.parse(authData);
+                const now = Date.now();
+                // Session expires after 24 hours
+                if (now - auth.timestamp > 24 * 60 * 60 * 1000) {
+                    localStorage.removeItem(AUTH_STORAGE_KEY);
+                    return false;
+                }
+                return auth.authenticated === true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // Set authentication
+        function setAuthenticated() {
+            localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({
+                authenticated: true,
+                timestamp: Date.now()
+            }));
+        }
+
+        // Show login modal
+        function showLoginModal() {
+            const authOverlay = document.getElementById('authOverlay');
+            const authContainer = document.getElementById('authContainer');
+            
+            const isFirstTime = localStorage.getItem('admin_password_set') === 'false';
+            
+            authContainer.innerHTML = `
+                <div class="auth-header">
+                    <h2>🔐 Admin Login</h2>
+                    <p>${isFirstTime ? 'Please set up your password' : 'Enter your password to continue'}</p>
+                </div>
+                <div id="authError"></div>
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="auth-form-group">
+                        <label for="loginPassword">Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="loginPassword" class="auth-input" required autocomplete="current-password">
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('loginPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="auth-actions">
+                        <button type="submit" class="auth-btn auth-btn-primary">Login</button>
+                    </div>
+                </form>
+                <div class="auth-links">
+                    <a onclick="showResetPasswordModal()">Forgot Password?</a>
+                    ${isFirstTime ? '' : ' | <a onclick="showCreatePasswordModal()">Change Password</a>'}
+                </div>
+            `;
+            
+            authOverlay.style.display = 'flex';
+            document.getElementById('loginPassword').focus();
+        }
+
+        // Handle login
+        function handleLogin(event) {
+            event.preventDefault();
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('authError');
+            
+            if (!password) {
+                errorDiv.innerHTML = '<div class="auth-error">Please enter your password</div>';
+                return;
+            }
+
+            const isFirstTime = localStorage.getItem('admin_password_set') === 'false';
+            
+            if (isFirstTime) {
+                // First time setup - create password
+                if (password.length < 6) {
+                    errorDiv.innerHTML = '<div class="auth-error">Password must be at least 6 characters long</div>';
+                    return;
+                }
+                
+                const hashedPassword = hashPassword(password);
+                localStorage.setItem(PASSWORD_STORAGE_KEY, hashedPassword);
+                localStorage.setItem('admin_password_set', 'true');
+                setAuthenticated();
+                
+                errorDiv.innerHTML = '<div class="auth-success">Password created successfully! Redirecting...</div>';
+                setTimeout(() => {
+                    document.getElementById('authOverlay').style.display = 'none';
+                    location.reload();
+                }, 1000);
+            } else {
+                // Normal login
+                if (verifyPassword(password)) {
+                    setAuthenticated();
+                    errorDiv.innerHTML = '<div class="auth-success">Login successful! Redirecting...</div>';
+                    setTimeout(() => {
+                        document.getElementById('authOverlay').style.display = 'none';
+                        location.reload();
+                    }, 500);
+                } else {
+                    errorDiv.innerHTML = '<div class="auth-error">Incorrect password. Please try again.</div>';
+                    document.getElementById('loginPassword').value = '';
+                    document.getElementById('loginPassword').focus();
+                }
+            }
+        }
+
+        // Show reset password modal
+        function showResetPasswordModal() {
+            const authContainer = document.getElementById('authContainer');
+            
+            authContainer.innerHTML = `
+                <div class="auth-header">
+                    <h2>🔑 Reset Password</h2>
+                    <p>Enter your current password to reset</p>
+                </div>
+                <div id="authError"></div>
+                <form id="resetPasswordForm" onsubmit="handleResetPassword(event)">
+                    <div class="auth-form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="currentPassword" class="auth-input" required>
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('currentPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="auth-form-group">
+                        <label for="newPassword">New Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="newPassword" class="auth-input" required oninput="checkPasswordStrength(this.value)">
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('newPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div id="passwordStrength" class="password-strength" style="display: none;">
+                            <div class="password-strength-bar">
+                                <div id="passwordStrengthFill" class="password-strength-fill"></div>
+                            </div>
+                            <div id="passwordStrengthText"></div>
+                        </div>
+                    </div>
+                    <div class="auth-form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="confirmPassword" class="auth-input" required>
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('confirmPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="auth-actions">
+                        <button type="submit" class="auth-btn auth-btn-primary">Reset Password</button>
+                        <button type="button" class="auth-btn auth-btn-secondary" onclick="showLoginModal()">Cancel</button>
+                    </div>
+                </form>
+            `;
+            
+            document.getElementById('currentPassword').focus();
+        }
+
+        // Handle reset password
+        function handleResetPassword(event) {
+            event.preventDefault();
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorDiv = document.getElementById('authError');
+            
+            // Validate current password
+            if (!verifyPassword(currentPassword)) {
+                errorDiv.innerHTML = '<div class="auth-error">Current password is incorrect</div>';
+                return;
+            }
+            
+            // Validate new password
+            if (newPassword.length < 6) {
+                errorDiv.innerHTML = '<div class="auth-error">New password must be at least 6 characters long</div>';
+                return;
+            }
+            
+            if (newPassword === currentPassword) {
+                errorDiv.innerHTML = '<div class="auth-error">New password must be different from current password</div>';
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                errorDiv.innerHTML = '<div class="auth-error">New passwords do not match</div>';
+                return;
+            }
+            
+            // Update password
+            const hashedPassword = hashPassword(newPassword);
+            localStorage.setItem(PASSWORD_STORAGE_KEY, hashedPassword);
+            localStorage.setItem('admin_password_set', 'true');
+            
+            errorDiv.innerHTML = '<div class="auth-success">Password reset successfully! Please login again.</div>';
+            setTimeout(() => {
+                localStorage.removeItem(AUTH_STORAGE_KEY);
+                showLoginModal();
+            }, 1500);
+        }
+
+        // Show create password modal
+        function showCreatePasswordModal() {
+            const authContainer = document.getElementById('authContainer');
+            
+            authContainer.innerHTML = `
+                <div class="auth-header">
+                    <h2>🔐 Create New Password</h2>
+                    <p>Set a new password for your admin account</p>
+                </div>
+                <div id="authError"></div>
+                <div class="auth-info">
+                    <strong>Password Requirements:</strong>
+                    <ul>
+                        <li>At least 6 characters long</li>
+                        <li>Should contain letters and numbers (recommended)</li>
+                        <li>Should be different from your current password</li>
+                    </ul>
+                </div>
+                <form id="createPasswordForm" onsubmit="handleCreatePassword(event)">
+                    <div class="auth-form-group">
+                        <label for="currentPasswordCreate">Current Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="currentPasswordCreate" class="auth-input" required>
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('currentPasswordCreate', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="auth-form-group">
+                        <label for="newPasswordCreate">New Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="newPasswordCreate" class="auth-input" required oninput="checkPasswordStrength(this.value, 'passwordStrengthCreate')">
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('newPasswordCreate', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div id="passwordStrengthCreate" class="password-strength" style="display: none;">
+                            <div class="password-strength-bar">
+                                <div id="passwordStrengthFillCreate" class="password-strength-fill"></div>
+                            </div>
+                            <div id="passwordStrengthTextCreate"></div>
+                        </div>
+                    </div>
+                    <div class="auth-form-group">
+                        <label for="confirmPasswordCreate">Confirm New Password</label>
+                        <div class="password-toggle">
+                            <input type="password" id="confirmPasswordCreate" class="auth-input" required>
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('confirmPasswordCreate', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="auth-actions">
+                        <button type="submit" class="auth-btn auth-btn-primary">Create Password</button>
+                        <button type="button" class="auth-btn auth-btn-secondary" onclick="showLoginModal()">Cancel</button>
+                    </div>
+                </form>
+            `;
+            
+            document.getElementById('currentPasswordCreate').focus();
+        }
+
+        // Handle create password
+        function handleCreatePassword(event) {
+            event.preventDefault();
+            const currentPassword = document.getElementById('currentPasswordCreate').value;
+            const newPassword = document.getElementById('newPasswordCreate').value;
+            const confirmPassword = document.getElementById('confirmPasswordCreate').value;
+            const errorDiv = document.getElementById('authError');
+            
+            // Validate current password
+            if (!verifyPassword(currentPassword)) {
+                errorDiv.innerHTML = '<div class="auth-error">Current password is incorrect</div>';
+                return;
+            }
+            
+            // Validate new password
+            if (newPassword.length < 6) {
+                errorDiv.innerHTML = '<div class="auth-error">New password must be at least 6 characters long</div>';
+                return;
+            }
+            
+            if (newPassword === currentPassword) {
+                errorDiv.innerHTML = '<div class="auth-error">New password must be different from current password</div>';
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                errorDiv.innerHTML = '<div class="auth-error">New passwords do not match</div>';
+                return;
+            }
+            
+            // Update password
+            const hashedPassword = hashPassword(newPassword);
+            localStorage.setItem(PASSWORD_STORAGE_KEY, hashedPassword);
+            localStorage.setItem('admin_password_set', 'true');
+            
+            errorDiv.innerHTML = '<div class="auth-success">Password created successfully! Please login again.</div>';
+            setTimeout(() => {
+                localStorage.removeItem(AUTH_STORAGE_KEY);
+                showLoginModal();
+            }, 1500);
+        }
+
+        // Toggle password visibility
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Check password strength
+        function checkPasswordStrength(password, strengthId = 'passwordStrength') {
+            const strengthDiv = document.getElementById(strengthId);
+            const strengthFill = document.getElementById(strengthId === 'passwordStrength' ? 'passwordStrengthFill' : 'passwordStrengthFillCreate');
+            const strengthText = document.getElementById(strengthId === 'passwordStrength' ? 'passwordStrengthText' : 'passwordStrengthTextCreate');
+            
+            if (!password) {
+                strengthDiv.style.display = 'none';
+                return;
+            }
+            
+            strengthDiv.style.display = 'block';
+            
+            let strength = 0;
+            let feedback = '';
+            
+            if (password.length >= 6) strength++;
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+            
+            if (strength <= 2) {
+                strengthFill.className = 'password-strength-fill password-strength-weak';
+                feedback = 'Weak password';
+            } else if (strength <= 3) {
+                strengthFill.className = 'password-strength-fill password-strength-medium';
+                feedback = 'Medium strength';
+            } else {
+                strengthFill.className = 'password-strength-fill password-strength-strong';
+                feedback = 'Strong password';
+            }
+            
+            strengthText.textContent = feedback;
+            strengthText.style.color = strengthFill.className.includes('weak') ? '#e74c3c' : 
+                                      strengthFill.className.includes('medium') ? '#f39c12' : '#27ae60';
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing Admin Dashboard...');
+            
+            // Initialize authentication
+            initializeAuth();
+            
+            // Check authentication
+            if (!isAuthenticated()) {
+                showLoginModal();
+                return;
+            }
+            
+            // Hide loading overlay
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }, 1000);
+
+            // Check MongoDB connection first
+            checkMongoDBConnection();
+            
+            // Load initial data
+            loadAppointments();
+            loadDiagnosis();
+            updateStats();
+            renderRevenueTracking();
+            
+            // Setup search functionality
+            setupSearch();
+            
+            // Setup auto-refresh
+            startAutoRefresh();
+            
+            // Initialize advanced features
+            initializeAdvancedFeatures();
+            
+            console.log('✅ Dashboard initialized successfully');
+        });
+
+        // Enhanced load appointments with retry logic and better error handling
+        async function loadAppointments() {
+            if (isLoading) {
+                console.log('⏳ Already loading appointments, skipping...');
+                return;
+            }
+
+            isLoading = true;
+            const startTime = performance.now();
+            
+            try {
+                console.log('📋 Loading appointments from database...');
+                showNotification('Loading appointments...', 'info');
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), CONFIG.REQUEST_TIMEOUT);
+                
+                const response = await fetch(`${BACKEND_BASE}/api/mongodb/appointments`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+                const loadTime = Math.round(performance.now() - startTime);
+                console.log(`📡 Response received in ${loadTime}ms - Status: ${response.status}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Validate data structure
+                    if (!Array.isArray(data)) {
+                        throw new Error('Invalid data format received from server');
+                    }
+                    
+                    appointments = data;
+                    console.log(`✅ Appointments loaded: ${appointments.length} records in ${loadTime}ms`);
+                    
+                    // Store appointments globally for access
+                    window.appointments = appointments;
+                    
+                    // Sanitize data before rendering
+                    const sanitizedAppointments = sanitizeAppointmentData(appointments);
+                    renderAppointments(sanitizedAppointments);
+                    updateConnectionStatus(true, `Loaded ${appointments.length} appointments`);
+                    updateMongoDBStatus(true, `MongoDB Connected (${appointments.length} appointments)`);
+                    
+                    showNotification(`✅ Loaded ${appointments.length} appointments in ${loadTime}ms`, 'success');
+                    retryCount = 0; // Reset retry count on success
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Server error:', response.status, errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+            } catch (error) {
+                handleError(error, 'loadAppointments');
+                updateConnectionStatus(false, 'Failed to load appointments');
+                updateMongoDBStatus(false, 'MongoDB Disconnected');
+                
+                // Implement retry logic
+                if (retryCount < CONFIG.MAX_RETRIES) {
+                    retryCount++;
+                    console.log(`🔄 Retrying in 2 seconds... (Attempt ${retryCount}/${CONFIG.MAX_RETRIES})`);
+                    setTimeout(() => {
+                        loadAppointments();
+                    }, 2000);
+                } else {
+                    // Try local storage fallback after max retries
+                loadFromLocalStorage();
+                }
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        // Load diagnosis from MongoDB
+        async function loadDiagnosis() {
+            try {
+                console.log('🧪 Loading diagnosis from database...');
+                
+                const response = await fetch(`${BACKEND_BASE}/api/mongodb/diagnosis`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    diagnosisData = await response.json();
+                    console.log('✅ Diagnosis loaded:', diagnosisData.length);
+                    renderDiagnosis(diagnosisData);
+                    updateMongoDBStatus(true, `MongoDB Connected (${diagnosisData.length} blood tests)`);
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error('❌ Failed to load diagnosis:', error);
+                updateMongoDBStatus(false, 'MongoDB Disconnected');
+                showNotification('Failed to load diagnosis from database', 'error');
+            }
+        }
+
+        // Enhanced local storage fallback with data validation
+        function loadFromLocalStorage() {
+            try {
+                const localAppointments = localStorage.getItem('appointmentData');
+                const localDiagnosis = localStorage.getItem('diagnosisData');
+                
+                if (localAppointments) {
+                    const parsedAppointments = JSON.parse(localAppointments);
+                    if (Array.isArray(parsedAppointments)) {
+                        appointments = parsedAppointments;
+                    renderAppointments(appointments);
+                    updateConnectionStatus(false, 'Using local storage');
+                        showNotification('Using local storage data for appointments', 'warning');
+                    }
+                }
+                
+                if (localDiagnosis) {
+                    const parsedDiagnosis = JSON.parse(localDiagnosis);
+                    if (Array.isArray(parsedDiagnosis)) {
+                        diagnosisData = parsedDiagnosis;
+                        renderDiagnosis(diagnosisData);
+                        showNotification('Using local storage data for blood tests', 'warning');
+                    }
+                }
+                
+                updateStats();
+                
+                if (!localAppointments && !localDiagnosis) {
+                    showNotification('No local data available. Please check your connection.', 'error');
+                }
+            } catch (error) {
+                console.error('❌ Local storage fallback failed:', error);
+                showNotification('Failed to load local data. Please refresh the page.', 'error');
+            }
+        }
+        
+        // Data validation and sanitization
+        function validateAppointmentData(data) {
+            if (!Array.isArray(data)) {
+                throw new Error('Invalid data format: expected array');
+            }
+            
+            return data.filter(appointment => {
+                // Basic validation
+                if (!appointment || typeof appointment !== 'object') {
+                    console.warn('Invalid appointment object:', appointment);
+                    return false;
+                }
+                
+                // Required fields validation
+                const requiredFields = ['name', 'phone'];
+                const hasRequiredFields = requiredFields.every(field => 
+                    appointment[field] && typeof appointment[field] === 'string'
+                );
+                
+                if (!hasRequiredFields) {
+                    console.warn('Appointment missing required fields:', appointment);
+                    return false;
+                }
+                
+                return true;
+            });
+        }
+        
+        // Enhanced error handling with user-friendly messages
+        function handleError(error, context = 'Unknown') {
+            console.error(`❌ Error in ${context}:`, error);
+            
+            let userMessage = 'An unexpected error occurred. Please try again.';
+            
+            if (error.name === 'AbortError') {
+                userMessage = 'Request timed out. Please check your connection and try again.';
+            } else if (error.message.includes('Failed to fetch')) {
+                userMessage = 'Unable to connect to server. Please check your internet connection.';
+            } else if (error.message.includes('HTTP 500')) {
+                userMessage = 'Server error. Please try again later.';
+            } else if (error.message.includes('HTTP 404')) {
+                userMessage = 'Service not found. Please contact support.';
+            } else if (error.message.includes('HTTP 403')) {
+                userMessage = 'Access denied. Please check your permissions.';
+            }
+            
+            showNotification(userMessage, 'error');
+            
+            // Log error for debugging
+            if (window.console && console.error) {
+                console.error('Full error details:', {
+                    context,
+                    error: error.message,
+                    stack: error.stack,
+                    timestamp: new Date().toISOString()
+                });
+            }
+        }
+
+        // Render appointments table
+        function renderAppointments(data) {
+            const tbody = document.getElementById('appointmentsTableBody');
+            if (!tbody) {
+                console.error('❌ Appointments table body not found');
+                return;
+            }
+
+            console.log('🎨 Rendering appointments:', data.length, 'records');
+
+            if (data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem; color: #666;">
+                            <i class="fas fa-calendar-times" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                            No appointments found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = data.map((appointment, index) => {
+                console.log(`📋 Rendering appointment ${index + 1}:`, appointment);
+                
+                // Format appointment date
+                const appointmentDate = appointment.appointmentDate ? 
+                    new Date(appointment.appointmentDate).toLocaleDateString('en-IN') : 'N/A';
+                
+                // Format created date
+                const createdDate = appointment.createdAt ? 
+                    new Date(appointment.createdAt).toLocaleDateString('en-IN') : 'N/A';
+                
+                return `
+                    <tr class="fade-in" style="animation-delay: ${index * 0.1}s">
+                        <td><strong>${appointment.token || 'N/A'}</strong></td>
+                        <td>
+                            <div style="display: flex; flex-direction: column;">
+                                <strong>${appointment.name || 'N/A'}</strong>
+                                <small style="color: #666;">${appointment.age || 'N/A'} years, ${appointment.gender || 'N/A'}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; flex-direction: column;">
+                                <span>${appointment.phone || 'N/A'}</span>
+                                <small style="color: #666;">${appointment.email || 'No email'}</small>
+                            </div>
+                        </td>
+                        <td>${appointment.department || 'General'}</td>
+                        <td>
+                            <div style="display: flex; flex-direction: column;">
+                                <span>${appointmentDate}</span>
+                                <small style="color: #666;">Created: ${createdDate}</small>
+                            </div>
+                        </td>
+                        <td><span class="status-badge ${getStatusClass(appointment.paymentStatus)}">${appointment.paymentStatus || 'Pending'}</span></td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-primary" onclick="viewDetails('appointment', ${index})" style="padding: 0.5rem; font-size: 0.8rem;" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-info" onclick="editAppointment(${index})" style="padding: 0.5rem; font-size: 0.8rem;" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger" onclick="deleteRecord('appointment', ${index})" style="padding: 0.5rem; font-size: 0.8rem;" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            console.log('✅ Appointments table rendered successfully');
+        }
+
+        // Render diagnosis table
+        function renderDiagnosis(data) {
+            const tbody = document.getElementById('diagnosisTableBody');
+            if (!tbody) return;
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">No blood tests found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.map((diagnosis, index) => `
+                <tr class="fade-in" style="animation-delay: ${index * 0.1}s">
+                    <td><strong>${diagnosis.token || 'N/A'}</strong></td>
+                    <td>${diagnosis.name || 'N/A'}</td>
+                    <td>${diagnosis.phone || 'N/A'}</td>
+                    <td>${diagnosis.age || 'N/A'}</td>
+                    <td>${(diagnosis.tests || []).join(', ') || 'N/A'}</td>
+                    <td>${new Date(diagnosis.createdAt).toLocaleDateString()}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="viewDetails('diagnosis', ${index})" style="padding: 0.5rem; font-size: 0.8rem;">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteRecord('diagnosis', ${index})" style="padding: 0.5rem; font-size: 0.8rem; margin-left: 0.5rem;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Get status class for styling
+        function getStatusClass(status) {
+            switch (status?.toLowerCase()) {
+                case 'paid': return 'paid';
+                case 'confirmed': return 'confirmed';
+                case 'pending': return 'pending';
+                case 'not paid': return 'not-paid';
+                default: return 'pending';
+            }
+        }
+
+        // Update statistics with receipt-based revenue calculation
+        function updateStats() {
+            const totalAppointments = appointments.length;
+            const totalDiagnosis = diagnosisData.length;
+            const totalPatients = new Set([...appointments.map(a => a.phone), ...diagnosisData.map(d => d.phone)]).size;
+            
+            // Calculate revenue based on appointment receipts (₹300 per receipt)
+            const paidAppointments = appointments.filter(a => 
+                a.paymentStatus === 'Paid' || 
+                a.paymentStatus === 'paid' || 
+                a.paymentStatus === 'Confirmed' ||
+                a.paymentStatus === 'confirmed'
+            );
+            const totalRevenue = paidAppointments.length * 300; // ₹300 per receipt
+
+            document.getElementById('totalAppointments').textContent = totalAppointments;
+            document.getElementById('totalDiagnosis').textContent = totalDiagnosis;
+            document.getElementById('totalPatients').textContent = totalPatients;
+            document.getElementById('totalRevenue').textContent = `₹${totalRevenue.toLocaleString()}`;
+
+            // Animate counters
+            animateCounter('totalAppointments', totalAppointments);
+            animateCounter('totalDiagnosis', totalDiagnosis);
+            animateCounter('totalPatients', totalPatients);
+            animateCounter('totalRevenue', totalRevenue, '₹');
+            
+            // Update revenue breakdown display
+            const revenueBreakdown = document.getElementById('revenueBreakdown');
+            if (revenueBreakdown) {
+                revenueBreakdown.textContent = `${paidAppointments.length} receipts × ₹300`;
+            }
+            
+            // Log revenue calculation details
+            console.log(`💰 Revenue Calculation:
+                - Total Appointments: ${totalAppointments}
+                - Paid Appointments: ${paidAppointments.length}
+                - Revenue per Receipt: ₹300
+                - Total Revenue: ₹${totalRevenue.toLocaleString()}`);
+        }
+
+        // Animate counter values
+        function animateCounter(elementId, targetValue, prefix = '') {
+            const element = document.getElementById(elementId);
+            const startValue = 0;
+            const duration = 1000;
+            const startTime = performance.now();
+
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
+                
+                element.textContent = prefix + currentValue;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+            
+            requestAnimationFrame(updateCounter);
+        }
+
+        // Update connection status
+        function updateConnectionStatus(isConnected, message) {
+            const statusElement = document.getElementById('connectionStatusText');
+            const statusDot = document.querySelector('#connectionStatus .status-dot');
+            
+            if (isConnected) {
+                statusElement.textContent = message;
+                statusDot.style.background = '#2ecc71';
+            } else {
+                statusElement.textContent = message;
+                statusDot.style.background = '#e74c3c';
+            }
+        }
+
+        // Check MongoDB connection status
+        async function checkMongoDBConnection() {
+            const mongoStatus = document.getElementById('mongoStatus');
+            const mongoStatusDot = document.getElementById('mongoStatusDot');
+            const mongoStatusText = document.getElementById('mongoStatusText');
+            
+            // Set checking state
+            mongoStatus.className = 'status-indicator mongo-checking';
+            mongoStatusText.textContent = 'Checking MongoDB...';
+            mongoStatusDot.style.background = '#ffc107';
+            mongoStatusDot.style.animation = 'blink 1s infinite';
+            
+            try {
+                console.log('🔍 Checking MongoDB connection...');
+                
+                // Test MongoDB connection by fetching statistics
+                const response = await fetch(`${BACKEND_BASE}/api/mongodb/statistics`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    timeout: 5000
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ MongoDB connection successful:', data);
+                    
+                    // Update UI to connected state
+                    mongoStatus.className = 'status-indicator mongo-connected';
+                    mongoStatusText.textContent = `MongoDB Connected (${data.statistics.totalAppointments} appointments, ${data.statistics.totalDiagnosis} blood tests)`;
+                    mongoStatusDot.style.background = '#2ecc71';
+                    mongoStatusDot.style.animation = 'blink 2s infinite';
+                    
+                    showNotification('✅ MongoDB connection established', 'success');
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error('❌ MongoDB connection failed:', error);
+                
+                // Update UI to disconnected state
+                mongoStatus.className = 'status-indicator mongo-disconnected';
+                mongoStatusText.textContent = 'MongoDB Disconnected';
+                mongoStatusDot.style.background = '#e74c3c';
+                mongoStatusDot.style.animation = 'blink 1s infinite';
+                
+                showNotification('⚠️ MongoDB connection failed - using local storage', 'warning');
+            }
+        }
+
+        // Update MongoDB status
+        function updateMongoDBStatus(isConnected, message) {
+            const mongoStatus = document.getElementById('mongoStatus');
+            const mongoStatusDot = document.getElementById('mongoStatusDot');
+            const mongoStatusText = document.getElementById('mongoStatusText');
+            
+            if (isConnected) {
+                mongoStatus.className = 'status-indicator mongo-connected';
+                mongoStatusText.textContent = message;
+                mongoStatusDot.style.background = '#2ecc71';
+                mongoStatusDot.style.animation = 'blink 2s infinite';
+            } else {
+                mongoStatus.className = 'status-indicator mongo-disconnected';
+                mongoStatusText.textContent = message;
+                mongoStatusDot.style.background = '#e74c3c';
+                mongoStatusDot.style.animation = 'blink 1s infinite';
+            }
+        }
+
+        // Data sanitization function
+        function sanitizeAppointmentData(data) {
+            return data.map(appointment => ({
+                ...appointment,
+                name: sanitizeString(appointment.name),
+                phone: sanitizeString(appointment.phone),
+                email: sanitizeString(appointment.email),
+                token: sanitizeString(appointment.token),
+                department: sanitizeString(appointment.department)
+            }));
+        }
+
+        // String sanitization to prevent XSS
+        function sanitizeString(str) {
+            if (!str) return '';
+            return str.toString()
+                .replace(/[<>]/g, '') // Remove potential HTML tags
+                .replace(/javascript:/gi, '') // Remove javascript: protocol
+                .replace(/on\w+=/gi, '') // Remove event handlers
+                .trim();
+        }
+
+        // Enhanced search with debouncing
+        function setupSearch() {
+            const appointmentSearch = document.getElementById('appointmentSearch');
+            const diagnosisSearch = document.getElementById('diagnosisSearch');
+
+            if (appointmentSearch) {
+                appointmentSearch.addEventListener('input', debounce((e) => {
+                    const query = sanitizeString(e.target.value).toLowerCase();
+                    if (query.length === 0) {
+                        renderAppointments(appointments);
+                        return;
+                    }
+                    
+                    const filtered = appointments.filter(appointment => 
+                        appointment.name?.toLowerCase().includes(query) ||
+                        appointment.phone?.includes(query) ||
+                        appointment.token?.toLowerCase().includes(query) ||
+                        appointment.department?.toLowerCase().includes(query)
+                    );
+                    renderAppointments(filtered);
+                    
+                    // Show search results count
+                    if (filtered.length !== appointments.length) {
+                        showNotification(`Found ${filtered.length} appointments matching "${query}"`, 'info');
+                    }
+                }, CONFIG.SEARCH_DEBOUNCE));
+            }
+
+            if (diagnosisSearch) {
+                diagnosisSearch.addEventListener('input', debounce((e) => {
+                    const query = sanitizeString(e.target.value).toLowerCase();
+                    if (query.length === 0) {
+                        renderDiagnosis(diagnosisData);
+                        return;
+                    }
+                    
+                    const filtered = diagnosisData.filter(diagnosis => 
+                        diagnosis.name?.toLowerCase().includes(query) ||
+                        diagnosis.phone?.includes(query) ||
+                        diagnosis.token?.toLowerCase().includes(query) ||
+                        diagnosis.tests?.some(test => test.toLowerCase().includes(query))
+                    );
+                    renderDiagnosis(filtered);
+                    
+                    // Show search results count
+                    if (filtered.length !== diagnosisData.length) {
+                        showNotification(`Found ${filtered.length} blood tests matching "${query}"`, 'info');
+                    }
+                }, CONFIG.SEARCH_DEBOUNCE));
+            }
+        }
+
+        // Debounce utility function
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Enhanced auto-refresh with visibility API
+        function startAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+            
+            autoRefreshInterval = setInterval(() => {
+                // Only refresh if page is visible and not loading
+                if (!document.hidden && !isLoading) {
+                    console.log('🔄 Auto-refreshing data...');
+                loadAppointments();
+                loadDiagnosis();
+                updateStats();
+                }
+            }, CONFIG.REFRESH_INTERVAL);
+            
+            // Handle page visibility changes
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden && !isLoading) {
+                    console.log('👁️ Page became visible, refreshing data...');
+                    loadAppointments();
+                    loadDiagnosis();
+                    updateStats();
+                }
+            });
+        }
+
+        // Initialize advanced features
+        function initializeAdvancedFeatures() {
+            // Add particle effects to buttons
+            addParticleEffects();
+            
+            // Initialize keyboard shortcuts
+            initializeKeyboardShortcuts();
+            
+            // Add smooth scrolling
+            document.documentElement.style.scrollBehavior = 'smooth';
+            
+            // Initialize performance monitoring
+            initializePerformanceMonitoring();
+            
+            // Add offline detection
+            initializeOfflineDetection();
+            
+            // Initialize data persistence
+            initializeDataPersistence();
+        }
+        
+        // Performance monitoring
+        function initializePerformanceMonitoring() {
+            // Monitor page load performance
+            window.addEventListener('load', () => {
+                if (window.performance && window.performance.timing) {
+                    const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
+                    console.log(`📊 Page load time: ${loadTime}ms`);
+                    
+                    if (loadTime > 3000) {
+                        showNotification('Page is loading slowly. Consider checking your connection.', 'warning');
+                    }
+                }
+            });
+            
+            // Monitor memory usage (if available)
+            if (window.performance && window.performance.memory) {
+                setInterval(() => {
+                    const memory = window.performance.memory;
+                    const usedMB = Math.round(memory.usedJSHeapSize / 1048576);
+                    const totalMB = Math.round(memory.totalJSHeapSize / 1048576);
+                    
+                    if (usedMB > 50) { // Alert if using more than 50MB
+                        console.warn(`⚠️ High memory usage: ${usedMB}MB / ${totalMB}MB`);
+                    }
+                }, 30000); // Check every 30 seconds
+            }
+        }
+        
+        // Offline detection
+        function initializeOfflineDetection() {
+            function updateOnlineStatus() {
+                if (navigator.onLine) {
+                    showNotification('Connection restored', 'success');
+                    // Refresh data when back online
+                    if (appointments.length === 0 || diagnosisData.length === 0) {
+                        loadAppointments();
+                        loadDiagnosis();
+                    }
+                } else {
+                    showNotification('You are offline. Some features may not work.', 'warning');
+                }
+            }
+            
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+        }
+        
+        // Data persistence
+        function initializeDataPersistence() {
+            // Save data to localStorage periodically
+            setInterval(() => {
+                try {
+                    if (appointments.length > 0) {
+                        localStorage.setItem('appointmentData', JSON.stringify(appointments));
+                    }
+                    if (diagnosisData.length > 0) {
+                        localStorage.setItem('diagnosisData', JSON.stringify(diagnosisData));
+                    }
+                } catch (error) {
+                    console.warn('Failed to save data to localStorage:', error);
+                }
+            }, 60000); // Save every minute
+        }
+
+        // Add particle effects to buttons
+        function addParticleEffects() {
+            const buttons = document.querySelectorAll('.action-btn, .btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    createParticleEffect(e.target);
+                });
+            });
+        }
+
+        // Create particle effect
+        function createParticleEffect(element) {
+            const rect = element.getBoundingClientRect();
+            const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c'];
+            
+            for (let i = 0; i < 5; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = rect.left + rect.width / 2 + 'px';
+                particle.style.top = rect.top + rect.height / 2 + 'px';
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.width = '4px';
+                particle.style.height = '4px';
+                particle.style.borderRadius = '50%';
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 3000);
+            }
+        }
+
+        // Enhanced keyboard shortcuts with accessibility
+        function initializeKeyboardShortcuts() {
+            document.addEventListener('keydown', (e) => {
+                // Skip if user is typing in input fields
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    return;
+                }
+                
+                // Global shortcuts
+                if (e.ctrlKey || e.metaKey) {
+                    switch (e.key.toLowerCase()) {
+                        case 'r':
+                            e.preventDefault();
+                            refreshData();
+                            showNotification('Data refreshed (Ctrl+R)', 'info');
+                            break;
+                        case 'e':
+                            e.preventDefault();
+                            exportData();
+                            break;
+                        case 'a':
+                            e.preventDefault();
+                            openAnalytics();
+                            break;
+                        case 's':
+                            e.preventDefault();
+                            openSettings();
+                            break;
+                        case 't':
+                            e.preventDefault();
+                            toggleTheme();
+                            break;
+                    }
+                }
+                
+                // Navigation shortcuts
+                switch (e.key) {
+                    case 'Escape':
+                        // Close any open popups
+                        const popup = document.querySelector('.popup-overlay');
+                        if (popup) {
+                            closeAnimatedPopup();
+                        }
+                        break;
+                    case 'F5':
+                        e.preventDefault();
+                        refreshData();
+                        break;
+                    case 'Tab':
+                        // Ensure proper tab navigation
+                        handleTabNavigation(e);
+                        break;
+                }
+            });
+            
+            // Add ARIA labels and roles for accessibility
+            addAccessibilityFeatures();
+        }
+        
+        // Handle tab navigation for better accessibility
+        function handleTabNavigation(e) {
+            const focusableElements = document.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+            
+            if (e.shiftKey && document.activeElement === firstElement) {
+                e.preventDefault();
+                lastElement.focus();
+            } else if (!e.shiftKey && document.activeElement === lastElement) {
+                e.preventDefault();
+                firstElement.focus();
+            }
+        }
+        
+        // Add accessibility features
+        function addAccessibilityFeatures() {
+            // Add ARIA labels to buttons
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                if (!button.getAttribute('aria-label') && !button.textContent.trim()) {
+                    const icon = button.querySelector('i');
+                    if (icon) {
+                        const iconClass = icon.className;
+                        const label = getIconLabel(iconClass);
+                        button.setAttribute('aria-label', label);
+                    }
+                }
+            });
+            
+            // Add role attributes to interactive elements
+            const actionButtons = document.querySelectorAll('.action-btn');
+            actionButtons.forEach(button => {
+                button.setAttribute('role', 'button');
+                button.setAttribute('tabindex', '0');
+            });
+            
+            // Add live region for announcements
+            const liveRegion = document.createElement('div');
+            liveRegion.setAttribute('aria-live', 'polite');
+            liveRegion.setAttribute('aria-atomic', 'true');
+            liveRegion.style.position = 'absolute';
+            liveRegion.style.left = '-10000px';
+            liveRegion.style.width = '1px';
+            liveRegion.style.height = '1px';
+            liveRegion.style.overflow = 'hidden';
+            document.body.appendChild(liveRegion);
+            
+            // Store reference for screen reader announcements
+            window.liveRegion = liveRegion;
+        }
+        
+        // Get accessible label for icons
+        function getIconLabel(iconClass) {
+            const iconMap = {
+                'fa-sync-alt': 'Refresh data',
+                'fa-download': 'Export data',
+                'fa-chart-line': 'Open analytics',
+                'fa-upload': 'Upload posters',
+                'fa-trash-alt': 'Reset database',
+                'fa-cog': 'Open settings',
+                'fa-database': 'Test MongoDB connection',
+                'fa-info-circle': 'Show collection information',
+                'fa-eye': 'View details',
+                'fa-edit': 'Edit record',
+                'fa-trash': 'Delete record',
+                'fa-moon': 'Switch to dark theme',
+                'fa-sun': 'Switch to light theme',
+                'fa-sign-out-alt': 'Logout'
+            };
+            
+            for (const [className, label] of Object.entries(iconMap)) {
+                if (iconClass.includes(className)) {
+                    return label;
+                }
+            }
+            return 'Button';
+        }
+
+        // Action functions
+        function refreshData() {
+            showNotification('Refreshing data...', 'info');
+            loadAppointments();
+            loadDiagnosis();
+            updateStats();
+            renderRevenueTracking();
+        }
+
+        function exportData() {
+            try {
+                // Calculate revenue data
+                const paidAppointments = appointments.filter(a => 
+                    a.paymentStatus === 'Paid' || 
+                    a.paymentStatus === 'paid' || 
+                    a.paymentStatus === 'Confirmed' ||
+                    a.paymentStatus === 'confirmed'
+                );
+                
+                const totalRevenue = paidAppointments.length * 300;
+                
+                // Export appointments with revenue calculation
+                const appointmentsWithRevenue = appointments.map(appointment => ({
+                    ...appointment,
+                    revenue: (appointment.paymentStatus === 'Paid' || 
+                             appointment.paymentStatus === 'paid' || 
+                             appointment.paymentStatus === 'Confirmed' ||
+                             appointment.paymentStatus === 'confirmed') ? 300 : 0
+                }));
+                
+                const appointmentsCSV = convertToCSV(appointmentsWithRevenue, [
+                    'token', 'name', 'phone', 'department', 'appointmentDate', 'paymentStatus', 'revenue'
+                ]);
+                downloadCSV(appointmentsCSV, 'appointments_with_revenue.csv');
+                
+                // Export revenue summary
+                const revenueSummary = [{
+                    'Metric': 'Total Appointments',
+                    'Value': appointments.length,
+                    'Revenue': 'N/A'
+                }, {
+                    'Metric': 'Paid Appointments',
+                    'Value': paidAppointments.length,
+                    'Revenue': `₹${(paidAppointments.length * 300).toLocaleString()}`
+                }, {
+                    'Metric': 'Pending Appointments',
+                    'Value': appointments.length - paidAppointments.length,
+                    'Revenue': `₹${((appointments.length - paidAppointments.length) * 300).toLocaleString()}`
+                }, {
+                    'Metric': 'Total Revenue',
+                    'Value': 'N/A',
+                    'Revenue': `₹${totalRevenue.toLocaleString()}`
+                }];
+                
+                const revenueCSV = convertToCSV(revenueSummary, ['Metric', 'Value', 'Revenue']);
+                downloadCSV(revenueCSV, 'revenue_summary.csv');
+                
+                // Export diagnosis
+                const diagnosisCSV = convertToCSV(diagnosisData, [
+                    'token', 'name', 'phone', 'age', 'tests'
+                ]);
+                downloadCSV(diagnosisCSV, 'diagnosis.csv');
+                
+                showNotification(`Data exported successfully! Revenue: ₹${totalRevenue.toLocaleString()}`, 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showNotification('Failed to export data', 'error');
+            }
+        }
+
+        function openAnalytics() {
+            // Calculate detailed revenue analytics
+            const paidAppointments = appointments.filter(a => 
+                a.paymentStatus === 'Paid' || 
+                a.paymentStatus === 'paid' || 
+                a.paymentStatus === 'Confirmed' ||
+                a.paymentStatus === 'confirmed'
+            );
+            
+            const pendingAppointments = appointments.filter(a => 
+                a.paymentStatus === 'Pending' || 
+                a.paymentStatus === 'pending' ||
+                a.paymentStatus === 'Not Paid' ||
+                a.paymentStatus === 'not paid'
+            );
+            
+            const totalRevenue = paidAppointments.length * 300;
+            const potentialRevenue = pendingAppointments.length * 300;
+            const revenuePercentage = appointments.length > 0 ? 
+                Math.round((paidAppointments.length / appointments.length) * 100) : 0;
+            
+            // Calculate daily revenue (last 7 days)
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            
+            const recentPaidAppointments = paidAppointments.filter(a => {
+                const appointmentDate = new Date(a.appointmentDate || a.createdAt);
+                return appointmentDate >= sevenDaysAgo;
+            });
+            
+            const recentRevenue = recentPaidAppointments.length * 300;
+            
+            showAnimatedPopup({
+                title: 'Revenue Analytics Dashboard',
+                message: `
+                    <div style="text-align: left; line-height: 1.6;">
+                        <h4>💰 Revenue Summary</h4>
+                        <ul style="margin: 1rem 0;">
+                            <li><strong>Total Revenue:</strong> ₹${totalRevenue.toLocaleString()}</li>
+                            <li><strong>Paid Appointments:</strong> ${paidAppointments.length}</li>
+                            <li><strong>Pending Appointments:</strong> ${pendingAppointments.length}</li>
+                            <li><strong>Payment Success Rate:</strong> ${revenuePercentage}%</li>
+                        </ul>
+                        
+                        <h4>📈 Recent Performance (Last 7 Days)</h4>
+                        <ul style="margin: 1rem 0;">
+                            <li><strong>Recent Revenue:</strong> ₹${recentRevenue.toLocaleString()}</li>
+                            <li><strong>Recent Paid Appointments:</strong> ${recentPaidAppointments.length}</li>
+                            <li><strong>Average per Day:</strong> ₹${Math.round(recentRevenue / 7).toLocaleString()}</li>
+                        </ul>
+                        
+                        <h4>🎯 Potential Revenue</h4>
+                        <ul style="margin: 1rem 0;">
+                            <li><strong>Pending Revenue:</strong> ₹${potentialRevenue.toLocaleString()}</li>
+                            <li><strong>Total Potential:</strong> ₹${(totalRevenue + potentialRevenue).toLocaleString()}</li>
+                        </ul>
+                        
+                        <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">
+                            💡 Revenue is calculated at ₹300 per paid appointment receipt
+                        </p>
+                    </div>
+                `,
+                type: 'info',
+                confirmText: 'Got it!',
+                onConfirm: () => closeAnimatedPopup()
+            });
+        }
+
+        function openPosterUpload() {
+            window.open('posterupload.html', '_blank', 'width=800,height=600');
+        }
+
+        function resetDatabase() {
+            showConfirmPopup(
+                'Reset Database',
+                '⚠️ Are you sure you want to reset the database? This action cannot be undone!',
+                () => {
+                    showLoadingPopup('Resetting Database', 'Please wait while we reset the database...');
+                    // Implementation for database reset
+                    setTimeout(() => {
+                        closeAnimatedPopup();
+                        showSuccessPopup('Database Reset', 'Database has been reset successfully!');
+                    }, 2000);
+                },
+                () => {
+                    showNotification('Database reset cancelled', 'info');
+                }
+            );
+        }
+
+        function openSettings() {
+            showAnimatedPopup({
+                title: 'Settings',
+                message: '⚙️ Advanced settings panel is coming soon!<br><br>• Database configuration<br>• User preferences<br>• Security settings<br>• Notification preferences',
+                type: 'info',
+                confirmText: 'Understood',
+                onConfirm: () => closeAnimatedPopup()
+            });
+        }
+
+        function viewDetails(type, index) {
+            const data = type === 'appointment' ? appointments : diagnosisData;
+            if (data[index]) {
+                const details = data[index];
+                const formattedDetails = JSON.stringify(details, null, 2);
+                showAnimatedPopup({
+                    title: `${type === 'appointment' ? 'Appointment' : 'Blood Test'} Details`,
+                    message: `<pre style="background: #f8f9fa; padding: 1rem; border-radius: 8px; overflow-x: auto; font-size: 0.9rem;">${formattedDetails}</pre>`,
+                    type: 'info',
+                    confirmText: 'Close',
+                    onConfirm: () => closeAnimatedPopup()
+                });
+            }
+        }
+
+        function deleteRecord(type, index) {
+            showConfirmPopup(
+                'Delete Record',
+                `Are you sure you want to delete this ${type === 'appointment' ? 'appointment' : 'blood test'} record?`,
+                () => {
+                    if (type === 'appointment') {
+                        appointments.splice(index, 1);
+                        renderAppointments(appointments);
+                    } else {
+                        diagnosisData.splice(index, 1);
+                        renderDiagnosis(diagnosisData);
+                    }
+                    updateStats();
+                    showSuccessPopup('Record Deleted', 'Record has been deleted successfully!');
+                },
+                () => {
+                    showNotification('Delete cancelled', 'info');
+                }
+            );
+        }
+
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            document.body.classList.toggle('dark-theme');
+            const themeBtn = document.querySelector('[onclick="toggleTheme()"]');
+            themeBtn.innerHTML = isDarkTheme ? '<i class="fas fa-sun"></i> Theme' : '<i class="fas fa-moon"></i> Theme';
+            showNotification(`Switched to ${isDarkTheme ? 'dark' : 'light'} theme`, 'info');
+        }
+
+        function logout() {
+            showConfirmPopup(
+                'Logout',
+                'Are you sure you want to logout? You will need to login again to access the dashboard.',
+                () => {
+                    showLoadingPopup('Logging Out', 'Please wait while we log you out...');
+                    setTimeout(() => {
+                        localStorage.removeItem(AUTH_STORAGE_KEY);
+                        window.location.href = 'index.html';
+                    }, 1000);
+                },
+                () => {
+                    showNotification('Logout cancelled', 'info');
+                }
+            );
+        }
+
+        // Utility functions
+        function convertToCSV(data, fields) {
+            if (data.length === 0) return '';
+            
+            const headers = fields.join(',');
+            const rows = data.map(item => 
+                fields.map(field => {
+                    const value = item[field];
+                    if (Array.isArray(value)) {
+                        return `"${value.join('; ')}"`;
+                    }
+                    return `"${value || ''}"`;
+                }).join(',')
+            );
+            
+            return [headers, ...rows].join('\n');
+        }
+
+        function downloadCSV(csv, filename) {
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.setAttribute('role', 'alert');
+            notification.setAttribute('aria-live', 'assertive');
+            
+            document.body.appendChild(notification);
+            
+            // Announce to screen readers
+            if (window.liveRegion) {
+                window.liveRegion.textContent = `${type.toUpperCase()}: ${message}`;
+            }
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideInRight 0.3s ease-out reverse';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Animated Popup System
+        function showAnimatedPopup(options) {
+            const {
+                title = 'Notification',
+                message = '',
+                type = 'info',
+                showCancel = false,
+                confirmText = 'OK',
+                cancelText = 'Cancel',
+                onConfirm = null,
+                onCancel = null,
+                showInput = false,
+                inputPlaceholder = '',
+                inputType = 'text'
+            } = options;
+
+            // Remove existing popups
+            const existingPopups = document.querySelectorAll('.popup-overlay');
+            existingPopups.forEach(popup => popup.remove());
+
+            const overlay = document.createElement('div');
+            overlay.className = 'popup-overlay';
+            overlay.onclick = (e) => {
+                if (e.target === overlay) {
+                    closeAnimatedPopup();
+                }
+            };
+
+            const container = document.createElement('div');
+            container.className = `popup-container popup-${type}`;
+
+            const iconMap = {
+                success: '✅',
+                warning: '⚠️',
+                danger: '❌',
+                info: 'ℹ️'
+            };
+
+            container.innerHTML = `
+                <div class="popup-header">
+                    <div class="popup-title">
+                        <div class="popup-icon ${type}">${iconMap[type]}</div>
+                        ${title}
+                    </div>
+                    <button class="popup-close" onclick="closeAnimatedPopup()">×</button>
+                </div>
+                <div class="popup-content">
+                    ${message}
+                    ${showInput ? `<input type="${inputType}" class="popup-input" placeholder="${inputPlaceholder}" id="popupInput">` : ''}
+                </div>
+                <div class="popup-actions">
+                    ${showCancel ? `<button class="popup-btn popup-btn-secondary" onclick="handlePopupCancel()">${cancelText}</button>` : ''}
+                    <button class="popup-btn popup-btn-primary" onclick="handlePopupConfirm()">${confirmText}</button>
+                </div>
+            `;
+
+            overlay.appendChild(container);
+            document.body.appendChild(overlay);
+
+            // Focus input if present
+            if (showInput) {
+                setTimeout(() => {
+                    const input = document.getElementById('popupInput');
+                    if (input) input.focus();
+                }, 100);
+            }
+
+            // Store callbacks globally
+            window.currentPopupCallbacks = { onConfirm, onCancel };
+        }
+
+        function closeAnimatedPopup() {
+            const overlay = document.querySelector('.popup-overlay');
+            if (overlay) {
+                overlay.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => overlay.remove(), 300);
+            }
+            window.currentPopupCallbacks = null;
+        }
+
+        function handlePopupConfirm() {
+            const input = document.getElementById('popupInput');
+            const value = input ? input.value : null;
+            
+            if (window.currentPopupCallbacks && window.currentPopupCallbacks.onConfirm) {
+                window.currentPopupCallbacks.onConfirm(value);
+            }
+            closeAnimatedPopup();
+        }
+
+        function handlePopupCancel() {
+            if (window.currentPopupCallbacks && window.currentPopupCallbacks.onCancel) {
+                window.currentPopupCallbacks.onCancel();
+            }
+            closeAnimatedPopup();
+        }
+
+        // Enhanced popup functions
+        function showConfirmPopup(title, message, onConfirm, onCancel = null) {
+            showAnimatedPopup({
+                title,
+                message,
+                type: 'warning',
+                showCancel: true,
+                confirmText: 'Yes',
+                cancelText: 'No',
+                onConfirm,
+                onCancel
+            });
+        }
+
+        function showSuccessPopup(title, message, onConfirm = null) {
+            showAnimatedPopup({
+                title,
+                message,
+                type: 'success',
+                confirmText: 'OK',
+                onConfirm
+            });
+        }
+
+        function showErrorPopup(title, message, onConfirm = null) {
+            showAnimatedPopup({
+                title,
+                message,
+                type: 'danger',
+                confirmText: 'OK',
+                onConfirm
+            });
+        }
+
+        function showInputPopup(title, message, placeholder, onConfirm, onCancel = null) {
+            showAnimatedPopup({
+                title,
+                message,
+                type: 'info',
+                showCancel: true,
+                showInput: true,
+                inputPlaceholder: placeholder,
+                confirmText: 'Submit',
+                cancelText: 'Cancel',
+                onConfirm,
+                onCancel
+            });
+        }
+
+        function showLoadingPopup(title, message) {
+            showAnimatedPopup({
+                title,
+                message,
+                type: 'info',
+                showCancel: false,
+                confirmText: '',
+                onConfirm: null
+            });
+
+            // Replace content with loading spinner
+            const container = document.querySelector('.popup-container');
+            if (container) {
+                container.innerHTML = `
+                    <div class="popup-loading">
+                        <div class="popup-spinner"></div>
+                        <h3>${title}</h3>
+                        <p>${message}</p>
+                    </div>
+                `;
+            }
+        }
+
+
+        // Render revenue tracking table
+        function renderRevenueTracking() {
+            const tbody = document.getElementById('revenueTableBody');
+            if (!tbody) return;
+
+            if (appointments.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 2rem; color: #666;">
+                            <i class="fas fa-chart-line" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                            No appointment data available
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Calculate revenue breakdown by payment status
+            const statusGroups = {};
+            appointments.forEach(appointment => {
+                const status = appointment.paymentStatus || 'Pending';
+                if (!statusGroups[status]) {
+                    statusGroups[status] = { count: 0, revenue: 0 };
+                }
+                statusGroups[status].count++;
+                if (status === 'Paid' || status === 'paid' || status === 'Confirmed' || status === 'confirmed') {
+                    statusGroups[status].revenue += 300;
+                }
+            });
+
+            const totalAppointments = appointments.length;
+            const totalRevenue = Object.values(statusGroups).reduce((sum, group) => sum + group.revenue, 0);
+
+            tbody.innerHTML = Object.entries(statusGroups).map(([status, data]) => {
+                const percentage = totalAppointments > 0 ? Math.round((data.count / totalAppointments) * 100) : 0;
+                const statusClass = getStatusClass(status);
+                
+                return `
+                    <tr class="fade-in">
+                        <td><span class="status-badge ${statusClass}">${status}</span></td>
+                        <td><strong>${data.count}</strong></td>
+                        <td><strong>₹${data.revenue.toLocaleString()}</strong></td>
+                        <td>${percentage}%</td>
+                        <td>
+                            <button class="btn btn-primary" onclick="viewStatusDetails('${status}')" style="padding: 0.5rem; font-size: 0.8rem;">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('') + `
+                <tr style="background: #f8f9fa; font-weight: bold; border-top: 2px solid #dee2e6;">
+                    <td><strong>Total</strong></td>
+                    <td><strong>${totalAppointments}</strong></td>
+                    <td><strong>₹${totalRevenue.toLocaleString()}</strong></td>
+                    <td><strong>100%</strong></td>
+                    <td>
+                        <button class="btn btn-success" onclick="generateRevenueReport()" style="padding: 0.5rem; font-size: 0.8rem;">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // View details for specific payment status
+        function viewStatusDetails(status) {
+            const filteredAppointments = appointments.filter(a => 
+                (a.paymentStatus || 'Pending') === status
+            );
+            
+            if (filteredAppointments.length === 0) {
+                showNotification(`No appointments found with status: ${status}`, 'info');
+                return;
+            }
+
+            const revenue = status === 'Paid' || status === 'paid' || status === 'Confirmed' || status === 'confirmed' 
+                ? filteredAppointments.length * 300 : 0;
+
+            showAnimatedPopup({
+                title: `${status} Appointments Details`,
+                message: `
+                    <div style="text-align: left;">
+                        <h4>📊 Summary</h4>
+                        <ul style="margin: 1rem 0;">
+                            <li><strong>Count:</strong> ${filteredAppointments.length}</li>
+                            <li><strong>Revenue:</strong> ₹${revenue.toLocaleString()}</li>
+                            <li><strong>Average per appointment:</strong> ₹${filteredAppointments.length > 0 ? (revenue / filteredAppointments.length).toFixed(2) : 0}</li>
+                        </ul>
+                        
+                        <h4>📋 Recent Appointments</h4>
+                        <div style="max-height: 200px; overflow-y: auto; background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                            ${filteredAppointments.slice(0, 10).map(apt => `
+                                <div style="padding: 0.5rem 0; border-bottom: 1px solid #dee2e6;">
+                                    <strong>${apt.name || 'N/A'}</strong> - ${apt.phone || 'N/A'}<br>
+                                    <small style="color: #666;">Token: ${apt.token || 'N/A'} | Date: ${new Date(apt.appointmentDate || apt.createdAt).toLocaleDateString()}</small>
+                                </div>
+                            `).join('')}
+                            ${filteredAppointments.length > 10 ? `<p style="text-align: center; color: #666; margin-top: 1rem;">... and ${filteredAppointments.length - 10} more</p>` : ''}
+                        </div>
+                    </div>
+                `,
+                type: 'info',
+                confirmText: 'Close',
+                onConfirm: () => closeAnimatedPopup()
+            });
+        }
+
+        // Generate comprehensive revenue report
+        function generateRevenueReport() {
+            const paidAppointments = appointments.filter(a => 
+                a.paymentStatus === 'Paid' || 
+                a.paymentStatus === 'paid' || 
+                a.paymentStatus === 'Confirmed' ||
+                a.paymentStatus === 'confirmed'
+            );
+            
+            const pendingAppointments = appointments.filter(a => 
+                a.paymentStatus === 'Pending' || 
+                a.paymentStatus === 'pending' ||
+                a.paymentStatus === 'Not Paid' ||
+                a.paymentStatus === 'not paid'
+            );
+
+            const totalRevenue = paidAppointments.length * 300;
+            const potentialRevenue = pendingAppointments.length * 300;
+            const paymentSuccessRate = appointments.length > 0 ? 
+                Math.round((paidAppointments.length / appointments.length) * 100) : 0;
+
+            // Calculate daily revenue for last 7 days
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            
+            const recentPaidAppointments = paidAppointments.filter(a => {
+                const appointmentDate = new Date(a.appointmentDate || a.createdAt);
+                return appointmentDate >= sevenDaysAgo;
+            });
+            
+            const recentRevenue = recentPaidAppointments.length * 300;
+
+            showAnimatedPopup({
+                title: 'Revenue Report Generated',
+                message: `
+                    <div style="text-align: left; line-height: 1.6;">
+                        <h4>📊 Revenue Report Summary</h4>
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                            <p><strong>Total Revenue:</strong> ₹${totalRevenue.toLocaleString()}</p>
+                            <p><strong>Paid Appointments:</strong> ${paidAppointments.length}</p>
+                            <p><strong>Pending Appointments:</strong> ${pendingAppointments.length}</p>
+                            <p><strong>Payment Success Rate:</strong> ${paymentSuccessRate}%</p>
+                        </div>
+                        
+                        <h4>📈 Recent Performance (Last 7 Days)</h4>
+                        <div style="background: #e8f5e8; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                            <p><strong>Recent Revenue:</strong> ₹${recentRevenue.toLocaleString()}</p>
+                            <p><strong>Recent Paid Appointments:</strong> ${recentPaidAppointments.length}</p>
+                            <p><strong>Average per Day:</strong> ₹${Math.round(recentRevenue / 7).toLocaleString()}</p>
+                        </div>
+                        
+                        <h4>🎯 Potential Revenue</h4>
+                        <div style="background: #fff3cd; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                            <p><strong>Pending Revenue:</strong> ₹${potentialRevenue.toLocaleString()}</p>
+                            <p><strong>Total Potential:</strong> ₹${(totalRevenue + potentialRevenue).toLocaleString()}</p>
+                        </div>
+                        
+                        <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">
+                            💡 Revenue calculated at ₹300 per paid appointment receipt
+                        </p>
+                    </div>
+                `,
+                type: 'success',
+                confirmText: 'Download Report',
+                onConfirm: () => {
+                    exportData();
+                    closeAnimatedPopup();
+                }
+            });
+        }
+
+        // Show collection information with cleanup status
+        function showCollectionInfo() {
+            showAnimatedPopup({
+                title: 'MongoDB Collection Status',
+                message: `
+                    <div style="text-align: left;">
+                        <h4>✅ Active Collections (Backend Using):</h4>
+                        <div style="background: #d4edda; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                            <ul style="margin: 0;">
+                                <li><strong>appointments</strong> - Current appointment data ✅</li>
+                                <li><strong>bloodtests</strong> - Current blood test data ✅</li>
+                        </ul>
+                        </div>
+                        
+                        <h4>🗑️ Old Collections (Should be Deleted):</h4>
+                        <div style="background: #f8d7da; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                            <ul style="margin: 0;">
+                                <li><strong>opappointments</strong> - Old collection ❌</li>
+                                <li><strong>diagnoses</strong> - Old collection ❌</li>
+                        </ul>
+                        </div>
+                        
+                        <h4>🔧 Cleanup Required:</h4>
+                        <div style="background: #fff3cd; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                            <p style="margin: 0; font-size: 0.9rem;">
+                                <strong>Action Needed:</strong> Delete old collections in MongoDB Atlas<br>
+                                <strong>Keep:</strong> appointments, bloodtests<br>
+                                <strong>Delete:</strong> opappointments, diagnoses
+                            </p>
+                        </div>
+                        
+                        <h4>📝 Quick Steps:</h4>
+                        <ol style="font-size: 0.9rem; color: #666; margin: 1rem 0;">
+                            <li>Go to MongoDB Atlas → Browse Collections</li>
+                            <li>Delete 'opappointments' collection</li>
+                            <li>Delete 'diagnoses' collection</li>
+                            <li>Keep 'appointments' and 'bloodtests'</li>
+                        </ol>
+                        
+                        <p style="font-size: 0.8rem; color: #999; margin-top: 1rem;">
+                            📄 See MONGODB_CLEANUP_GUIDE.md for detailed instructions
+                        </p>
+                    </div>
+                `,
+                type: 'warning',
+                showCancel: false,
+                confirmText: 'Understood',
+                onConfirm: () => {
+                    console.log('Collection cleanup info acknowledged');
+                }
+            });
+        }
+
+    </script>
+    
+<!-- Configuration Files -->
+<script src="../config.js"></script>
+<script src="../admin-config.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Disallow admin areas
+Disallow: /admin-dashboard.html
+Disallow: /admin-config.js
+Disallow: /config.js
+Disallow: /production-config.js
+
+# Allow public pages
+Allow: /index.html
+Allow: /appoinment.html
+Allow: /bloodtestbook.html
+Allow: /doctors.html
+Allow: /services.html
+Allow: /posterupload.html
+
+# Sitemap
+Sitemap: https://srikamalahospital.store/sitemap.xml

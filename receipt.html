@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Receipt - Sri Kamala Hospital</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <!-- html2pdf library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* Global responsive styles */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Minimal styling for basic functionality */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #00b894;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .loading h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .loading p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px 20px;
+            background: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .error h3 {
+            color: #e53e3e;
+            margin-bottom: 10px;
+        }
+
+        .error p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Receipt container - responsive and centered */
+        .receipt-container {
+            position: relative;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .receipt-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('ChatGPT Image Apr 19, 2025, 01_22_02 AM.png');
+            background-size: 400px;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.1;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Ensure content appears above background */
+        .receipt-header,
+        .receipt-title,
+        .receipt-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Center hospital header content */
+        .receipt-header {
+            text-align: center;
+        }
+
+        .hospital-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 10px auto;
+        }
+
+        .hospital-name {
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .hospital-info {
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        /* Receipt title styling */
+        .receipt-title {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px 0;
+            border-top: 2px solid #333;
+            border-bottom: 2px solid #333;
+        }
+
+        .receipt-title h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+        }
+
+        /* Simple details styling - minimal and clean */
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #eee;
+            min-height: 30px;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .detail-value {
+            color: #555;
+            font-size: 16px;
+            text-align: right;
+        }
+
+        /* Token number highlighting */
+        .token-row {
+            background: rgba(0, 123, 255, 0.1);
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            margin: 0 -5px 8px -5px;
+            padding: 8px 5px;
+        }
+
+        .token-row .detail-label {
+            color: #007bff;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .token-row .detail-value {
+            color: #007bff;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        /* Payment info plain styling */
+        .payment-info {
+            background: transparent;
+            border: none;
+            padding: 15px 0;
+            margin: 15px 0;
+        }
+
+        .payment-info h3 {
+            color: #0000dc;
+            margin-bottom: 10px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .payment-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .payment-item {
+            background: transparent;
+            padding: 8px 0;
+            border: none;
+        }
+
+        .payment-label {
+            font-size: 14px;
+            color: #e11010;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .payment-value {
+            font-weight: 600;
+            font-size: 15px;
+            color: #155724;
+        }
+
+        /* Important note plain styling */
+        .important-note {
+            background: transparent;
+            border: none;
+            padding: 12px 0;
+            margin: 15px 0;
+        }
+
+        .important-note h4 {
+            color: #856404;
+            margin-bottom: 6px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .important-note p {
+            color: #856404;
+            font-size: 15px;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        /* Responsive button styling */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        /* Status badges - simple */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-payathospital {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-notpaid {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Pay at Hospital stamp styling */
+        .pay-at-hospital-stamp {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            border: 4px solid #007bff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+            transform: rotate(-15deg);
+            opacity: 0.9;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.1) 0%, rgba(0, 123, 255, 0.05) 100%);
+            color: #007bff;
+            z-index: 5;
+            animation: stampPulse 2s ease-in-out infinite;
+        }
+
+        /* Paid stamp styling */
+        .paid-stamp {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            border: 4px solid #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+            transform: rotate(-15deg);
+            opacity: 0.9;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(40, 167, 69, 0.05) 100%);
+            color: #28a745;
+            z-index: 5;
+            animation: paidStampPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes paidStampPulse {
+            0%, 100% { 
+                transform: rotate(-15deg) scale(1);
+                box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            }
+            50% { 
+                transform: rotate(-15deg) scale(1.05);
+                box-shadow: 0 6px 20px rgba(40, 167, 69, 0.5);
+            }
+        }
+
+        @keyframes stampPulse {
+            0%, 100% { 
+                transform: rotate(-15deg) scale(1);
+                box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+            }
+            50% { 
+                transform: rotate(-15deg) scale(1.05);
+                box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5);
+            }
+        }
+
+        /* Download notification styles */
+        .download-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+            z-index: 1000;
+            animation: slideInRight 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            max-width: 280px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes slideInRight {
+            0% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .download-notification .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Responsive Design for All Devices */
+        
+        /* Large Desktop (1200px and up) */
+        @media (min-width: 1200px) {
+            .receipt-container {
+                max-width: 900px;
+                padding: 40px;
+            }
+            
+            .hospital-name {
+                font-size: 32px;
+            }
+            
+            .receipt-title h2 {
+                font-size: 28px;
+            }
+        }
+
+        /* Desktop (992px to 1199px) */
+        @media (max-width: 1199px) and (min-width: 992px) {
+            .receipt-container {
+                max-width: 800px;
+                padding: 35px;
+            }
+        }
+
+        /* Tablet (768px to 991px) */
+        @media (max-width: 991px) and (min-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .receipt-container {
+                max-width: 700px;
+                padding: 25px;
+            }
+            
+            .hospital-name {
+                font-size: 24px;
+            }
+            
+            .receipt-title h2 {
+                font-size: 22px;
+            }
+            
+            .detail-label, .detail-value {
+                font-size: 15px;
+            }
+        }
+
+        /* Mobile Large (576px to 767px) */
+        @media (max-width: 767px) and (min-width: 576px) {
+            body {
+                padding: 10px;
+            }
+            
+            .receipt-container {
+                max-width: 100%;
+                padding: 20px;
+                margin: 10px 0;
+            }
+            
+            .hospital-name {
+                font-size: 22px;
+            }
+            
+            .hospital-info {
+                font-size: 14px;
+            }
+            
+            .receipt-title h2 {
+                font-size: 20px;
+            }
+            
+            .detail-label, .detail-value {
+                font-size: 14px;
+            }
+            
+            .payment-info h3 {
+            font-size: 18px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                margin: 5px 0;
+            }
+        }
+
+        /* Mobile Small (up to 575px) */
+        @media (max-width: 575px) {
+            body {
+                padding: 5px;
+                align-items: flex-start;
+                padding-top: 10px;
+            }
+            
+            .receipt-container {
+                max-width: 100%;
+                padding: 15px;
+                margin: 5px 0;
+                border-radius: 10px;
+            }
+            
+            .hospital-logo img {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .hospital-name {
+                font-size: 20px;
+                margin-bottom: 6px;
+            }
+            
+            .hospital-info {
+                font-size: 13px;
+                margin-bottom: 6px;
+            }
+            
+            .receipt-title {
+                margin: 15px 0;
+                padding: 10px 0;
+            }
+            
+            .receipt-title h2 {
+                font-size: 18px;
+            }
+            
+            .detail-row {
+                padding: 4px 0;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+            }
+            
+            .detail-label, .detail-value {
+                font-size: 13px;
+            }
+            
+            .detail-value {
+                text-align: left;
+                font-weight: 600;
+            }
+            
+            .token-row {
+                padding: 6px 5px;
+                margin: 0 -3px 6px -3px;
+            }
+            
+            .token-row .detail-label,
+            .token-row .detail-value {
+                font-size: 16px;
+            }
+            
+            .payment-info h3 {
+                font-size: 16px;
+            }
+            
+            .payment-details {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+            
+            .payment-label {
+                font-size: 12px;
+            }
+            
+            .payment-value {
+                font-size: 13px;
+            }
+            
+            .important-note h4 {
+                font-size: 14px;
+            }
+            
+            .important-note p {
+                font-size: 13px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .btn {
+                width: 100%;
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            
+            .pay-at-hospital-stamp,
+            .paid-stamp {
+                width: 80px;
+                height: 80px;
+                top: 10px;
+                right: 10px;
+                font-size: 10px;
+            }
+        }
+
+        /* Extra Small Mobile (up to 375px) */
+        @media (max-width: 375px) {
+            .receipt-container {
+                padding: 12px;
+            }
+            
+            .hospital-name {
+                font-size: 18px;
+            }
+            
+            .hospital-info {
+                font-size: 12px;
+            }
+            
+            .receipt-title h2 {
+                font-size: 16px;
+            }
+            
+            .detail-label, .detail-value {
+                font-size: 12px;
+            }
+            
+            .token-row .detail-label,
+            .token-row .detail-value {
+                font-size: 14px;
+            }
+            
+            .btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+            
+            .loading, .error {
+                padding: 20px 15px;
+            }
+            
+            .loading h3, .error h3 {
+                font-size: 16px;
+            }
+            
+            .loading p, .error p {
+                font-size: 13px;
+            }
+        }
+
+        /* Print styles - ensure logo is visible when printing */
+        @media print {
+            /* Force single page print */
+            @page {
+                size: A4;
+                margin: 0.5in;
+            }
+
+            body {
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                display: block !important;
+                min-height: auto !important;
+                font-size: 12px !important;
+                line-height: 1.3 !important;
+            }
+
+            .receipt-container {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 !important;
+                position: relative !important;
+                background: white !important;
+                padding: 15px !important;
+                border-radius: 0 !important;
+                page-break-inside: avoid !important;
+                height: auto !important;
+                max-height: 11in !important;
+            }
+
+            .receipt-container::before {
+                display: block !important;
+                opacity: 0.3 !important;
+                background-size: 200px !important;
+                z-index: 1 !important;
+                background-image: url('ChatGPT Image Apr 19, 2025, 01_22_02 AM.png') !important;
+                background-repeat: no-repeat !important;
+                background-position: center !important;
+            }
+
+            /* Print logo overlay for better visibility */
+            .print-logo-overlay {
+                display: block !important;
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 200px !important;
+                height: 200px !important;
+                opacity: 0.3 !important;
+                z-index: 1 !important;
+                pointer-events: none !important;
+                background-image: url('ChatGPT Image Apr 19, 2025, 01_22_02 AM.png') !important;
+                background-size: contain !important;
+                background-repeat: no-repeat !important;
+                background-position: center !important;
+            }
+
+            /* Print text watermark */
+            .print-text-watermark {
+                display: block !important;
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) rotate(-15deg) !important;
+                font-size: 36px !important;
+                font-weight: 900 !important;
+                color: rgba(0, 123, 255, 0.2) !important;
+                z-index: 1 !important;
+                pointer-events: none !important;
+                text-align: center !important;
+                letter-spacing: 6px !important;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+                white-space: nowrap !important;
+            }
+
+            /* Ensure content appears above background when printing */
+            .receipt-header,
+            .receipt-title,
+            .receipt-content {
+                z-index: 2 !important;
+                position: relative !important;
+                background: rgba(255, 255, 255, 0.9) !important;
+            }
+
+            /* Compact header for print */
+            .receipt-header {
+                margin-bottom: 10px !important;
+            }
+
+            .hospital-name {
+                font-size: 20px !important;
+                margin-bottom: 5px !important;
+            }
+
+            .hospital-info {
+                font-size: 12px !important;
+                margin-bottom: 5px !important;
+            }
+
+            .receipt-title {
+                margin: 10px 0 !important;
+                padding: 8px 0 !important;
+            }
+
+            .receipt-title h2 {
+                font-size: 18px !important;
+            }
+
+            /* Compact details for print */
+            .detail-row {
+                padding: 3px 0 !important;
+                font-size: 12px !important;
+                page-break-inside: avoid !important;
+            }
+
+            .detail-label {
+                font-size: 12px !important;
+            }
+
+            .detail-value {
+                font-size: 12px !important;
+            }
+
+            .token-row {
+                padding: 4px 5px !important;
+                margin: 0 -3px 4px -3px !important;
+            }
+
+            .token-row .detail-label,
+            .token-row .detail-value {
+                font-size: 14px !important;
+            }
+
+            /* Compact payment info */
+            .payment-info {
+                margin: 8px 0 !important;
+                padding: 8px 0 !important;
+            }
+
+            .payment-info h3 {
+                font-size: 14px !important;
+                margin-bottom: 5px !important;
+            }
+
+            .payment-details {
+                gap: 4px !important;
+            }
+
+            .payment-label {
+                font-size: 10px !important;
+            }
+
+            .payment-value {
+                font-size: 11px !important;
+            }
+
+            /* Compact important note */
+            .important-note {
+                margin: 8px 0 !important;
+                padding: 6px 0 !important;
+            }
+
+            .important-note h4 {
+                font-size: 12px !important;
+                margin-bottom: 3px !important;
+            }
+
+            .important-note p {
+                font-size: 11px !important;
+                line-height: 1.2 !important;
+            }
+
+            /* Hide action buttons and settings when printing */
+            .action-buttons,
+            .auto-download-settings {
+                display: none !important;
+            }
+
+            /* Show stamps only if they should be visible (not force all) */
+            .pay-at-hospital-stamp {
+                display: flex !important;
+                opacity: 0.8 !important;
+                width: 80px !important;
+                height: 80px !important;
+                top: 10px !important;
+                right: 10px !important;
+                font-size: 10px !important;
+            }
+
+            .paid-stamp {
+                display: flex !important;
+                opacity: 0.8 !important;
+                width: 80px !important;
+                height: 80px !important;
+                top: 10px !important;
+                right: 10px !important;
+                font-size: 10px !important;
+            }
+
+            /* Hide stamps that shouldn't be visible */
+            .pay-at-hospital-stamp[style*="display: none"],
+            .paid-stamp[style*="display: none"] {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <!-- Print Logo Overlay for better print visibility -->
+        <div class="print-logo-overlay" style="display: none;"></div>
+        
+        <!-- Print Text Watermark -->
+        <div class="print-text-watermark" style="display: none;">SRI KAMALA HOSPITAL</div>
+        
+        <!-- Pay at Hospital Stamp -->
+        <div id="payAtHospitalStamp" class="pay-at-hospital-stamp" style="display: none;">
+            PAY AT<br>HOSPITAL
+        </div>
+        
+        <!-- Paid Stamp -->
+        <div id="paidStamp" class="paid-stamp" style="display: none;">
+            ✅ PAID
+        </div>
+        
+        <!-- Header -->
+        <div class="receipt-header">
+            <div class="hospital-logo">
+                <img src="ChatGPT Image Apr 19, 2025, 01_22_02 AM.png" height="60" width="60" alt="Hospital Logo" />
+            </div>
+            <h1 class="hospital-name">Sri Kamala Hospital</h1>
+            <div class="hospital-info">
+                Opp. Tirumala Grand Restaurant, Suryapet - 508213<br>
+                Phone: 9948076665 | Email: srikamalahospitalsrpt@gmail.com
+            </div>
+            
+           
+        </div>
+
+        <!-- Title -->
+        <div class="receipt-title">
+            <h2>Appointment Receipt</h2>
+        </div>
+        
+        <!-- Content -->
+        <div class="receipt-content">
+            <!-- Loading State -->
+        <div id="loading" class="loading">
+                <div class="loading-spinner"></div>
+                <h3>Loading Receipt...</h3>
+                <p>Please wait while we fetch your appointment details</p>
+        </div>
+        
+            <!-- Error State -->
+        <div id="error" class="error" style="display: none;">
+                <h3>❌ Error Loading Receipt</h3>
+                <p id="error-message">Unable to load appointment details</p>
+                <button class="btn btn-primary" onclick="location.reload()">🔄 Retry</button>
+        </div>
+        
+            <!-- Receipt Content -->
+        <div id="receipt-content" style="display: none;">
+                <!-- Appointment Details -->
+                <div class="receipt-details">
+                    <div class="detail-row token-row">
+                        <span class="detail-label">Token Number:</span>
+                        <span class="detail-value token-value" id="token">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Patient Name:</span>
+                        <span class="detail-value" id="name">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Age:</span>
+                        <span class="detail-value" id="age">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Gender:</span>
+                        <span class="detail-value" id="gender">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Phone:</span>
+                        <span class="detail-value" id="phone">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Department:</span>
+                        <span class="detail-value" id="department">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Appointment Date:</span>
+                        <span class="detail-value" id="date">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Appointment Time:</span>
+                        <span class="detail-value" id="time">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Reason for Visit:</span>
+                        <span class="detail-value" id="reason">-</span>
+                    </div>
+                </div>
+
+                <!-- Payment Information -->
+                <div class="payment-info">
+                    <h3>💳 Payment Information</h3>
+                    <div class="payment-details">
+                        <div class="payment-item">
+                            <div class="payment-label">Payment Status</div>
+                            <div class="payment-value" id="payment-status">-</div>
+            </div>
+                        <div class="payment-item">
+                            <div class="payment-label">Payment Method</div>
+                            <div class="payment-value" id="payment-method">-</div>
+            </div>
+                        <div class="payment-item">
+                            <div class="payment-label">Payment ID</div>
+                            <div class="payment-value" id="payment-id">-</div>
+                        </div>
+                        <div class="payment-item">
+                            <div class="payment-label">Payment Time</div>
+                            <div class="payment-value" id="payment-time">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Important Notes -->
+                <div class="important-note">
+                    <h4>📋 Important Information</h4>
+                    <p id="important-note-text">
+                        Please bring this receipt or a screenshot on the day of your appointment. 
+                        Arrive 15 minutes before your scheduled time.
+                    </p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="downloadReceiptAsPDF()">
+                        📥 Download PDF
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.print()">
+                        🖨️ Print Receipt
+                    </button>
+                    <a href="index.html" class="btn btn-secondary">
+                        🏠 Back to Home
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+            const BACKEND_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+                ? 'http://localhost:3000'
+                : 'https://hospital-backend-78ur.onrender.com';
+            
+        // DOM Elements
+        const loadingEl = document.getElementById('loading');
+        const errorEl = document.getElementById('error');
+        const receiptEl = document.getElementById('receipt-content');
+        const errorMessageEl = document.getElementById('error-message');
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 Receipt page loaded');
+            
+            // Receipt page initialized
+            
+            // Force logo visibility for printing
+            const printLogoOverlay = document.querySelector('.print-logo-overlay');
+            if (printLogoOverlay) {
+                printLogoOverlay.style.display = 'block';
+            }
+
+            // Print event listener to ensure logo visibility
+            window.addEventListener('beforeprint', function() {
+                console.log('🖨️ Preparing for print - forcing logo visibility');
+                
+                // Force show print logo overlay
+                if (printLogoOverlay) {
+                    printLogoOverlay.style.display = 'block';
+                    printLogoOverlay.style.opacity = '0.3';
+                    printLogoOverlay.style.position = 'absolute';
+                    printLogoOverlay.style.top = '50%';
+                    printLogoOverlay.style.left = '50%';
+                    printLogoOverlay.style.transform = 'translate(-50%, -50%)';
+                    printLogoOverlay.style.width = '400px';
+                    printLogoOverlay.style.height = '400px';
+                    printLogoOverlay.style.zIndex = '1';
+                    printLogoOverlay.style.backgroundImage = "url('ChatGPT Image Apr 19, 2025, 01_22_02 AM.png')";
+                    printLogoOverlay.style.backgroundSize = 'contain';
+                    printLogoOverlay.style.backgroundRepeat = 'no-repeat';
+                    printLogoOverlay.style.backgroundPosition = 'center';
+                }
+
+                // Force show background logo
+                const receiptContainer = document.querySelector('.receipt-container');
+                if (receiptContainer) {
+                    receiptContainer.style.setProperty('--print-logo', 'url("ChatGPT Image Apr 19, 2025, 01_22_02 AM.png")');
+                }
+            });
+
+            // Reset after printing
+            window.addEventListener('afterprint', function() {
+                console.log('🖨️ Print completed - resetting logo');
+                if (printLogoOverlay) {
+                    printLogoOverlay.style.display = 'none';
+                }
+            });
+            
+            try {
+                await loadReceiptData();
+            } catch (error) {
+                console.error('❌ Error loading receipt:', error);
+                showError('Failed to load receipt data');
+            }
+        });
+
+        // Load receipt data
+        async function loadReceiptData() {
+            console.log('🔍 Loading receipt data...');
+            
+            // Get token from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            
+            if (!token) {
+                throw new Error('No token provided in URL');
+            }
+
+            console.log('🔍 Token:', token);
+            console.log('🔍 Backend URL:', BACKEND_BASE);
+
+            let appointmentData = null;
+
+            // Try to fetch from backend API first
+            try {
+                console.log('🌐 Fetching latest data from backend API...');
+                const response = await fetch(`${BACKEND_BASE}/get-appointment-by-token?token=${encodeURIComponent(token)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    appointmentData = await response.json();
+                    console.log('✅ Appointment data received from backend:', appointmentData);
+                } else if (response.status === 404) {
+                    console.log('⚠️ Appointment not found in backend (404), trying localStorage fallback...');
+                    // Try localStorage as fallback
+                    const localData = localStorage.getItem('appointmentData');
+                    if (localData) {
+                        try {
+                            const parsedData = JSON.parse(localData);
+                            // Check if token matches
+                            if (parsedData.token === token) {
+                                appointmentData = parsedData;
+                                console.log('✅ Appointment data found in localStorage:', appointmentData);
+                            } else {
+                                console.log('⚠️ Token mismatch in localStorage');
+                            }
+                        } catch (e) {
+                            console.error('❌ Error parsing localStorage data:', e);
+                        }
+                    }
+                    
+                    // If still no data, try to get by phone from localStorage
+                    if (!appointmentData) {
+                        const patientPhone = localStorage.getItem('patientPhone');
+                        if (patientPhone) {
+                            console.log('🔍 Trying to fetch by phone:', patientPhone);
+                            try {
+                                const phoneResponse = await fetch(`${BACKEND_BASE}/get-latest-appointment-by-phone?phone=${encodeURIComponent(patientPhone)}`);
+                                if (phoneResponse.ok) {
+                                    appointmentData = await phoneResponse.json();
+                                    console.log('✅ Appointment data found by phone:', appointmentData);
+                                }
+                            } catch (e) {
+                                console.error('❌ Error fetching by phone:', e);
+                            }
+                        }
+                    }
+                    
+                    if (!appointmentData) {
+                        throw new Error(`Appointment with token "${token}" not found in database or local storage`);
+                    }
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error('❌ Error fetching from backend:', error);
+                
+                // Fallback to localStorage
+                console.log('🔄 Trying localStorage fallback...');
+                const localData = localStorage.getItem('appointmentData');
+                if (localData) {
+                    try {
+                        const parsedData = JSON.parse(localData);
+                        if (parsedData.token === token) {
+                            appointmentData = parsedData;
+                            console.log('✅ Using localStorage data:', appointmentData);
+                        } else {
+                            console.log('⚠️ Token mismatch in localStorage');
+                        }
+                    } catch (e) {
+                        console.error('❌ Error parsing localStorage:', e);
+                    }
+                }
+                
+                // If still no data, throw error
+                if (!appointmentData) {
+                    throw new Error(`Failed to load appointment: ${error.message}`);
+                }
+            }
+
+            // Populate receipt with the data we found
+            if (appointmentData) {
+                populateReceipt(appointmentData);
+            } else {
+                throw new Error('No appointment data found');
+            }
+        }
+
+        // Populate receipt with data
+        function populateReceipt(data) {
+            console.log('📝 Populating receipt with data:', data);
+            console.log('🏷️ Payment status from data:', data.paymentStatus);
+
+            // Basic appointment details
+            setElementText('token', data.token || 'N/A');
+            setElementText('name', data.name || 'N/A');
+            setElementText('age', data.age || 'N/A');
+            setElementText('gender', data.gender || 'N/A');
+            setElementText('phone', data.phone || 'N/A');
+            setElementText('department', data.department || 'N/A');
+            setElementText('reason', data.reason || 'N/A');
+
+            // Date and time formatting
+            const { formattedDate, formattedTime } = formatDateTime(data.appointmentDate);
+            setElementText('date', formattedDate);
+            setElementText('time', data.appointmentTime || formattedTime);
+
+            // Payment information
+            setElementText('payment-id', data.orderId || 'N/A');
+            setElementText('payment-method', data.paymentMethod || 'N/A');
+            setElementText('payment-time', data.paymentTime ? new Date(data.paymentTime).toLocaleString() : 'N/A');
+
+            // Payment status with styling
+            const paymentStatusEl = document.getElementById('payment-status');
+            console.log('🏷️ Setting payment status element:', paymentStatusEl);
+            console.log('🏷️ Payment status from data:', data.paymentStatus);
+            
+            const statusText = getPaymentStatusText(data.paymentStatus);
+            console.log('🏷️ Status text result:', statusText);
+            
+            if (paymentStatusEl) {
+                paymentStatusEl.textContent = statusText.text;
+                paymentStatusEl.className = `status-badge ${statusText.class}`;
+                console.log('🏷️ Payment status element updated');
+            } else {
+                console.error('❌ Payment status element not found!');
+            }
+
+
+            // Set important note based on payment status
+            setImportantNote(data.paymentStatus);
+
+            // Show appropriate stamp based on payment status
+            showPaymentStamp(data.paymentStatus);
+
+            // Show receipt content
+            loadingEl.style.display = 'none';
+            receiptEl.style.display = 'block';
+            
+            // Receipt populated with latest data from database
+
+            // Auto-download receipt after a delay for better UX
+            setTimeout(() => {
+                showDownloadNotification();
+                autoDownloadReceipt(data);
+            }, 4000); // 4 second delay to let user see the receipt first
+        }
+
+        // Format date and time
+        function formatDateTime(dateString) {
+            if (!dateString) {
+                return { formattedDate: 'N/A', formattedTime: 'N/A' };
+            }
+
+            try {
+                // Handle different date formats
+                if (dateString.includes(' ')) {
+                    const [datePart, ...timeParts] = dateString.split(' ');
+                    const timePart = timeParts.join(' ');
+                    
+                    // Format date
+                    const date = new Date(datePart);
+                    const formattedDate = date.toLocaleDateString('en-IN', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    
+                    return { formattedDate, formattedTime: timePart };
+                } else {
+                    const date = new Date(dateString);
+                    const formattedDate = date.toLocaleDateString('en-IN', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    return { formattedDate, formattedTime: 'N/A' };
+                }
+            } catch (error) {
+                console.error('Error formatting date:', error);
+                return { formattedDate: dateString, formattedTime: 'N/A' };
+            }
+        }
+
+        // Get payment status text and class
+        function getPaymentStatusText(status) {
+            console.log('🏷️ Getting payment status text for:', status);
+            
+            switch (status) {
+                case 'Paid':
+                    return { text: '✅ Paid', class: 'status-paid' };
+                case 'Pending':
+                    return { text: '⏳ Pending', class: 'status-pending' };
+                case 'Pay at Hospital':
+                    return { text: '🏥 Pay at Hospital', class: 'status-payathospital' };
+                default:
+                    console.log('⚠️ Unknown payment status:', status);
+                    return { text: '❌ Not Paid', class: 'status-notpaid' };
+            }
+        }
+
+
+        // Set important note based on payment status
+        function setImportantNote(status) {
+            const noteEl = document.getElementById('important-note-text');
+            
+            switch (status) {
+                case 'Paid':
+                    noteEl.textContent = '✅ Payment completed! Please bring this receipt on the day of your appointment. Arrive 15 minutes before your scheduled time.';
+                    break;
+                case 'Pending':
+                    noteEl.textContent = '⏳ Payment is being processed. Please wait for confirmation. You will receive a notification once payment is completed.';
+                    break;
+                case 'Pay at Hospital':
+                    noteEl.textContent = '🏥 Please pay at the hospital reception on the day of your appointment. Bring this receipt as proof of booking.';
+                    break;
+                default:
+                    noteEl.textContent = '❌ Payment not completed. Please contact the hospital to complete your payment.';
+            }
+        }
+
+        // Show appropriate payment stamp
+        function showPaymentStamp(status) {
+            console.log('🏷️ Setting payment stamp for status:', status, 'Type:', typeof status);
+            
+            const payAtHospitalStamp = document.getElementById('payAtHospitalStamp');
+            const paidStamp = document.getElementById('paidStamp');
+            
+            console.log('🏷️ Stamp elements found:', {
+                payAtHospitalStamp: !!payAtHospitalStamp,
+                paidStamp: !!paidStamp
+            });
+            
+            // Hide both stamps first
+            if (payAtHospitalStamp) {
+                payAtHospitalStamp.style.display = 'none';
+                console.log('🏷️ Hidden Pay at Hospital stamp');
+            }
+            if (paidStamp) {
+                paidStamp.style.display = 'none';
+                console.log('🏷️ Hidden Paid stamp');
+            }
+            
+            // Show appropriate stamp based on status
+            switch (status) {
+                case 'Pay at Hospital':
+                    console.log('🏥 Showing Pay at Hospital stamp');
+                    if (payAtHospitalStamp) {
+                        payAtHospitalStamp.style.display = 'flex';
+                        console.log('🏥 Pay at Hospital stamp displayed');
+                    }
+                    break;
+                case 'Paid':
+                    console.log('✅ Showing Paid stamp');
+                    if (paidStamp) {
+                        paidStamp.style.display = 'flex';
+                        console.log('✅ Paid stamp displayed');
+                    }
+                    break;
+                default:
+                    console.log('❌ No stamp for status:', status);
+                    // No stamp for Pending, Not Paid, or other statuses
+                    break;
+            }
+        }
+
+        // Helper function to set element text
+        function setElementText(id, text) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = text;
+            }
+        }
+
+        // Show error state
+        function showError(message) {
+            loadingEl.style.display = 'none';
+            errorEl.style.display = 'block';
+            errorMessageEl.textContent = message;
+        }
+
+        // Auto-download receipt as PDF
+        function autoDownloadReceipt(data) {
+            try {
+                console.log('📥 Auto-downloading receipt...');
+                
+                // Create filename with token and date
+                const currentDate = new Date().toISOString().split('T')[0];
+                const filename = `Receipt_${data.token || 'Unknown'}_${currentDate}.pdf`;
+                
+                // Use html2pdf library to generate and download PDF
+                if (typeof html2pdf !== 'undefined') {
+                    const element = document.querySelector('.receipt-container');
+                    const opt = {
+                        margin: [0.2, 0.2, 0.2, 0.2], // Very small margins for single page
+                        filename: filename,
+                        image: { 
+                            type: 'jpeg', 
+                            quality: 0.95 
+                        },
+                        html2canvas: { 
+                            scale: 1.2, // Reduced scale to fit single page
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: '#ffffff',
+                            width: 800,
+                            height: 1000,
+                            scrollX: 0,
+                            scrollY: 0
+                        },
+                        jsPDF: { 
+                            unit: 'in', 
+                            format: 'a4', 
+                            orientation: 'portrait',
+                            compress: true
+                        },
+                        pagebreak: { 
+                            mode: ['avoid-all', 'css', 'legacy'] 
+                        }
+                    };
+                    
+                    html2pdf().set(opt).from(element).save();
+                    console.log('✅ Receipt downloaded successfully:', filename);
+                    
+                    // Show success notification
+                    showDownloadSuccessNotification();
+                } else {
+                    // Fallback: trigger print dialog
+                    console.log('📄 html2pdf not available, triggering print dialog...');
+                    window.print();
+                }
+            } catch (error) {
+                console.error('❌ Auto-download failed:', error);
+                // Fallback: show download button
+                showDownloadButton();
+            }
+        }
+
+
+        // Show download success notification
+        function showDownloadSuccessNotification() {
+            const notification = document.createElement('div');
+            notification.className = 'download-notification';
+            notification.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+            notification.innerHTML = `
+                <div style="font-size: 18px;">✅</div>
+                <div>
+                    <div style="font-weight: 700; margin-bottom: 2px;">Receipt Downloaded!</div>
+                    <div style="font-size: 12px; opacity: 0.9;">Check your downloads folder</div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideInRight 0.6s ease-out reverse';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.remove();
+                        }
+                    }, 600);
+                }
+            }, 3000);
+        }
+
+        // Show manual download button as fallback
+        function showDownloadButton() {
+            const actionButtons = document.querySelector('.action-buttons');
+            if (actionButtons) {
+                const downloadBtn = document.createElement('button');
+                downloadBtn.className = 'btn btn-primary';
+                downloadBtn.innerHTML = '📥 Download Receipt';
+                downloadBtn.onclick = () => {
+                    downloadReceiptAsPDF();
+                };
+                actionButtons.appendChild(downloadBtn);
+            }
+        }
+
+        // Manual download function for the download button
+        function downloadReceiptAsPDF() {
+            try {
+                const element = document.querySelector('.receipt-container');
+                const token = document.getElementById('token').textContent || 'Unknown';
+                const currentDate = new Date().toISOString().split('T')[0];
+                const filename = `Receipt_${token}_${currentDate}.pdf`;
+                
+                if (typeof html2pdf !== 'undefined') {
+                    const opt = {
+                        margin: [0.2, 0.2, 0.2, 0.2], // Very small margins for single page
+                        filename: filename,
+                        image: { 
+                            type: 'jpeg', 
+                            quality: 0.95 
+                        },
+                        html2canvas: { 
+                            scale: 1.2, // Reduced scale to fit single page
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: '#ffffff',
+                            width: 800,
+                            height: 1000,
+                            scrollX: 0,
+                            scrollY: 0
+                        },
+                        jsPDF: { 
+                            unit: 'in', 
+                            format: 'a4', 
+                            orientation: 'portrait',
+                            compress: true
+                        },
+                        pagebreak: { 
+                            mode: ['avoid-all', 'css', 'legacy'] 
+                        }
+                    };
+                    
+                    html2pdf().set(opt).from(element).save();
+                    console.log('✅ Receipt downloaded manually:', filename);
+                } else {
+                    console.log('📄 html2pdf not available, triggering print dialog...');
+                    window.print();
+                }
+            } catch (error) {
+                console.error('❌ Manual download failed:', error);
+                alert('Download failed. Please try printing instead.');
+            }
+        }
+
+        // Show download notification
+        function showDownloadNotification() {
+            // Remove any existing notification
+            const existingNotification = document.querySelector('.download-notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+
+            // Create notification element
+                const notification = document.createElement('div');
+            notification.className = 'download-notification';
+            notification.innerHTML = `
+                <div class="spinner"></div>
+                <div>
+                    <div style="font-weight: 700; margin-bottom: 2px;">📥 Preparing Receipt</div>
+                    <div style="font-size: 12px; opacity: 0.9;">Your receipt will download automatically</div>
+                </div>
+            `;
+            
+                document.body.appendChild(notification);
+
+            // Auto-remove after 6 seconds
+                setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideInRight 0.6s ease-out reverse';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.remove();
+                        }
+                    }, 600);
+                }
+            }, 6000);
+        }
+
+    </script>
+</body>
+</html>
